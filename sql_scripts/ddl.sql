@@ -158,7 +158,6 @@ CREATE TABLE [borrow_records] (
     [fine_accrued] money NOT NULL DEFAULT (0),
     [renewal_count] int NOT NULL DEFAULT (0),
     [pickup_deadline] datetime,
-    [time_zone] varchar(255) NOT NULL,
     [created_at] datetime NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
 )
