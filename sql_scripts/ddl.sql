@@ -1,6 +1,19 @@
+USE [master];
+GO
+
+IF EXISTS (SELECT name FROM sys.databases WHERE name = N'library_management_system')
+BEGIN
+    ALTER DATABASE library_management_system 
+    SET SINGLE_USER 
+    WITH ROLLBACK IMMEDIATE;
+END
+
 DROP DATABASE IF EXISTS library_management_system;
 CREATE DATABASE library_management_system;
+GO
+
 USE library_management_system;
+GO
 
 CREATE TABLE [authors] (
     [id] uniqueidentifier PRIMARY KEY,
@@ -174,6 +187,14 @@ CREATE TABLE [fines] (
 )
 GO
 
+CREATE TABLE [refresh_tokens] (
+	[id] uniqueidentifier PRIMARY KEY,
+	[token] varchar(256) NOT NULL,
+	[user_id] uniqueidentifier NOT NULL,
+	[expires_one] datetime2 NOT NULL
+)
+GO
+
 CREATE INDEX [IX_Authors_Name] ON [authors] ([name])
 GO
 
@@ -199,6 +220,9 @@ CREATE INDEX [IX_BookCopies_Barcode] ON [book_copies] ([barcode])
 GO
 
 CREATE INDEX [IX_BookCopies_BookId_State] ON [book_copies] ([book_id], [state])
+GO
+
+CREATE INDEX [IX_RefreshTokens_Token] ON [refresh_tokens] ([token])
 GO
 
 ALTER TABLE [librarian_categories] ADD FOREIGN KEY ([user_id]) REFERENCES [users] ([id])
@@ -259,4 +283,7 @@ ALTER TABLE [fines] ADD FOREIGN KEY ([member_id]) REFERENCES [users] ([id])
 GO
 
 ALTER TABLE [fines] ADD FOREIGN KEY ([borrow_record_id]) REFERENCES [borrow_records] ([id])
+GO
+
+ALTER TABLE [refresh_tokens] ADD FOREIGN KEY ([user_id]) REFERENCES [users] ([id])
 GO
