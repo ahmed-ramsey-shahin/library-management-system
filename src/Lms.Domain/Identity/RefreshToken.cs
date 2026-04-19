@@ -27,7 +27,7 @@ namespace Lms.Domain.Identity
                 return RefreshTokenErrors.IdRequired;
             }
 
-            if (string.IsNullOrEmpty(token))
+            if (string.IsNullOrWhiteSpace(token))
             {
                 return RefreshTokenErrors.TokenRequired;
             }
