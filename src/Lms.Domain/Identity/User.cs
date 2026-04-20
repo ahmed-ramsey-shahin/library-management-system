@@ -141,5 +141,47 @@ namespace Lms.Domain.Identity
 
             return true;
         }
+
+        public Result<Updated> AddCategory(Guid categoryId)
+        {
+            if (Role != Role.Librarian)
+            {
+                return UserErrors.NotLibrarian;
+            }
+
+            if (Status == UserStatus.Suspended)
+            {
+                return UserErrors.UserSuspended;
+            }
+
+            if (_librarianCategories.Any(lc => lc.CategoryId == categoryId))
+            {
+                return UserErrors.CategoryAlreadyAssigned;
+            }
+
+            _librarianCategories.Add(new LibrarianCategory(Id, categoryId));
+            return Result.Updated;
+        }
+
+        public Result<Updated> RemoveCategory(Guid categoryId)
+        {
+            if (Role != Role.Librarian)
+            {
+                return UserErrors.NotLibrarian;
+            }
+
+            if (Status == UserStatus.Suspended)
+            {
+                return UserErrors.UserSuspended;
+            }
+
+            if (!_librarianCategories.Any(lc => lc.CategoryId == categoryId))
+            {
+                return UserErrors.CategoryNotAssigned;
+            }
+
+            _librarianCategories.RemoveAll(lc => lc.CategoryId == categoryId);
+            return Result.Updated;
+        }
     }
 }

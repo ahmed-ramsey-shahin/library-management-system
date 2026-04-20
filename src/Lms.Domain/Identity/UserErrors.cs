@@ -14,5 +14,7 @@ namespace Lms.Domain.Identity
         public static Error MaxUnpaidFines(int maxUnpaidFines) => Error.Forbidden("User.MaxUnpaidFines", $"A member cannot borrow a book if the number of unpaid fines exceeds {maxUnpaidFines}.");
         public static Error MaxLateBorrows(int maxLateBorrows) => Error.Forbidden("User.MaxLateBorrows", $"A member cannot borrow a book if the number of currently overdue borrows exceeds {maxLateBorrows}.");
         public static Error UserSuspended => Error.Forbidden("User.Suspended", "This operation cannot be performed because this user is suspended.");
+        public static Error CategoryAlreadyAssigned => Error.Conflict("User.CategoryAlreadyAssigned", "This category is already assigned to this librarian.");
+        public static Error CategoryNotAssigned => Error.Conflict("User.CategoryNotAssigned", "This category is not assigned to this librarian.");
     }
 }
