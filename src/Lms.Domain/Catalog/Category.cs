@@ -55,11 +55,16 @@ namespace Lms.Domain.Catalog
             return Result.Updated;
         }
 
-        public Result<Deleted> Delete()
+        public Result<Deleted> Delete(int associatedBooks, int associatedLibrarians)
         {
-            if (_books.Count > 0)
+            if (associatedBooks > 0)
             {
                 return CategoryErrors.CategoryHasBooks;
+            }
+
+            if (associatedLibrarians > 0)
+            {
+                return CategoryErrors.CategoryHasLibrarians;
             }
 
             IsDeleted = true;

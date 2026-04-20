@@ -52,9 +52,9 @@ namespace Lms.Domain.Catalog
             return Result.Updated;
         }
 
-        public Result<Deleted> Delete()
+        public Result<Deleted> Delete(int associatedBooks)
         {
-            if (_books.Count > 0)
+            if (associatedBooks > 0)
             {
                 return PublisherErrors.PublisherHasBooks;
             }
