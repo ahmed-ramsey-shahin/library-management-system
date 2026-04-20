@@ -396,5 +396,17 @@ namespace Lms.Domain.Catalog
             _genres.RemoveAll(g => g.Id == genre.Id);
             return Result.Updated;
         }
+
+        public Result<BookCopy> AddCopy(
+            Guid id,
+            string barcode,
+            string location,
+            DateOnly? acquisitionDate,
+            BookCopyStatus status=BookCopyStatus.Good,
+            BookCopyState state=BookCopyState.Available
+        )
+        {
+            return BookCopy.Create(id, Id, barcode, location, acquisitionDate, status, state);
+        }
     }
 }
