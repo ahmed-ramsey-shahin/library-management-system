@@ -6,8 +6,8 @@ namespace Lms.Domain.Identity
     {
         public Guid UserId { get; }
         public Guid CategoryId { get; }
-        public User User { get; set; } = null!;
-        public Category Category { get; set; } = null!;
+        public User User { get; internal set; } = null!;
+        public Category Category { get; internal set; } = null!;
 
         private LibrarianCategory()
         {}
