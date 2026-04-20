@@ -55,9 +55,9 @@ namespace Lms.Domain.Catalog
             return Result.Updated;
         }
 
-        public Result<Deleted> Delete(bool hasLinkedBooks)
+        public Result<Deleted> Delete()
         {
-            if (hasLinkedBooks)
+            if (_books.Count > 0)
             {
                 return CategoryErrors.CategoryHasBooks;
             }
