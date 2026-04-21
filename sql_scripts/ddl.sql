@@ -74,6 +74,11 @@ GO
 CREATE TABLE [users] (
     [id] uniqueidentifier PRIMARY KEY,
     [email] nvarchar(255) UNIQUE NOT NULL,
+    [first_name] nvarchar(50) NOT NULL,
+    [last_name] nvarchar(50) NOT NULL,
+    [phone_number] varchar(20) UNIQUE NOT NULL,
+    [address] nvarchar(512) NOT NULL,
+    [library_card_number] varchar(20) UNIQUE NOT NULL,
     [role] nvarchar(50) NOT NULL DEFAULT 'member',
     [status] nvarchar(50) NOT NULL DEFAULT 'active',
     [password] varchar(512) NOT NULL,

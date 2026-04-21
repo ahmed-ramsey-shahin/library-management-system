@@ -5,6 +5,11 @@ namespace Lms.Domain.Identity
     public static class UserErrors
     {
         public static Error IdRequired => Error.Validation("User.Id.Required", "User id is required.");
+        public static Error FirstNameRequired => Error.Validation("User.FirstName.Required", "User first name is required.");
+        public static Error LastNameRequired => Error.Validation("User.LastName.Required", "User last name is required.");
+        public static Error PhoneNumberRequired => Error.Validation("User.PhoneNumber.Required", "User phone number is required.");
+        public static Error AddressRequired => Error.Validation("User.Address.Required", "User address is required.");
+        public static Error LibraryCardNumberRequired => Error.Validation("User.LibraryCardNumberRequired.Required", "Library card number is required.");
         public static Error PasswordRequired => Error.Validation("User.Password.Required", "User password is required.");
         public static Error SaltRequired => Error.Validation("User.Salt.Required", "User salt is required.");
         public static Error EmailRequired => Error.Validation("User.Email.Required", "User email is required.");

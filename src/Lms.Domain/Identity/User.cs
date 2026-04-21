@@ -8,6 +8,11 @@ namespace Lms.Domain.Identity
     {
         public Guid Id { get; }
         public string Email { get; private set; } = string.Empty;
+        public string FirstName { get; private set; } = string.Empty;
+        public string LastName { get; private set; } = string.Empty;
+        public string PhoneNumber { get; private set; } = string.Empty;
+        public string Address { get; private set; } = string.Empty;
+        public string LibraryCardNumber { get; private set; } = string.Empty;
         public Role Role { get; private set; } = Role.Member;
         public UserStatus Status { get; private set; } = UserStatus.Active;
         public string Password { get; private set; } = string.Empty;
@@ -23,17 +28,46 @@ namespace Lms.Domain.Identity
         {
         }
 
-        private User(Guid id, string email, string passwordHash, string salt, Role role=Role.Member, UserStatus status=UserStatus.Active)
+        private User(
+            Guid id,
+            string email,
+            string firstName,
+            string lastName,
+            string phoneNumber,
+            string address,
+            string libraryCardNumber,
+            string passwordHash,
+            string salt,
+            Role role=Role.Member,
+            UserStatus status=UserStatus.Active
+        )
         {
             Id = id;
             Email = email;
+            FirstName = firstName;
+            LastName = lastName;
+            PhoneNumber = phoneNumber;
+            Address = address;
+            LibraryCardNumber = libraryCardNumber;
             Role = role;
             Status = status;
             Password = passwordHash;
             Salt = salt;
         }
 
-        public static Result<User> Create(Guid id, string email, string passwordHash, string salt, Role role=Role.Member, UserStatus status=UserStatus.Active)
+        public static Result<User> Create(
+            Guid id,
+            string email,
+            string firstName,
+            string lastName,
+            string phoneNumber,
+            string address,
+            string libraryCardNumber,
+            string passwordHash,
+            string salt,
+            Role role=Role.Member,
+            UserStatus status=UserStatus.Active
+        )
         {
             List<Error> errors = [];
 
@@ -57,12 +91,37 @@ namespace Lms.Domain.Identity
                 errors.Add(UserErrors.SaltRequired);
             }
 
+            if (string.IsNullOrWhiteSpace(firstName))
+            {
+                errors.Add(UserErrors.FirstNameRequired);
+            }
+
+            if (string.IsNullOrWhiteSpace(lastName))
+            {
+                errors.Add(UserErrors.LastNameRequired);
+            }
+
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                errors.Add(UserErrors.PhoneNumberRequired);
+            }
+
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                errors.Add(UserErrors.AddressRequired);
+            }
+
+            if (string.IsNullOrWhiteSpace(libraryCardNumber))
+            {
+                errors.Add(UserErrors.LibraryCardNumberRequired);
+            }
+
             if (errors.Count > 0)
             {
                 return errors;
             }
 
-            return new User(id, email, passwordHash, salt, role, status);
+            return new User(id, email, firstName, lastName, phoneNumber, address, libraryCardNumber, passwordHash, salt, role, status);
         }
 
         public Result<Updated> Update(string email, Role role=Role.Member)
@@ -213,6 +272,53 @@ namespace Lms.Domain.Identity
             }
 
             _librarianCategories.RemoveAll(lc => lc.CategoryId == categoryId);
+            return Result.Updated;
+        }
+
+        public Result<Updated> ChangePersonalDetails(string firstName, string lastName, string phoneNumber, string address)
+        {
+            List<Error> errors = [];
+
+            if (string.IsNullOrWhiteSpace(firstName))
+            {
+                errors.Add(UserErrors.FirstNameRequired);
+            }
+
+            if (string.IsNullOrWhiteSpace(lastName))
+            {
+                errors.Add(UserErrors.LastNameRequired);
+            }
+
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                errors.Add(UserErrors.PhoneNumberRequired);
+            }
+
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                errors.Add(UserErrors.AddressRequired);
+            }
+
+            if (errors.Count > 0)
+            {
+                return errors;
+            }
+
+            FirstName = firstName;
+            LastName = lastName;
+            PhoneNumber = phoneNumber;
+            Address = address;
+            return Result.Updated;
+        }
+
+        public Result<Updated> UpdateLibraryCardNumber(string libraryCardNumber)
+        {
+            if (string.IsNullOrWhiteSpace(libraryCardNumber))
+            {
+                return UserErrors.LibraryCardNumberRequired;
+            }
+
+            LibraryCardNumber = libraryCardNumber;
             return Result.Updated;
         }
     }
