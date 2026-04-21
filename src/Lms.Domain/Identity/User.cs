@@ -10,6 +10,8 @@ namespace Lms.Domain.Identity
         public string Email { get; private set; } = string.Empty;
         public Role Role { get; private set; } = Role.Member;
         public UserStatus Status { get; private set; } = UserStatus.Active;
+        public string Password { get; private set; } = string.Empty;
+        public string Salt { get; private set; } = string.Empty;
         private readonly List<LibrarianCategory> _librarianCategories = [];
         public IReadOnlyCollection<LibrarianCategory> LibrarianCategories => _librarianCategories.AsReadOnly();
         private readonly List<BorrowRecord> _borrowRecords = [];
@@ -21,15 +23,17 @@ namespace Lms.Domain.Identity
         {
         }
 
-        private User(Guid id, string email, Role role=Role.Member, UserStatus status=UserStatus.Active)
+        private User(Guid id, string email, string passwordHash, string salt, Role role=Role.Member, UserStatus status=UserStatus.Active)
         {
             Id = id;
             Email = email;
             Role = role;
             Status = status;
+            Password = passwordHash;
+            Salt = salt;
         }
 
-        public static Result<User> Create(Guid id, string email, Role role=Role.Member, UserStatus status=UserStatus.Active)
+        public static Result<User> Create(Guid id, string email, string passwordHash, string salt, Role role=Role.Member, UserStatus status=UserStatus.Active)
         {
             List<Error> errors = [];
 
@@ -43,12 +47,22 @@ namespace Lms.Domain.Identity
                 errors.Add(UserErrors.EmailRequired);
             }
 
+            if (string.IsNullOrWhiteSpace(passwordHash))
+            {
+                errors.Add(UserErrors.PasswordRequired);
+            }
+
+            if (string.IsNullOrWhiteSpace(salt))
+            {
+                errors.Add(UserErrors.SaltRequired);
+            }
+
             if (errors.Count > 0)
             {
                 return errors;
             }
 
-            return new User(id, email, role, status);
+            return new User(id, email, passwordHash, salt, role, status);
         }
 
         public Result<Updated> Update(string email, Role role=Role.Member)
@@ -76,6 +90,30 @@ namespace Lms.Domain.Identity
             return Result.Updated;
         }
 
+        public Result<Updated> ChangePassword(string passwordHash, string salt)
+        {
+            List<Error> errors = [];
+
+            if (string.IsNullOrWhiteSpace(passwordHash))
+            {
+                errors.Add(UserErrors.PasswordRequired);
+            }
+
+            if (string.IsNullOrWhiteSpace(salt))
+            {
+                errors.Add(UserErrors.SaltRequired);
+            }
+
+            if (errors.Count > 0)
+            {
+                return errors;
+            }
+
+            Password = passwordHash;
+            Salt = salt;
+            return Result.Updated;
+        }
+
         public Result<Updated> Suspend()
         {
             Status = UserStatus.Suspended;
@@ -97,17 +135,6 @@ namespace Lms.Domain.Identity
 
             IsDeleted = true;
             return Result.Deleted;
-        }
-
-        public Result<Updated> AddCategory(LibrarianCategory category)
-        {
-            if (Role != Role.Librarian)
-            {
-                return UserErrors.NotLibrarian;
-            }
-
-            _librarianCategories.Add(category);
-            return Result.Updated;
         }
 
         public Result<bool> CanBorrow(int activeBorrows, int maxActiveBorrows, int unpaidFines, int maxUnpaidFines, int lateBorrows, int maxLateBorrows)
