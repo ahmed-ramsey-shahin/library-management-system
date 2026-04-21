@@ -7,7 +7,7 @@ namespace Lms.Domain.Catalog
     public sealed class BookCopy : AuditableEntity
     {
         public Guid Id { get; }
-        public Guid BookId { get; private set; }
+        public Guid BookId { get; }
         public Book Book { get; private set; } = null!;
         public string Barcode { get; private set; } = string.Empty;
         public BookCopyStatus Status { get; private set; } = BookCopyStatus.Good;
@@ -87,6 +87,18 @@ namespace Lms.Domain.Catalog
 
             IsDeleted = true;
             return Result.Deleted;
+        }
+
+        public Result<Updated> ChangeStatus(BookCopyStatus status)
+        {
+            Status = status;
+            return Result.Updated;
+        }
+
+        public Result<Updated> ChangeState(BookCopyState state)
+        {
+            State = state;
+            return Result.Updated;
         }
     }
 }
