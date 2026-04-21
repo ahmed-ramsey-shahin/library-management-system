@@ -175,17 +175,13 @@ namespace Lms.Domain.Catalog
             return Result.Deleted;
         }
 
-        public Result<Updated> Update(
+        public Result<Updated> UpdateDetails(
             string isbn,
             string issn,
             string title,
             Guid publisherId,
             DateOnly publishingDate,
             string edition,
-            decimal borrowPricePerDay,
-            decimal finePerDay,
-            decimal lostFee,
-            decimal damageFee,
             string language="english"
         )
         {
@@ -221,6 +217,35 @@ namespace Lms.Domain.Catalog
                 errors.Add(BookErrors.EditionRequired);
             }
 
+            if (string.IsNullOrWhiteSpace(language))
+            {
+                errors.Add(BookErrors.LanguageRequired);
+            }
+
+            if (errors.Count > 0)
+            {
+                return errors;
+            }
+
+            Isbn = isbn;
+            Issn = issn;
+            Title = title;
+            PublisherId = publisherId;
+            PublishingDate = publishingDate;
+            Language = language;
+            Edition = edition;
+            return Result.Updated;
+        }
+
+        public Result<Updated> UpdateFinancials(
+            decimal borrowPricePerDay,
+            decimal finePerDay,
+            decimal lostFee,
+            decimal damageFee,
+        )
+        {
+            List<Error> errors = [];
+
             if (borrowPricePerDay <= 0)
             {
                 errors.Add(BookErrors.BorrowPricePerDayInvalid);
@@ -241,23 +266,11 @@ namespace Lms.Domain.Catalog
                 errors.Add(BookErrors.DamageFeeInvalid);
             }
 
-            if (string.IsNullOrWhiteSpace(language))
-            {
-                errors.Add(BookErrors.LanguageRequired);
-            }
-
             if (errors.Count > 0)
             {
                 return errors;
             }
 
-            Isbn = isbn;
-            Issn = issn;
-            Title = title;
-            PublisherId = publisherId;
-            PublishingDate = publishingDate;
-            Language = language;
-            Edition = edition;
             BorrowPricePerDay = borrowPricePerDay;
             FinePerDay = finePerDay;
             LostFee = lostFee;
