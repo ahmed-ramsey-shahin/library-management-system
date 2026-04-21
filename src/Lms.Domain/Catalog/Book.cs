@@ -241,7 +241,7 @@ namespace Lms.Domain.Catalog
             decimal borrowPricePerDay,
             decimal finePerDay,
             decimal lostFee,
-            decimal damageFee,
+            decimal damageFee
         )
         {
             List<Error> errors = [];
