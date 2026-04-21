@@ -122,5 +122,16 @@ namespace Lms.Domain.Catalog
             State = BookCopyState.Maintenance;
             return Result.Updated;
         }
+
+        public Result<Updated> ChangeLocation(string location)
+        {
+            if (string.IsNullOrWhiteSpace(location))
+            {
+                return BookCopyErrors.LocationRequired;
+            }
+
+            Location = location;
+            return Result.Updated;
+        }
     }
 }
