@@ -43,6 +43,38 @@ namespace Lms.Domain.Catalog
         )
         {
             acquisitionDate ??= DateOnly.FromDateTime(DateTime.UtcNow);
+            List<Error> errors = [];
+
+            if (id == Guid.Empty)
+            {
+                errors.Add(BookCopyErrors.IdRequired);
+            }
+
+            if (bookId == Guid.Empty)
+            {
+                errors.Add(BookCopyErrors.BookIdRequired);
+            }
+
+            if (string.IsNullOrWhiteSpace(barcode))
+            {
+                errors.Add(BookCopyErrors.BookIdRequired);
+            }
+
+            if (string.IsNullOrWhiteSpace(location))
+            {
+                errors.Add(BookCopyErrors.LocationRequired);
+            }
+
+            if (acquisitionDate > DateOnly.FromDateTime(DateTime.UtcNow))
+            {
+                errors.Add(BookCopyErrors.AcquisitionDateInvalid);
+            }
+
+            if (errors.Count > 0)
+            {
+                return errors;
+            }
+
             return new BookCopy(id, bookId, barcode, status, state, location, acquisitionDate.Value);
         }
     }
