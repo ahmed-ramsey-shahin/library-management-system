@@ -77,5 +77,16 @@ namespace Lms.Domain.Catalog
 
             return new BookCopy(id, bookId, barcode, status, state, location, acquisitionDate.Value);
         }
+
+        public Result<Deleted> Delete()
+        {
+            if (State == BookCopyState.Borrowed)
+            {
+                return BookCopyErrors.CannotDeleteBorrowedCopy;
+            }
+
+            IsDeleted = true;
+            return Result.Deleted;
+        }
     }
 }

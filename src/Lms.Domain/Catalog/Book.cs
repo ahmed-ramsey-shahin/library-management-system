@@ -421,5 +421,31 @@ namespace Lms.Domain.Catalog
         {
             return BookCopy.Create(id, Id, barcode, location, acquisitionDate, status, state);
         }
+
+        public Result<Updated> RemoveCopy(Guid copyId)
+        {
+            if (copyId == Guid.Empty)
+            {
+                return BookCopyErrors.IdRequired;
+            }
+
+            var copy = _bookCopies.FirstOrDefault(copy => copy.Id == copyId);
+
+            if (copy is null)
+            {
+                return BookErrors.CopyNotFound;
+            }
+
+            var result = copy.Delete();
+
+            if (result.IsSuccess)
+            {
+                return Result.Updated;
+            }
+            else
+            {
+                return result.Errors!;
+            }
+        }
     }
 }

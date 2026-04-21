@@ -9,5 +9,6 @@ namespace Lms.Domain.Catalog
         public static Error BarcodeRequired => Error.Validation("BookCopy.Barcode.Required", "Barcode is required.");
         public static Error LocationRequired => Error.Validation("BookCopy.Location.Required", "Copy location is required.");
         public static Error AcquisitionDateInvalid => Error.Validation("BookCopy.AcquisitionDate.Invalid", "Acquisition date cannot be in the future.");
+        public static Error CannotDeleteBorrowedCopy => Error.NotFound("BookCopy.CannotDeleteBorrowedCopy", "This operation cannot be completed because this copy is borrowed by a member.");
     }
 }

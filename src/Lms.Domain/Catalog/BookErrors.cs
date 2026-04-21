@@ -35,5 +35,7 @@ namespace Lms.Domain.Catalog
 
         public static Error GenreAlreadyAssigned => Error.Conflict("Book.GenreAlreadyAssigned", "This operation cannot be completed because the genre is already assigned.");
         public static Error GenreNotAssigned => Error.Conflict("Book.GenreNotAssigned", "This operation cannot be completed because the genre is not assigned.");
+
+        public static Error CopyNotFound => Error.NotFound("Book.CopyNotFound", "No copy of this book was found with the specified ID.");
     }
 }
