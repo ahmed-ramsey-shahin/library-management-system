@@ -1,3 +1,4 @@
+using Lms.Domain.Circulation;
 using Lms.Domain.Common;
 using Lms.Domain.Common.Results;
 
@@ -11,6 +12,10 @@ namespace Lms.Domain.Identity
         public UserStatus Status { get; private set; } = UserStatus.Active;
         private readonly List<LibrarianCategory> _librarianCategories = [];
         public IReadOnlyCollection<LibrarianCategory> LibrarianCategories => _librarianCategories.AsReadOnly();
+        private readonly List<BorrowRecord> _borrowRecords = [];
+        public IReadOnlyCollection<BorrowRecord> BorrowRecords => _borrowRecords.AsReadOnly();
+        private readonly List<Fine> _fines = [];
+        public IReadOnlyCollection<Fine> Fines => _fines.AsReadOnly();
 
         private User()
         {
