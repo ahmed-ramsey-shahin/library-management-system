@@ -88,16 +88,6 @@ CREATE TABLE [users] (
 )
 GO
 
-CREATE TABLE [refresh_tokens] (
-    [id] uniqueidentifier PRIMARY KEY,
-    [token] varchar(256) UNIQUE NOT NULL,
-    [user_id] uniqueidentifier NOT NULL,
-    [expires_on] datetime2 NOT NULL,
-    [is_revoked] bit NOT NULL DEFAULT (0),
-    [revoked_at] datetime2
-)
-GO
-
 CREATE TABLE [librarian_categories] (
     [user_id] uniqueidentifier,
     [category_id] uniqueidentifier,
@@ -210,7 +200,7 @@ CREATE TABLE [refresh_tokens] (
 	[id] uniqueidentifier PRIMARY KEY,
     [token] varchar(256) UNIQUE NOT NULL,
 	[user_id] uniqueidentifier NOT NULL,
-	[expires_one] datetime2 NOT NULL
+	[expires_on] datetime2 NOT NULL,
     [is_revoked] bit NOT NULL DEFAULT (0),
     [revoked_at] datetime2
 )
