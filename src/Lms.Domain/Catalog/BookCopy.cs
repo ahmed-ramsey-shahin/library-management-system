@@ -91,13 +91,35 @@ namespace Lms.Domain.Catalog
 
         public Result<Updated> ChangeStatus(BookCopyStatus status)
         {
+            if (State == BookCopyState.Borrowed)
+            {
+                return BookCopyErrors.CantChangeStateOfBorrowedBook;
+            }
+
             Status = status;
             return Result.Updated;
         }
 
-        public Result<Updated> ChangeState(BookCopyState state)
+        public Result<Updated> MarkAsBorrowed()
         {
-            State = state;
+            if (Status != BookCopyStatus.Good)
+            {
+                return BookCopyErrors.CopyNotGood;
+            }
+
+            State = BookCopyState.Borrowed;
+            return Result.Updated;
+        }
+
+        public Result<Updated> MarkAsAvailable()
+        {
+            State = BookCopyState.Available;
+            return Result.Updated;
+        }
+
+        public Result<Updated> MarkAsMaintenance()
+        {
+            State = BookCopyState.Maintenance;
             return Result.Updated;
         }
     }
