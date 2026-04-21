@@ -10,6 +10,8 @@ namespace Lms.Domain.Catalog
         public string Isbn { get; private set; } = string.Empty;
         public string Issn { get; private set; } = string.Empty;
         public string Title { get; private set; } = string.Empty;
+        public string? Description { get; private set; }
+        public int PageCount { get; private set; }
         public Guid PublisherId { get; private set; }
         public Publisher Publisher { get; private set; } = null!;
         public DateOnly PublishingDate { get; private set; }
@@ -42,6 +44,8 @@ namespace Lms.Domain.Catalog
             string isbn,
             string issn,
             string title,
+            string? description,
+            int pageCount,
             Guid publisherId,
             DateOnly publishingDate,
             string language,
@@ -56,6 +60,8 @@ namespace Lms.Domain.Catalog
             Isbn = isbn;
             Issn = issn;
             Title = title;
+            Description = description;
+            PageCount = pageCount;
             PublisherId = publisherId;
             PublishingDate = publishingDate;
             Language = language;
@@ -71,6 +77,8 @@ namespace Lms.Domain.Catalog
             string isbn,
             string issn,
             string title,
+            string? description,
+            int pageCount,
             Guid publisherId,
             DateOnly publishingDate,
             string edition,
@@ -143,6 +151,11 @@ namespace Lms.Domain.Catalog
                 errors.Add(BookErrors.LanguageRequired);
             }
 
+            if (pageCount <= 0)
+            {
+                errors.Add(BookErrors.PageCountInvalid);
+            }
+
             if (errors.Count > 0)
             {
                 return errors;
@@ -153,6 +166,8 @@ namespace Lms.Domain.Catalog
                 isbn,
                 issn,
                 title,
+                description,
+                pageCount,
                 publisherId,
                 publishingDate,
                 language,
@@ -179,6 +194,8 @@ namespace Lms.Domain.Catalog
             string isbn,
             string issn,
             string title,
+            string? description,
+            int pageCount,
             Guid publisherId,
             DateOnly publishingDate,
             string edition,
@@ -222,6 +239,11 @@ namespace Lms.Domain.Catalog
                 errors.Add(BookErrors.LanguageRequired);
             }
 
+            if (pageCount <= 0)
+            {
+                errors.Add(BookErrors.PageCountInvalid);
+            }
+
             if (errors.Count > 0)
             {
                 return errors;
@@ -230,6 +252,8 @@ namespace Lms.Domain.Catalog
             Isbn = isbn;
             Issn = issn;
             Title = title;
+            Description = description;
+            PageCount = pageCount;
             PublisherId = publisherId;
             PublishingDate = publishingDate;
             Language = language;

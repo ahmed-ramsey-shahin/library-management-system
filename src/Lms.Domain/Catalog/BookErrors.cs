@@ -16,6 +16,7 @@ namespace Lms.Domain.Catalog
         public static Error FinePerDayInvalid => Error.Validation("Book.FinePerDay.Invalid", "Fine per day must be greater than zero.");
         public static Error LostFeeInvalid => Error.Validation("Book.LostFee.Invalid", "Lost fee must be greater than zero.");
         public static Error DamageFeeInvalid => Error.Validation("Book.DamageFee.Invalid", "Damage fee must be greater than zero.");
+        public static Error PageCountInvalid => Error.Validation("Book.PageCount.Invalid", "Page count must be greater than zero.");
 
         public static Error BookHasCopies => Error.Conflict("Book.HasCopies", "This operation cannot be completed because the book still has associated copies.");
 

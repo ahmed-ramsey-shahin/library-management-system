@@ -100,6 +100,8 @@ CREATE TABLE [books] (
     [isbn] varchar(17) UNIQUE NOT NULL,
     [issn] varchar(9) UNIQUE NOT NULL,
     [title] nvarchar(255) NOT NULL,
+    [description] nvarchar(1024),
+    [page_count] int NOT NULL,
     [publisher_id] uniqueidentifier NOT NULL,
     [publishing_date] date NOT NULL,
     [language] nvarchar(50) NOT NULL DEFAULT 'english',
