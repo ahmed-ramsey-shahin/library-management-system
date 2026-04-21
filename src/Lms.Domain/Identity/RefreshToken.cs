@@ -7,7 +7,11 @@ namespace Lms.Domain.Identity
         public Guid Id { get; }
         public string Token { get; } = string.Empty;
         public Guid UserId { get; }
+        public User User { get; private set; } = null!;
         public DateTimeOffset ExpiresOn { get; }
+        public bool IsRevoked { get; private set; }
+        public DateTimeOffset? RevokedAt { get; private set; }
+        public bool IsValid => !IsRevoked && ExpiresOn > DateTimeOffset.UtcNow;
 
         private RefreshToken()
         {}
@@ -18,6 +22,7 @@ namespace Lms.Domain.Identity
             Token = token;
             UserId = userId;
             ExpiresOn = expiresOn;
+            IsRevoked = false;
         }
 
         public static Result<RefreshToken> Create(Guid id, string token, Guid userId, DateTimeOffset expiresOn)
@@ -43,6 +48,18 @@ namespace Lms.Domain.Identity
             }
 
             return new RefreshToken(id, token, userId, expiresOn);
+        }
+
+        public Result<Updated> Revoke()
+        {
+            if (IsRevoked)
+            {
+                return Result.Updated;
+            }
+
+            IsRevoked = true;
+            RevokedAt = DateTimeOffset.UtcNow;
+            return Result.Updated;
         }
     }
 }

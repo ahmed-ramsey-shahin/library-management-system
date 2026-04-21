@@ -23,6 +23,8 @@ namespace Lms.Domain.Identity
         public IReadOnlyCollection<BorrowRecord> BorrowRecords => _borrowRecords.AsReadOnly();
         private readonly List<Fine> _fines = [];
         public IReadOnlyCollection<Fine> Fines => _fines.AsReadOnly();
+        private readonly List<RefreshToken> _refreshTokens = [];
+        public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens.AsReadOnly();
 
         private User()
         {
@@ -319,6 +321,20 @@ namespace Lms.Domain.Identity
             }
 
             LibraryCardNumber = libraryCardNumber;
+            return Result.Updated;
+        }
+
+        public Result<Updated> RevokeAllTokens()
+        {
+            foreach (var token in _refreshTokens)
+            {
+                var revokeResult = token.Revoke();
+                if (revokeResult.IsError)
+                {
+                    return revokeResult.Errors!;
+                }
+            }
+
             return Result.Updated;
         }
     }

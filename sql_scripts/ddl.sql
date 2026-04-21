@@ -18,7 +18,7 @@ GO
 CREATE TABLE [authors] (
     [id] uniqueidentifier PRIMARY KEY,
     [name] nvarchar(255) UNIQUE NOT NULL,
-    [created_at] datetime NOT NULL DEFAULT GETUTCDATE(),
+    [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
 )
 GO
@@ -26,7 +26,7 @@ GO
 CREATE TABLE [publishers] (
     [id] uniqueidentifier PRIMARY KEY,
     [name] nvarchar(255) UNIQUE NOT NULL,
-    [created_at] datetime NOT NULL DEFAULT GETUTCDATE(),
+    [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
 )
 GO
@@ -34,7 +34,7 @@ GO
 CREATE TABLE [keywords] (
     [id] uniqueidentifier PRIMARY KEY,
     [name] nvarchar(255) UNIQUE NOT NULL,
-    [created_at] datetime NOT NULL DEFAULT GETUTCDATE(),
+    [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
 )
 GO
@@ -42,7 +42,7 @@ GO
 CREATE TABLE [genres] (
     [id] uniqueidentifier PRIMARY KEY,
     [name] nvarchar(255) UNIQUE NOT NULL,
-    [created_at] datetime NOT NULL DEFAULT GETUTCDATE(),
+    [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
 )
 GO
@@ -50,7 +50,7 @@ GO
 CREATE TABLE [themes] (
     [id] uniqueidentifier PRIMARY KEY,
     [name] nvarchar(255) UNIQUE NOT NULL,
-    [created_at] datetime NOT NULL DEFAULT GETUTCDATE(),
+    [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
 )
 GO
@@ -58,7 +58,7 @@ GO
 CREATE TABLE [audience] (
     [id] uniqueidentifier PRIMARY KEY,
     [name] nvarchar(255) UNIQUE NOT NULL,
-    [created_at] datetime NOT NULL DEFAULT GETUTCDATE(),
+    [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
 )
 GO
@@ -66,7 +66,7 @@ GO
 CREATE TABLE [categories] (
     [id] uniqueidentifier PRIMARY KEY,
     [name] nvarchar(255) UNIQUE NOT NULL,
-    [created_at] datetime NOT NULL DEFAULT GETUTCDATE(),
+    [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
 )
 GO
@@ -83,8 +83,18 @@ CREATE TABLE [users] (
     [status] nvarchar(50) NOT NULL DEFAULT 'active',
     [password] varchar(512) NOT NULL,
     [salt] varchar(64) NOT NULL,
-    [created_at] datetime NOT NULL DEFAULT GETUTCDATE(),
+    [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
+)
+GO
+
+CREATE TABLE [refresh_tokens] (
+    [id] uniqueidentifier PRIMARY KEY,
+    [token] varchar(256) UNIQUE NOT NULL,
+    [user_id] uniqueidentifier NOT NULL,
+    [expires_on] datetime2 NOT NULL,
+    [is_revoked] bit NOT NULL DEFAULT (0),
+    [revoked_at] datetime2
 )
 GO
 
@@ -110,7 +120,7 @@ CREATE TABLE [books] (
     [fine_per_day] money NOT NULL,
     [lost_fee] money NOT NULL,
     [damage_fee] money NOT NULL,
-    [created_at] datetime NOT NULL DEFAULT GETUTCDATE(),
+    [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
 )
 GO
@@ -165,7 +175,7 @@ CREATE TABLE [book_copies] (
     [state] varchar(50) NOT NULL DEFAULT 'available',
     [location] varchar(100) NOT NULL,
     [acquisition_date] date NOT NULL DEFAULT GETUTCDATE(),
-    [created_at] datetime NOT NULL DEFAULT GETUTCDATE(),
+    [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0),
     [version] rowversion NOT NULL
 )
@@ -179,8 +189,8 @@ CREATE TABLE [borrow_records] (
     [due_date] date NOT NULL,
     [fine_accrued] money NOT NULL DEFAULT (0),
     [renewal_count] int NOT NULL DEFAULT (0),
-    [pickup_deadline] datetime,
-    [created_at] datetime NOT NULL DEFAULT GETUTCDATE(),
+    [pickup_deadline] datetime2,
+    [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
 )
 GO
@@ -192,15 +202,17 @@ CREATE TABLE [fines] (
     [status] varchar(50) NOT NULL DEFAULT 'unpaid',
     [amount] money NOT NULL DEFAULT (0),
     [description] nvarchar(500),
-    [fine_date] datetime NOT NULL DEFAULT GETUTCDATE()
+    [fine_date] datetime2 NOT NULL DEFAULT GETUTCDATE()
 )
 GO
 
 CREATE TABLE [refresh_tokens] (
 	[id] uniqueidentifier PRIMARY KEY,
-	[token] varchar(256) NOT NULL,
+    [token] varchar(256) UNIQUE NOT NULL,
 	[user_id] uniqueidentifier NOT NULL,
 	[expires_one] datetime2 NOT NULL
+    [is_revoked] bit NOT NULL DEFAULT (0),
+    [revoked_at] datetime2
 )
 GO
 
