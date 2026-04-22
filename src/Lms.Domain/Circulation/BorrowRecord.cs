@@ -1,5 +1,6 @@
 using Lms.Domain.Catalog;
 using Lms.Domain.Common;
+using Lms.Domain.Common.Results;
 using Lms.Domain.Identity;
 
 namespace Lms.Domain.Circulation
@@ -28,8 +29,6 @@ namespace Lms.Domain.Circulation
             Guid bookCopyId,
             BorrowRecordStatus status,
             DateOnly dueDate,
-            decimal fineAccrued,
-            int renewalCount,
             DateOnly pickupDeadline
         )
         {
@@ -38,9 +37,51 @@ namespace Lms.Domain.Circulation
             BookCopyId = bookCopyId;
             Status = status;
             DueDate = dueDate;
-            FineAccrued = fineAccrued;
-            RenewalCount = renewalCount;
             PickupDeadline = pickupDeadline;
+        }
+
+        public static Result<BorrowRecord> Create(
+            Guid id,
+            Guid memberId,
+            Guid bookCopyId,
+            BorrowRecordStatus status,
+            DateOnly dueDate,
+            DateOnly pickupDeadline
+        )
+        {
+            List<Error> errors = [];
+
+            if (id == Guid.Empty)
+            {
+                errors.Add(BorrowRecordErrors.IdRequired);
+            }
+
+            if (memberId == Guid.Empty)
+            {
+                errors.Add(BorrowRecordErrors.MemberIdRequired);
+            }
+
+            if (bookCopyId == Guid.Empty)
+            {
+                errors.Add(BorrowRecordErrors.BookCopyId);
+            }
+
+            if (dueDate > DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
+            {
+                errors.Add(BorrowRecordErrors.DueDateInvalid);
+            }
+
+            if (pickupDeadline > DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)))
+            {
+                errors.Add(BorrowRecordErrors.PickupDeadlineInvalid);
+            }
+
+            if (errors.Count > 0)
+            {
+                return errors;
+            }
+
+            return new BorrowRecord(id, memberId, bookCopyId, status, dueDate, pickupDeadline);
         }
     }
 }
