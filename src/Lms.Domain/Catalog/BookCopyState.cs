@@ -4,6 +4,7 @@ namespace Lms.Domain.Catalog
     {
         Available,
         Borrowed,
+        WaitingApproval,
         Maintenance,
     }
 }

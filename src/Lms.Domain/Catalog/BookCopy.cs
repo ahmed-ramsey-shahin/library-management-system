@@ -100,6 +100,27 @@ namespace Lms.Domain.Catalog
             return Result.Updated;
         }
 
+        public Result<Updated> MarkAsWaitingApproval()
+        {
+            if (Status != BookCopyStatus.Good)
+            {
+                return BookCopyErrors.CopyNotGood;
+            }
+
+            if (State == BookCopyState.Available)
+            {
+                return BookCopyErrors.CantChangeStateOfBorrowedBook;
+            }
+
+            if (State == BookCopyState.WaitingApproval)
+            {
+                return Result.Updated;
+            }
+
+            State = BookCopyState.WaitingApproval;
+            return Result.Updated;
+        }
+
         public Result<Updated> MarkAsBorrowed()
         {
             if (Status != BookCopyStatus.Good)

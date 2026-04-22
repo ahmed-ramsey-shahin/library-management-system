@@ -481,7 +481,7 @@ namespace Lms.Domain.Catalog
                 return BookErrors.NoAvailableCopies;
             }
 
-            copy.MarkAsBorrowed();
+            copy.MarkAsWaitingApproval();
             return copy;
         }
     }
