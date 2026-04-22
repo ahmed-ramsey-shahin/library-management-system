@@ -107,6 +107,11 @@ namespace Lms.Domain.Catalog
                 return BookCopyErrors.CopyNotGood;
             }
 
+            if (State == BookCopyState.Borrowed)
+            {
+                return Result.Updated;
+            }
+
             State = BookCopyState.Borrowed;
             return Result.Updated;
         }

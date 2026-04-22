@@ -471,5 +471,18 @@ namespace Lms.Domain.Catalog
                 return result.Errors!;
             }
         }
+
+        public Result<BookCopy> AllocateAvailableCopy()
+        {
+            var copy = _bookCopies.FirstOrDefault(c => c.State == BookCopyState.Available);
+
+            if (copy is null)
+            {
+                return BookErrors.NoAvailableCopies;
+            }
+
+            copy.MarkAsBorrowed();
+            return copy;
+        }
     }
 }
