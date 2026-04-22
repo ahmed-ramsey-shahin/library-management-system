@@ -8,9 +8,9 @@ namespace Lms.Domain.Circulation
     public sealed class BorrowRecord : AuditableEntity
     {
         public Guid Id { get; }
-        public Guid MemberId { get; private set; }
+        public Guid MemberId { get; }
         public User Member { get; private set; } = null!;
-        public Guid BookCopyId { get; private set; }
+        public Guid BookCopyId { get; }
         public BookCopy BookCopy { get; private set; } = null!;
         public BorrowRecordStatus Status { get; private set; } = BorrowRecordStatus.Waiting;
         public DateOnly DueDate { get; private set; }
@@ -82,6 +82,88 @@ namespace Lms.Domain.Circulation
             }
 
             return new BorrowRecord(id, memberId, bookCopyId, status, dueDate, pickupDeadline);
+        }
+
+        public Result<IReadOnlyCollection<Fine>> GetUnpaidFines()
+        {
+            return Fines.Where(fine => fine.Status == FineStatus.Unpaid).ToList();
+        }
+
+        public Result<Fine> AddFine(
+            Guid id,
+            decimal amount,
+            string description,
+            DateTimeOffset? fineDate=null
+        )
+        {
+            var fine = _fines.FirstOrDefault(fine => fine.Id == id);
+
+            if (fine is not null)
+            {
+                return BorrowRecordErrors.FineAlreadyExists;
+            }
+
+            fineDate ??= DateTimeOffset.UtcNow;
+            var fineResult = Fine.Create(id, MemberId, Id, amount, description, fineDate.Value);
+
+            if (fineResult.IsError)
+            {
+                return fineResult.Errors!;
+            }
+
+            _fines.Add(fineResult.Value);
+            return fineResult.Value;
+        }
+
+        public Result<Updated> RemoveFine(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return FineErrors.IdRequired;
+            }
+
+            var fine = _fines.FirstOrDefault(fine => fine.Id == id);
+            if (fine is null)
+            {
+                return BorrowRecordErrors.FineNotFound;
+            }
+
+            var result = fine.Delete();
+
+            if (result.IsError)
+            {
+                return result.Errors!;
+            }
+
+            return Result.Updated;
+        }
+
+        public Result<Updated> AcceptBorrowRequest(int activeBorrows, int maxActiveBorrows, int unpaidFines, int maxUnpaidFine, int lateBorrows, int maxLateBorrows)
+        {
+            if (Status == BorrowRecordStatus.Accepted)
+            {
+                return Result.Updated;
+            }
+
+            if (Status != BorrowRecordStatus.Waiting)
+            {
+                return BorrowRecordErrors.ResponseInvalid(Status);
+            }
+
+            var canBorrow = Member.CanBorrow(activeBorrows, maxActiveBorrows, unpaidFines, maxUnpaidFine, lateBorrows, maxLateBorrows);
+
+            if (canBorrow.IsError)
+            {
+                return canBorrow.Errors!;
+            }
+
+            if (canBorrow.Value)
+            {
+                return BorrowRecordErrors.MemberNotApplicable;
+            }
+
+            Status = BorrowRecordStatus.Accepted;
+            return Result.Updated;
         }
     }
 }
