@@ -25,5 +25,9 @@ namespace Lms.Application.Common.Errors
         public static Error CategoryNameLength => Error.Validation("ApplicationErrors.Category.CategoryNameLength", "Category name length cannot exceed 50 characetrs.");
         public static Error CategoryAlreadyExists => Error.Validation("ApplicationErrors.Category.CategoryAlreadyExists", "This category already exists.");
         public static Error CategoryNotFound => Error.Validation("ApplicationErrors.Category.CategoryNotFound", "The required category was not found.");
+
+        public static Error PublisherNameLength => Error.Validation("ApplicationErrors.Publisher.PublisherNameLength", "Publisher name length cannot exceed 50 characetrs.");
+        public static Error PublisherAlreadyExists => Error.Validation("ApplicationErrors.Publisher.PublisherAlreadyExists", "This publisher already exists.");
+        public static Error PublisherNotFound => Error.Validation("ApplicationErrors.Publisher.PublisherNotFound", "The required publisher was not found.");
     }
 }

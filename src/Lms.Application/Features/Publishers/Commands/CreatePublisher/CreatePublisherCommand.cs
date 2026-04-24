@@ -1,0 +1,8 @@
+using Lms.Application.Features.Publishers.Dtos;
+using Lms.Domain.Common.Results;
+using MediatR;
+
+namespace Lms.Application.Features.Publishers.Commands.CreatePublisher
+{
+    public sealed record CreatePublisherCommand(string Name) : IRequest<Result<PublisherDto>>;
+}
