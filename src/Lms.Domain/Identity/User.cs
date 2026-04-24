@@ -1,4 +1,3 @@
-using Lms.Domain.Circulation;
 using Lms.Domain.Common;
 using Lms.Domain.Common.Results;
 
@@ -19,10 +18,6 @@ namespace Lms.Domain.Identity
         public string Salt { get; private set; } = string.Empty;
         private readonly List<LibrarianCategory> _librarianCategories = [];
         public IReadOnlyCollection<LibrarianCategory> LibrarianCategories => _librarianCategories.AsReadOnly();
-        private readonly List<BorrowRecord> _borrowRecords = [];
-        public IReadOnlyCollection<BorrowRecord> BorrowRecords => _borrowRecords.AsReadOnly();
-        private readonly List<Fine> _fines = [];
-        public IReadOnlyCollection<Fine> Fines => _fines.AsReadOnly();
         private readonly List<RefreshToken> _refreshTokens = [];
         public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens.AsReadOnly();
 

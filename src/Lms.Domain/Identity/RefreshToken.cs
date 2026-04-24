@@ -7,7 +7,6 @@ namespace Lms.Domain.Identity
         public Guid Id { get; }
         public string Token { get; } = string.Empty;
         public Guid UserId { get; }
-        public User User { get; private set; } = null!;
         public DateTimeOffset ExpiresOn { get; }
         public bool IsRevoked { get; private set; }
         public DateTimeOffset? RevokedAt { get; private set; }

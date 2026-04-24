@@ -39,5 +39,11 @@ namespace Lms.Domain.Catalog
 
         public static Error CopyNotFound => Error.NotFound("Book.CopyNotFound", "No copy of this book was found with the specified ID.");
         public static Error NoAvailableCopies => Error.NotFound("Book.NoAvailableCopies", "No available copies.");
+        public static Error CategoryIdRequired => Error.Validation("Book.CategoryIdRequired", "The category ID cannot be empty.");
+        public static Error ThemeIdRequired => Error.Validation("Book.ThemeIdRequired", "The theme ID cannot be empty.");
+        public static Error KeywordIdRequired => Error.Validation("Book.KeywordIdRequired", "The keyword ID cannot be empty.");
+        public static Error GenreIdRequired => Error.Validation("Book.GenreIdRequired", "The genre ID cannot be empty.");
+        public static Error AudienceIdRequired => Error.Validation("Book.AudienceIdRequired", "The audience ID cannot be empty.");
+        public static Error AuthorIdRequired => Error.Validation("Book.AuthorIdRequired", "The author ID cannot be empty.");
     }
 }

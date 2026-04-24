@@ -7,8 +7,6 @@ namespace Lms.Domain.Catalog
     {
         public Guid Id { get; }
         public string Name { get; private set; } = string.Empty;
-        private readonly List<Book> _books = [];
-        public IReadOnlyCollection<Book> Books => _books.AsReadOnly();
 
         private Publisher()
         {}

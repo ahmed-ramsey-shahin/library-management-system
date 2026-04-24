@@ -1,4 +1,3 @@
-using Lms.Domain.Catalog;
 using Lms.Domain.Common;
 using Lms.Domain.Common.Results;
 
@@ -8,8 +7,6 @@ namespace Lms.Domain.Metadata
     {
         public Guid Id { get; }
         public string Name { get; private set; } = string.Empty;
-        private readonly List<Book> _books = [];
-        public IReadOnlyCollection<Book> Books => _books.AsReadOnly();
 
         private Audience()
         {}

@@ -1,6 +1,5 @@
 using Lms.Domain.Common;
 using Lms.Domain.Common.Results;
-using Lms.Domain.Identity;
 
 namespace Lms.Domain.Catalog
 {
@@ -8,10 +7,6 @@ namespace Lms.Domain.Catalog
     {
         public Guid Id { get; }
         public string Name { get; private set; } = string.Empty;
-        private readonly List<Book> _books = [];
-        public IReadOnlyCollection<Book> Books => _books.AsReadOnly();
-        private readonly List<LibrarianCategory> _librarianCategories = [];
-        public IReadOnlyCollection<LibrarianCategory> LibrarianCategories => _librarianCategories.AsReadOnly();
 
         private Category()
         {}

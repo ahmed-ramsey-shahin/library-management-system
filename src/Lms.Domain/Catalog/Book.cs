@@ -1,6 +1,5 @@
 using Lms.Domain.Common;
 using Lms.Domain.Common.Results;
-using Lms.Domain.Metadata;
 
 namespace Lms.Domain.Catalog
 {
@@ -13,7 +12,6 @@ namespace Lms.Domain.Catalog
         public string? Description { get; private set; }
         public int PageCount { get; private set; }
         public Guid PublisherId { get; private set; }
-        public Publisher Publisher { get; private set; } = null!;
         public DateOnly PublishingDate { get; private set; }
         public string Language { get; private set; } = string.Empty;
         public string Edition { get; private set; } = string.Empty;
@@ -23,18 +21,18 @@ namespace Lms.Domain.Catalog
         public decimal DamageFee { get; private set; }
         private readonly List<BookCopy> _bookCopies = [];
         public IReadOnlyCollection<BookCopy> BookCopies => _bookCopies.AsReadOnly();
-        private readonly List<Category> _categories = [];
-        public IReadOnlyCollection<Category> Categories => _categories.AsReadOnly();
-        private readonly List<Author> _authors = [];
-        public IReadOnlyCollection<Author> Authors => _authors.AsReadOnly();
-        private readonly List<Keyword> _keywords = [];
-        public IReadOnlyCollection<Keyword> Keywords => _keywords.AsReadOnly();
-        private readonly List<Audience> _audiences = [];
-        public IReadOnlyCollection<Audience> Audiences => _audiences.AsReadOnly();
-        private readonly List<Theme> _themes = [];
-        public IReadOnlyCollection<Theme> Themes => _themes.AsReadOnly();
-        private readonly List<Genre> _genres = [];
-        public IReadOnlyCollection<Genre> Genres => _genres.AsReadOnly();
+        private readonly List<BookCategory> _bookCategories = [];
+        public IReadOnlyCollection<BookCategory> BookCategories => _bookCategories.AsReadOnly();
+        private readonly List<BookKeyword> _bookKeywords = [];
+        public IReadOnlyCollection<BookKeyword> BookKeywords => _bookKeywords.AsReadOnly();
+        private readonly List<BookTheme> _bookThemes = [];
+        public IReadOnlyCollection<BookTheme> BookThemes => _bookThemes.AsReadOnly();
+        private readonly List<BookGenre> _bookGenres = [];
+        public IReadOnlyCollection<BookGenre> BookGenres => _bookGenres.AsReadOnly();
+        private readonly List<BookAudience> _bookAudiences = [];
+        public IReadOnlyCollection<BookAudience> BookAudiences => _bookAudiences.AsReadOnly();
+        private readonly List<BookAuthor> _bookAuthors = [];
+        public IReadOnlyCollection<BookAuthor> BookAuthors => _bookAuthors.AsReadOnly();
 
         private Book()
         {}
@@ -302,135 +300,195 @@ namespace Lms.Domain.Catalog
             return Result.Updated;
         }
 
-        public Result<Updated> AddCategory(Category category)
+        public Result<Updated> AddCategory(Guid categoryId)
         {
-            ArgumentNullException.ThrowIfNull(category);
-            if (_categories.Any(c => c.Id == category.Id))
+            if (categoryId == Guid.Empty)
+            {
+                return BookErrors.CategoryIdRequired;
+            }
+
+            if (_bookCategories.Any(category => category.CategoryId == categoryId))
             {
                 return BookErrors.CategoryAlreadyAssigned;
             }
-            _categories.Add(category);
+
+            _bookCategories.Add(new BookCategory(Id, categoryId));
             return Result.Updated;
         }
 
-        public Result<Updated> RemoveCategory(Category category)
+        public Result<Updated> RemoveCategory(Guid categoryId)
         {
-            ArgumentNullException.ThrowIfNull(category);
-            if (!_categories.Any(c => c.Id == category.Id))
+            if (categoryId == Guid.Empty)
+            {
+                return BookErrors.CategoryIdRequired;
+            }
+
+            if (!_bookCategories.Any(category => category.CategoryId == categoryId))
             {
                 return BookErrors.CategoryNotAssigned;
             }
-            _categories.RemoveAll(c => c.Id == category.Id);
+
+            _bookCategories.RemoveAll(c => c.CategoryId == categoryId);
             return Result.Updated;
         }
 
-        public Result<Updated> AddAuthor(Author author)
+        public Result<Updated> AddAuthor(Guid authorId)
         {
-            ArgumentNullException.ThrowIfNull(author);
-            if (_authors.Any(a => a.Id == author.Id))
+            if (authorId == Guid.Empty)
+            {
+                return BookErrors.AuthorIdRequired;
+            }
+
+            if (_bookAuthors.Any(a => a.AuthorId == authorId))
             {
                 return BookErrors.AuthorAlreadyAssigned;
             }
-            _authors.Add(author);
+
+            _bookAuthors.Add(new BookAuthor(Id, authorId));
             return Result.Updated;
         }
 
-        public Result<Updated> RemoveAuthor(Author author)
+        public Result<Updated> RemoveAuthor(Guid authorId)
         {
-            ArgumentNullException.ThrowIfNull(author);
-            if (!_authors.Any(a => a.Id == author.Id))
+            if (authorId == Guid.Empty)
+            {
+                return BookErrors.CategoryIdRequired;
+            }
+
+            if (!_bookAuthors.Any(a => a.AuthorId == authorId))
             {
                 return BookErrors.AuthorNotAssigned;
             }
-            _authors.RemoveAll(a => a.Id == author.Id);
+
+            _bookAuthors.RemoveAll(a => a.AuthorId == authorId);
             return Result.Updated;
         }
 
-        public Result<Updated> AddKeyword(Keyword keyword)
+        public Result<Updated> AddKeyword(Guid keywordId)
         {
-            ArgumentNullException.ThrowIfNull(keyword);
-            if (_keywords.Any(k => k.Id == keyword.Id))
+            if (keywordId == Guid.Empty)
+            {
+                return BookErrors.KeywordIdRequired;
+            }
+
+            if (_bookKeywords.Any(a => a.KeywordId == keywordId))
             {
                 return BookErrors.KeywordAlreadyAssigned;
             }
-            _keywords.Add(keyword);
+
+            _bookKeywords.Add(new BookKeyword(Id, keywordId));
             return Result.Updated;
         }
 
-        public Result<Updated> RemoveKeyword(Keyword keyword)
+        public Result<Updated> RemoveKeyword(Guid keywordId)
         {
-            ArgumentNullException.ThrowIfNull(keyword);
-            if (!_keywords.Any(k => k.Id == keyword.Id))
+            if (keywordId == Guid.Empty)
+            {
+                return BookErrors.KeywordIdRequired;
+            }
+
+            if (!_bookKeywords.Any(a => a.KeywordId == keywordId))
             {
                 return BookErrors.KeywordNotAssigned;
             }
-            _keywords.RemoveAll(k => k.Id == keyword.Id);
+
+            _bookKeywords.RemoveAll(a => a.KeywordId == keywordId);
             return Result.Updated;
         }
 
-        public Result<Updated> AddAudience(Audience audience)
+        public Result<Updated> AddAudience(Guid audienceId)
         {
-            ArgumentNullException.ThrowIfNull(audience);
-            if (_audiences.Any(a => a.Id == audience.Id))
+            if (audienceId == Guid.Empty)
+            {
+                return BookErrors.AudienceIdRequired;
+            }
+
+            if (_bookAudiences.Any(a => a.AudienceId == audienceId))
             {
                 return BookErrors.AudienceAlreadyAssigned;
             }
-            _audiences.Add(audience);
+
+            _bookAudiences.Add(new BookAudience(Id, audienceId));
             return Result.Updated;
         }
 
-        public Result<Updated> RemoveAudience(Audience audience)
+        public Result<Updated> RemoveAudience(Guid audienceId)
         {
-            ArgumentNullException.ThrowIfNull(audience);
-            if (!_audiences.Any(a => a.Id == audience.Id))
+            if (audienceId == Guid.Empty)
+            {
+                return BookErrors.AudienceIdRequired;
+            }
+
+            if (!_bookAudiences.Any(a => a.AudienceId == audienceId))
             {
                 return BookErrors.AudienceNotAssigned;
             }
-            _audiences.RemoveAll(a => a.Id == audience.Id);
+
+            _bookAudiences.RemoveAll(a => a.AudienceId == audienceId);
             return Result.Updated;
         }
 
-        public Result<Updated> AddTheme(Theme theme)
+        public Result<Updated> AddTheme(Guid themeId)
         {
-            ArgumentNullException.ThrowIfNull(theme);
-            if (_themes.Any(t => t.Id == theme.Id))
+            if (themeId == Guid.Empty)
+            {
+                return BookErrors.ThemeIdRequired;
+            }
+
+            if (_bookThemes.Any(a => a.ThemeId == themeId))
             {
                 return BookErrors.ThemeAlreadyAssigned;
             }
-            _themes.Add(theme);
+
+            _bookThemes.Add(new BookTheme(Id, themeId));
             return Result.Updated;
         }
 
-        public Result<Updated> RemoveTheme(Theme theme)
+        public Result<Updated> RemoveTheme(Guid themeId)
         {
-            ArgumentNullException.ThrowIfNull(theme);
-            if (!_themes.Any(t => t.Id == theme.Id))
+            if (themeId == Guid.Empty)
+            {
+                return BookErrors.ThemeIdRequired;
+            }
+
+            if (!_bookThemes.Any(a => a.ThemeId == themeId))
             {
                 return BookErrors.ThemeNotAssigned;
             }
-            _themes.RemoveAll(t => t.Id == theme.Id);
+
+            _bookThemes.RemoveAll(a => a.ThemeId == themeId);
             return Result.Updated;
         }
 
-        public Result<Updated> AddGenre(Genre genre)
+        public Result<Updated> AddGenre(Guid genreId)
         {
-            ArgumentNullException.ThrowIfNull(genre);
-            if (_genres.Any(g => g.Id == genre.Id))
+            if (genreId == Guid.Empty)
+            {
+                return BookErrors.GenreIdRequired;
+            }
+
+            if (_bookGenres.Any(a => a.GenreId == genreId))
             {
                 return BookErrors.GenreAlreadyAssigned;
             }
-            _genres.Add(genre);
+
+            _bookGenres.Add(new BookGenre(Id, genreId));
             return Result.Updated;
         }
 
-        public Result<Updated> RemoveGenre(Genre genre)
+        public Result<Updated> RemoveGenre(Guid genreId)
         {
-            ArgumentNullException.ThrowIfNull(genre);
-            if (!_genres.Any(g => g.Id == genre.Id))
+            if (genreId == Guid.Empty)
+            {
+                return BookErrors.GenreIdRequired;
+            }
+
+            if (!_bookGenres.Any(a => a.GenreId == genreId))
             {
                 return BookErrors.GenreNotAssigned;
             }
-            _genres.RemoveAll(g => g.Id == genre.Id);
+
+            _bookGenres.RemoveAll(a => a.GenreId == genreId);
             return Result.Updated;
         }
 
@@ -443,7 +501,15 @@ namespace Lms.Domain.Catalog
             BookCopyState state=BookCopyState.Available
         )
         {
-            return BookCopy.Create(id, Id, barcode, location, acquisitionDate, status, state);
+            var copyResult = BookCopy.Create(id, Id, barcode, location, acquisitionDate, status, state);
+
+            if (copyResult.IsError)
+            {
+                return copyResult.Errors!;
+            }
+
+            _bookCopies.Add(copyResult.Value);
+            return copyResult.Value;
         }
 
         public Result<Updated> RemoveCopy(Guid copyId)
