@@ -29,5 +29,9 @@ namespace Lms.Application.Common.Errors
         public static Error PublisherNameLength => Error.Validation("ApplicationErrors.Publisher.PublisherNameLength", "Publisher name length cannot exceed 50 characetrs.");
         public static Error PublisherAlreadyExists => Error.Validation("ApplicationErrors.Publisher.PublisherAlreadyExists", "This publisher already exists.");
         public static Error PublisherNotFound => Error.Validation("ApplicationErrors.Publisher.PublisherNotFound", "The required publisher was not found.");
+
+        public static Error ThemeNameLength => Error.Validation("ApplicationErrors.Theme.ThemeNameLength", "Theme name length cannot exceed 50 characetrs.");
+        public static Error ThemeAlreadyExists => Error.Validation("ApplicationErrors.Theme.ThemeAlreadyExists", "This theme already exists.");
+        public static Error ThemeNotFound => Error.Validation("ApplicationErrors.Theme.ThemeNotFound", "The required theme was not found.");
     }
 }
