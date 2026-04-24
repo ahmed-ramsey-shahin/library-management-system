@@ -2,5 +2,5 @@ using MediatR;
 
 namespace Lms.Domain.Common
 {
-    public class DomainEvent : INotification;
+    public record DomainEvent : INotification;
 }
