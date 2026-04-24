@@ -153,7 +153,7 @@ namespace Lms.Domain.Circulation
             }
 
             Status = BorrowRecordStatus.Accepted;
-            AddEvent(new BorrowRequestRejectedEvent(Id));
+            AddEvent(new BorrowRequestAcceptedEvent(Id));
             return Result.Updated;
         }
 
@@ -167,10 +167,10 @@ namespace Lms.Domain.Circulation
             if (Status == BorrowRecordStatus.Accepted || Status == BorrowRecordStatus.Late)
             {
                 Status = BorrowRecordStatus.Returned;
+                AddEvent(new BookReturnedEvent(Id));
                 return Result.Updated;
             }
 
-            AddEvent(new BookReturnedEvent(Id));
             return BorrowRecordErrors.ReturnInvalid(Status);
         }
 
