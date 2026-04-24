@@ -4,7 +4,7 @@ using Lms.Domain.Identity;
 
 namespace Lms.Domain.Circulation
 {
-    public sealed class BorrowRecord : AuditableEntity
+    public sealed class BorrowRecord : EventfulEntity
     {
         public Guid Id { get; }
         public Guid MemberId { get; }
@@ -153,6 +153,7 @@ namespace Lms.Domain.Circulation
             }
 
             Status = BorrowRecordStatus.Accepted;
+            AddEvent(new BorrowRequestRejectedEvent(Id));
             return Result.Updated;
         }
 
@@ -169,6 +170,7 @@ namespace Lms.Domain.Circulation
                 return Result.Updated;
             }
 
+            AddEvent(new BookReturnedEvent(Id));
             return BorrowRecordErrors.ReturnInvalid(Status);
         }
 
@@ -187,6 +189,7 @@ namespace Lms.Domain.Circulation
             RenewalCount++;
             DueDate = newDueDate;
             BorrowingCost += renewalCost;
+            AddEvent(new BookRenewedEvent(Id));
             return Result.Updated;
         }
 
@@ -203,6 +206,7 @@ namespace Lms.Domain.Circulation
             }
 
             Status = BorrowRecordStatus.Rejected;
+            AddEvent(new BorrowRequestRejectedEvent(Id));
             return Result.Updated;
         }
 
@@ -239,7 +243,7 @@ namespace Lms.Domain.Circulation
         {
             foreach (var fine in _fines.Where(fine => fine.Status == FineStatus.Unpaid).ToList())
             {
-                var payFineResult = fine.PayFine();
+                var payFineResult = PayFine(fine.Id);
                 if (payFineResult.IsError)
                 {
                     return payFineResult.Errors!;
@@ -262,6 +266,7 @@ namespace Lms.Domain.Circulation
             }
 
             Status = BorrowRecordStatus.Late;
+            AddEvent(new BorrowRecordMarkedAsLateEvent(Id));
             return Result.Updated;
         }
     }
