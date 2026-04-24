@@ -1,4 +1,3 @@
-using Lms.Domain.Catalog;
 using Lms.Domain.Common;
 using Lms.Domain.Common.Results;
 using Lms.Domain.Identity;
@@ -9,9 +8,7 @@ namespace Lms.Domain.Circulation
     {
         public Guid Id { get; }
         public Guid MemberId { get; }
-        public User Member { get; private set; } = null!;
         public Guid BookCopyId { get; }
-        public BookCopy BookCopy { get; private set; } = null!;
         public BorrowRecordStatus Status { get; private set; } = BorrowRecordStatus.Waiting;
         public DateOnly DueDate { get; private set; }
         public decimal FineAccrued { get; private set; }
@@ -138,7 +135,7 @@ namespace Lms.Domain.Circulation
             return Result.Updated;
         }
 
-        public Result<Updated> AcceptBorrowRequest(int activeBorrows, int maxActiveBorrows, int unpaidFines, int maxUnpaidFine, int lateBorrows, int maxLateBorrows)
+        public Result<Updated> AcceptBorrowRequest(User member, int activeBorrows, int maxActiveBorrows, int unpaidFines, int maxUnpaidFine, int lateBorrows, int maxLateBorrows)
         {
             if (Status == BorrowRecordStatus.Accepted)
             {
@@ -150,7 +147,7 @@ namespace Lms.Domain.Circulation
                 return BorrowRecordErrors.ResponseInvalid(Status);
             }
 
-            var canBorrow = Member.CanBorrow(activeBorrows, maxActiveBorrows, unpaidFines, maxUnpaidFine, lateBorrows, maxLateBorrows);
+            var canBorrow = member.CanBorrow(activeBorrows, maxActiveBorrows, unpaidFines, maxUnpaidFine, lateBorrows, maxLateBorrows);
 
             if (canBorrow.IsError)
             {
