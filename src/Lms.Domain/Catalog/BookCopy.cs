@@ -15,8 +15,6 @@ namespace Lms.Domain.Catalog
         public string Location { get; private set; } = string.Empty;
         public DateOnly AcquisitionDate { get; private set; } = DateOnly.FromDateTime(DateTime.UtcNow);
         public byte[] Version { get; private set; } = null!;
-        private readonly List<BorrowRecord> _borrowRecords = [];
-        public IReadOnlyCollection<BorrowRecord> BorrowRecords => _borrowRecords.AsReadOnly();
 
         private BookCopy()
         {}

@@ -352,7 +352,7 @@ namespace Lms.Domain.Catalog
         {
             if (authorId == Guid.Empty)
             {
-                return BookErrors.CategoryIdRequired;
+                return BookErrors.AuthorIdRequired;
             }
 
             if (!_bookAuthors.Any(a => a.AuthorId == authorId))

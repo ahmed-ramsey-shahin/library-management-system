@@ -154,7 +154,7 @@ namespace Lms.Domain.Circulation
                 return canBorrow.Errors!;
             }
 
-            if (canBorrow.Value)
+            if (!canBorrow.Value)
             {
                 return BorrowRecordErrors.MemberNotApplicable;
             }
