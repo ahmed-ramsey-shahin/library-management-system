@@ -135,7 +135,7 @@ namespace Lms.Domain.Circulation
             return Result.Updated;
         }
 
-        public Result<Updated> AcceptBorrowRequest(User member, MemberBorrowState memberState, LibraryPolicy policy)
+        public Result<Updated> AcceptBorrowRequest()
         {
             if (Status == BorrowRecordStatus.Accepted)
             {
@@ -145,18 +145,6 @@ namespace Lms.Domain.Circulation
             if (Status != BorrowRecordStatus.Waiting)
             {
                 return BorrowRecordErrors.ResponseInvalid(Status);
-            }
-
-            var canBorrow = member.CanBorrow(memberState, policy);
-
-            if (canBorrow.IsError)
-            {
-                return canBorrow.Errors!;
-            }
-
-            if (!canBorrow.Value)
-            {
-                return BorrowRecordErrors.MemberNotApplicable;
             }
 
             Status = BorrowRecordStatus.Accepted;

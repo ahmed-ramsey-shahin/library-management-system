@@ -1,4 +1,4 @@
-namespace Lms.Domain.Circulation
+namespace Lms.Domain.Identity
 {
     public record MemberBorrowState(
         int ActiveBorrows,
