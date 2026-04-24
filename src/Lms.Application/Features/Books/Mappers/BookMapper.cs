@@ -5,7 +5,7 @@ namespace Lms.Application.Features.Books.Mappers
 {
     public static class BookMapper
     {
-        public static BookSummaryDto ToSummaryDto(this Book book)
+        public static BookSummaryDto ToSummaryDto(this Book book, int availableCopies)
         {
             return new()
             {
@@ -13,6 +13,7 @@ namespace Lms.Application.Features.Books.Mappers
                 Title = book.Title,
                 Isbn = book.Isbn,
                 Edition = book.Edition,
+                AvailableCopies = availableCopies
             };
         }
     }
