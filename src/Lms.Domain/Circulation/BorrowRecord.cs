@@ -11,7 +11,7 @@ namespace Lms.Domain.Circulation
         public Guid BookCopyId { get; }
         public BorrowRecordStatus Status { get; private set; } = BorrowRecordStatus.Waiting;
         public DateOnly DueDate { get; private set; }
-        public decimal FineAccrued { get; private set; }
+        public decimal BorrowingCost { get; private set; }
         public int RenewalCount { get; private set; }
         public DateOnly PickupDeadline { get; private set; }
         private readonly List<Fine> _fines = [];
@@ -26,7 +26,8 @@ namespace Lms.Domain.Circulation
             Guid bookCopyId,
             BorrowRecordStatus status,
             DateOnly dueDate,
-            DateOnly pickupDeadline
+            DateOnly pickupDeadline,
+            decimal borrowingCost
         )
         {
             Id = id;
@@ -35,6 +36,7 @@ namespace Lms.Domain.Circulation
             Status = status;
             DueDate = dueDate;
             PickupDeadline = pickupDeadline;
+            BorrowingCost = borrowingCost;
         }
 
         public static Result<BorrowRecord> Create(
@@ -43,6 +45,7 @@ namespace Lms.Domain.Circulation
             Guid bookCopyId,
             DateOnly dueDate,
             DateOnly pickupDeadline,
+            decimal borrowingCost,
             BorrowRecordStatus status=BorrowRecordStatus.Waiting
         )
         {
@@ -78,7 +81,7 @@ namespace Lms.Domain.Circulation
                 return errors;
             }
 
-            return new BorrowRecord(id, memberId, bookCopyId, status, dueDate, pickupDeadline);
+            return new BorrowRecord(id, memberId, bookCopyId, status, dueDate, pickupDeadline, borrowingCost);
         }
 
         public Result<IReadOnlyCollection<Fine>> GetUnpaidFines()
@@ -150,6 +153,115 @@ namespace Lms.Domain.Circulation
             }
 
             Status = BorrowRecordStatus.Accepted;
+            return Result.Updated;
+        }
+
+        public Result<Updated> Return()
+        {
+            if (Status == BorrowRecordStatus.Returned)
+            {
+                return Result.Updated;
+            }
+
+            if (Status == BorrowRecordStatus.Accepted || Status == BorrowRecordStatus.Late)
+            {
+                Status = BorrowRecordStatus.Returned;
+                return Result.Updated;
+            }
+
+            return BorrowRecordErrors.ReturnInvalid(Status);
+        }
+
+        public Result<Updated> Renew(decimal renewalCost, DateOnly newDueDate, LibraryPolicy policy)
+        {
+            if (Status != BorrowRecordStatus.Accepted)
+            {
+                return BorrowRecordErrors.RenewInvalid(Status);
+            }
+
+            if (RenewalCount + 1 > policy.MaxRenewalCount)
+            {
+                return BorrowRecordErrors.MaxRenewalCountExceeded;
+            }
+
+            RenewalCount++;
+            DueDate = newDueDate;
+            BorrowingCost += renewalCost;
+            return Result.Updated;
+        }
+
+        public Result<Updated> RejectBorrowRequest()
+        {
+            if (Status == BorrowRecordStatus.Rejected)
+            {
+                return Result.Updated;
+            }
+
+            if (Status != BorrowRecordStatus.Waiting)
+            {
+                return BorrowRecordErrors.RejectInvalid(Status);
+            }
+
+            Status = BorrowRecordStatus.Rejected;
+            return Result.Updated;
+        }
+
+        public Result<Updated> PayFine(Guid fineId)
+        {
+            if (Status != BorrowRecordStatus.Accepted && Status != BorrowRecordStatus.Late && Status != BorrowRecordStatus.Returned)
+            {
+                return BorrowRecordErrors.PayFineInvalid;
+            }
+
+            if (fineId == Guid.Empty)
+            {
+                return BorrowRecordErrors.FineNotFound;
+            }
+
+            var fine = _fines.FirstOrDefault(fine => fine.Id == fineId);
+
+            if (fine is null)
+            {
+                return BorrowRecordErrors.FineNotFound;
+            }
+
+            var payFineResult = fine.PayFine();
+
+            if (payFineResult.IsError)
+            {
+                return payFineResult.Errors!;
+            }
+
+            return Result.Updated;
+        }
+
+        public Result<Updated> PayAllFines()
+        {
+            foreach (var fine in _fines.Where(fine => fine.Status == FineStatus.Unpaid).ToList())
+            {
+                var payFineResult = fine.PayFine();
+                if (payFineResult.IsError)
+                {
+                    return payFineResult.Errors!;
+                }
+            }
+
+            return Result.Updated;
+        }
+
+        public Result<Updated> MarkAsLate()
+        {
+            if (Status == BorrowRecordStatus.Late)
+            {
+                return Result.Updated;
+            }
+
+            if (Status != BorrowRecordStatus.Accepted)
+            {
+                return BorrowRecordErrors.CannotMarkAsLate;
+            }
+
+            Status = BorrowRecordStatus.Late;
             return Result.Updated;
         }
     }

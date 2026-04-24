@@ -177,7 +177,7 @@ CREATE TABLE [borrow_records] (
     [book_copy_id] uniqueidentifier NOT NULL,
     [status] varchar(50) NOT NULL DEFAULT 'waiting',
     [due_date] date NOT NULL,
-    [fine_accrued] money NOT NULL DEFAULT (0),
+    [borrowing_cost] money NOT NULL DEFAULT (0),
     [renewal_count] int NOT NULL DEFAULT (0),
     [pickup_deadline] datetime2,
     [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),

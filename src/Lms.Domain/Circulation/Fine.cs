@@ -92,7 +92,7 @@ namespace Lms.Domain.Circulation
         {
             if (Status == FineStatus.Paid)
             {
-                return FineErrors.FineAlreadyPaid;
+                return Result.Updated;
             }
 
             Status = FineStatus.Paid;
