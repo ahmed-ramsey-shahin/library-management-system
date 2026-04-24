@@ -5,18 +5,18 @@ namespace Lms.Application.Features.Authors.Mappers
 {
     public static class AuthorMapper
     {
-        public static AuthorDto ToDto(this Author genre)
+        public static AuthorDto ToDto(this Author author)
         {
             return new()
             {
-                AuthorId = genre.Id,
-                Name = genre.Name
+                AuthorId = author.Id,
+                Name = author.Name
             };
         }
 
-        public static List<AuthorDto> ToDto(this IEnumerable<Author> genres)
+        public static List<AuthorDto> ToDto(this IEnumerable<Author> authors)
         {
-            return [.. genres.Select(ToDto)];
+            return [.. authors.Select(ToDto)];
         }
     }
 }

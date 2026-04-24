@@ -5,18 +5,18 @@ namespace Lms.Application.Features.Audiences.Mappers
 {
     public static class AudienceMapper
     {
-        public static AudienceDto ToDto(this Audience genre)
+        public static AudienceDto ToDto(this Audience audience)
         {
             return new()
             {
-                AudienceId = genre.Id,
-                Name = genre.Name
+                AudienceId = audience.Id,
+                Name = audience.Name
             };
         }
 
-        public static List<AudienceDto> ToDto(this IEnumerable<Audience> genres)
+        public static List<AudienceDto> ToDto(this IEnumerable<Audience> audiences)
         {
-            return [.. genres.Select(ToDto)];
+            return [.. audiences.Select(ToDto)];
         }
     }
 }

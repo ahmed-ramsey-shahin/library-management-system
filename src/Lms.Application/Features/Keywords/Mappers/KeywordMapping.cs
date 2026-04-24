@@ -5,18 +5,18 @@ namespace Lms.Application.Features.Keywords.Mappers
 {
     public static class KeywordMapper
     {
-        public static KeywordDto ToDto(this Keyword genre)
+        public static KeywordDto ToDto(this Keyword keyword)
         {
             return new()
             {
-                KeywordId = genre.Id,
-                Name = genre.Name
+                KeywordId = keyword.Id,
+                Name = keyword.Name
             };
         }
 
-        public static List<KeywordDto> ToDto(this IEnumerable<Keyword> genres)
+        public static List<KeywordDto> ToDto(this IEnumerable<Keyword> keywords)
         {
-            return [.. genres.Select(ToDto)];
+            return [.. keywords.Select(ToDto)];
         }
     }
 }
