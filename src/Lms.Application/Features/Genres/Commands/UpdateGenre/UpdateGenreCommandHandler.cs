@@ -28,6 +28,18 @@ namespace Lms.Application.Features.Genres.Commands.UpdateGenre
                 return ApplicationErrors.GenreNotFound;
             }
 
+            var exists = await db.Genres.AnyAsync(genre => string.Equals(genre.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+
+            if (exists)
+            {
+                if (logger.IsEnabled(LogLevel.Warning))
+                {
+                    logger.LogWarning("Genre creation aborted. Genre already exists");
+                }
+
+                return ApplicationErrors.GenreAlreadyExists;
+            }
+
             genre.Update(request.Name);
             await db.SaveChangesAsync(cancellationToken);
             await cache.RemoveByTagAsync("genre", cancellationToken);
