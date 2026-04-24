@@ -14,7 +14,7 @@ namespace Lms.Application.Common.Interfaces
         public DbSet<Author> Authors { get; }
         public DbSet<Category> Categories { get; }
         public DbSet<Keyword> Keywords { get; }
-        public DbSet<Audience> Audiencies { get; }
+        public DbSet<Audience> Audiences { get; }
         public DbSet<Theme> Themes { get; }
         public DbSet<Genre> Genres { get; }
         public DbSet<BookCopy> BookCopies { get; }
