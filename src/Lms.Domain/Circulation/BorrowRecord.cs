@@ -135,7 +135,7 @@ namespace Lms.Domain.Circulation
             return Result.Updated;
         }
 
-        public Result<Updated> AcceptBorrowRequest(User member, int activeBorrows, int maxActiveBorrows, int unpaidFines, int maxUnpaidFine, int lateBorrows, int maxLateBorrows)
+        public Result<Updated> AcceptBorrowRequest(User member, MemberBorrowState memberState, LibraryPolicy policy)
         {
             if (Status == BorrowRecordStatus.Accepted)
             {
@@ -147,7 +147,7 @@ namespace Lms.Domain.Circulation
                 return BorrowRecordErrors.ResponseInvalid(Status);
             }
 
-            var canBorrow = member.CanBorrow(activeBorrows, maxActiveBorrows, unpaidFines, maxUnpaidFine, lateBorrows, maxLateBorrows);
+            var canBorrow = member.CanBorrow(memberState, policy);
 
             if (canBorrow.IsError)
             {

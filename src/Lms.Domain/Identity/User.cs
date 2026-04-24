@@ -1,3 +1,4 @@
+using Lms.Domain.Circulation;
 using Lms.Domain.Common;
 using Lms.Domain.Common.Results;
 
@@ -193,28 +194,28 @@ namespace Lms.Domain.Identity
             return Result.Deleted;
         }
 
-        public Result<bool> CanBorrow(int activeBorrows, int maxActiveBorrows, int unpaidFines, int maxUnpaidFines, int lateBorrows, int maxLateBorrows)
+        public Result<bool> CanBorrow(MemberBorrowState state, LibraryPolicy policy)
         {
             if (Role != Role.Member)
             {
                 return UserErrors.NotMember;
-            }
 
+            }
             List<Error> errors = [];
 
-            if (activeBorrows > maxActiveBorrows)
+            if (state.ActiveBorrows > policy.MaxActiveBorrows)
             {
-                errors.Add(UserErrors.MaxActiveBorrowsReached(maxActiveBorrows));
+                errors.Add(UserErrors.MaxActiveBorrowsReached(policy.MaxActiveBorrows));
             }
 
-            if (unpaidFines > maxUnpaidFines)
+            if (state.UnpaidFines > policy.MaxUnpaidFines)
             {
-                errors.Add(UserErrors.MaxUnpaidFines(maxUnpaidFines));
+                errors.Add(UserErrors.MaxUnpaidFines(policy.MaxUnpaidFines));
             }
 
-            if (lateBorrows > maxLateBorrows)
+            if (state.LateBorrows > policy.MaxLateBorrows)
             {
-                errors.Add(UserErrors.MaxLateBorrows(maxLateBorrows));
+                errors.Add(UserErrors.MaxLateBorrows(policy.MaxLateBorrows));
             }
 
             if (Status == UserStatus.Suspended)
