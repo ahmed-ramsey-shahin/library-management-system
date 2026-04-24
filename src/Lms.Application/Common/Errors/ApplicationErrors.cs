@@ -17,5 +17,9 @@ namespace Lms.Application.Common.Errors
         public static Error AudienceNameLength => Error.Validation("ApplicationErrors.Audience.AudienceNameLength", "Audience name length cannot exceed 50 characetrs.");
         public static Error AudienceAlreadyExists => Error.Validation("ApplicationErrors.Audience.AudienceAlreadyExists", "This audience already exists.");
         public static Error AudienceNotFound => Error.Validation("ApplicationErrors.Audience.AudienceNotFound", "The required audience was not found.");
+
+        public static Error AuthorNameLength => Error.Validation("ApplicationErrors.Author.AuthorNameLength", "Author name length cannot exceed 50 characetrs.");
+        public static Error AuthorAlreadyExists => Error.Validation("ApplicationErrors.Author.AuthorAlreadyExists", "This author already exists.");
+        public static Error AuthorNotFound => Error.Validation("ApplicationErrors.Author.AuthorNotFound", "The required author was not found.");
     }
 }
