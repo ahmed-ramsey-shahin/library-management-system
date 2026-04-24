@@ -172,13 +172,25 @@ namespace Lms.Domain.Identity
 
         public Result<Updated> Suspend()
         {
+            if (Status == UserStatus.Suspended)
+            {
+                return Result.Updated;
+            }
+
             Status = UserStatus.Suspended;
+            AddEvent(new UserSuspended(Id));
             return Result.Updated;
         }
 
         public Result<Updated> Activate()
         {
+            if (Status == UserStatus.Active)
+            {
+                return Result.Updated;
+            }
+
             Status = UserStatus.Active;
+            AddEvent(new UserActivated(Id));
             return Result.Updated;
         }
 
@@ -248,6 +260,7 @@ namespace Lms.Domain.Identity
             }
 
             _librarianCategories.Add(new LibrarianCategory(Id, categoryId));
+            AddEvent(new CategoryAdded(Id, categoryId));
             return Result.Updated;
         }
 
@@ -269,6 +282,7 @@ namespace Lms.Domain.Identity
             }
 
             _librarianCategories.RemoveAll(lc => lc.CategoryId == categoryId);
+            AddEvent(new CategoryRemoved(Id, categoryId));
             return Result.Updated;
         }
 
