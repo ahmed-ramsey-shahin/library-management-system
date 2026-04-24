@@ -1,4 +1,3 @@
-using Lms.Domain.Circulation;
 using Lms.Domain.Common;
 using Lms.Domain.Common.Results;
 
@@ -8,13 +7,12 @@ namespace Lms.Domain.Catalog
     {
         public Guid Id { get; }
         public Guid BookId { get; }
-        public Book Book { get; private set; } = null!;
         public string Barcode { get; private set; } = string.Empty;
         public BookCopyStatus Status { get; private set; } = BookCopyStatus.Good;
         public BookCopyState State { get; private set; } = BookCopyState.Available;
         public string Location { get; private set; } = string.Empty;
         public DateOnly AcquisitionDate { get; private set; } = DateOnly.FromDateTime(DateTime.UtcNow);
-        public byte[] Version { get; private set; } = null!;
+        public byte[] Version { get; } = null!;
 
         private BookCopy()
         {}
@@ -105,7 +103,7 @@ namespace Lms.Domain.Catalog
                 return BookCopyErrors.CopyNotGood;
             }
 
-            if (State == BookCopyState.Available)
+            if (State != BookCopyState.Available)
             {
                 return BookCopyErrors.CantChangeStateOfBorrowedBook;
             }

@@ -547,7 +547,13 @@ namespace Lms.Domain.Catalog
                 return BookErrors.NoAvailableCopies;
             }
 
-            copy.MarkAsWaitingApproval();
+            var result = copy.MarkAsWaitingApproval();
+
+            if (result.IsError)
+            {
+                return result.Errors!;
+            }
+
             return copy;
         }
     }

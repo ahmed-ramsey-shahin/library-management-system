@@ -236,6 +236,7 @@ namespace Lms.Domain.Circulation
                 return payFineResult.Errors!;
             }
 
+            AddEvent(new FinePaidEvent(fineId, Id));
             return Result.Updated;
         }
 
