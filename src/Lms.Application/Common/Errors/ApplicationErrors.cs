@@ -1,7 +1,10 @@
+using Lms.Domain.Common.Results;
+
 namespace Lms.Application.Common.Errors
 {
     public static class ApplicationErrors
     {
-        //
+        public static Error GenreNameLength => Error.Validation("ApplicationErrors.Genre.GenreNameLength", "Genre name length cannot exceed 50 characetrs.");
+        public static Error GenreAlreadyExists => Error.Validation("ApplicationErrors.Genre.GenreAlreadyExists", "This genre already exists.");
     }
 }
