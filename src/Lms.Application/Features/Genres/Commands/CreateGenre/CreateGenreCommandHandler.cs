@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lms.Application.Features.Genres.Commands.CreateGenre
 {
-    public class CreateGenreCommandHandler(
+    public sealed class CreateGenreCommandHandler(
         IAppDbContext db,
         ILogger<CreateGenreCommandHandler> logger,
         HybridCache cache

@@ -3,7 +3,7 @@ using Lms.Application.Common.Errors;
 
 namespace Lms.Application.Features.Genres.Commands.CreateGenre
 {
-    public class CreateGenreCommandValidator : AbstractValidator<CreateGenreCommand>
+    public sealed class CreateGenreCommandValidator : AbstractValidator<CreateGenreCommand>
     {
         public CreateGenreCommandValidator()
         {

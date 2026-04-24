@@ -4,7 +4,7 @@ using Lms.Domain.Metadata;
 
 namespace Lms.Application.Features.Genres.Commands.UpdateGenre
 {
-    public class UpdateGenreCommandValidator : AbstractValidator<UpdateGenreCommand>
+    public sealed class UpdateGenreCommandValidator : AbstractValidator<UpdateGenreCommand>
     {
         public UpdateGenreCommandValidator()
         {
