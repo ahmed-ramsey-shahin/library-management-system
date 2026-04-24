@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lms.Application.Features.Authors.Queries.GetAuthors
 {
-    public sealed class GetAuthorQueryHandler(
+    public sealed class GetAuthorsQueryHandler(
         IAppDbContext db
     ) : IRequestHandler<GetAuthorsQuery, Result<List<AuthorDto>>>
     {

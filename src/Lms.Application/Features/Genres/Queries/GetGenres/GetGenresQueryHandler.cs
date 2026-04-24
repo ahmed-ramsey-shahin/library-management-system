@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lms.Application.Features.Genres.Queries.GetGenres
 {
-    public sealed class GetGenreQueryHandler(
+    public sealed class GetGenresQueryHandler(
         IAppDbContext db
     ) : IRequestHandler<GetGenresQuery, Result<List<GenreDto>>>
     {

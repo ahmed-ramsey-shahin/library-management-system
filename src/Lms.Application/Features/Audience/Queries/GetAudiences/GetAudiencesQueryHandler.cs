@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lms.Application.Features.Audiences.Queries.GetAudiences
 {
-    public sealed class GetAudienceQueryHandler(
+    public sealed class GetAudiencesQueryHandler(
         IAppDbContext db
     ) : IRequestHandler<GetAudiencesQuery, Result<List<AudienceDto>>>
     {

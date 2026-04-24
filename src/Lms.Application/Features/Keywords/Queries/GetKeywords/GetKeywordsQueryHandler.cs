@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lms.Application.Features.Keywords.Queries.GetKeywords
 {
-    public sealed class GetKeywordQueryHandler(
+    public sealed class GetKeywordsQueryHandler(
         IAppDbContext db
     ) : IRequestHandler<GetKeywordsQuery, Result<List<KeywordDto>>>
     {
