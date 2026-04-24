@@ -13,5 +13,9 @@ namespace Lms.Application.Common.Errors
         public static Error KeywordNameLength => Error.Validation("ApplicationErrors.Keyword.KeywordNameLength", "Keyword name length cannot exceed 50 characetrs.");
         public static Error KeywordAlreadyExists => Error.Validation("ApplicationErrors.Keyword.KeywordAlreadyExists", "This keyword already exists.");
         public static Error KeywordNotFound => Error.Validation("ApplicationErrors.Keyword.KeywordNotFound", "The required keyword was not found.");
+
+        public static Error AudienceNameLength => Error.Validation("ApplicationErrors.Audience.AudienceNameLength", "Audience name length cannot exceed 50 characetrs.");
+        public static Error AudienceAlreadyExists => Error.Validation("ApplicationErrors.Audience.AudienceAlreadyExists", "This audience already exists.");
+        public static Error AudienceNotFound => Error.Validation("ApplicationErrors.Audience.AudienceNotFound", "The required audience was not found.");
     }
 }
