@@ -41,9 +41,9 @@ namespace Lms.Domain.Circulation
             Guid id,
             Guid memberId,
             Guid bookCopyId,
-            BorrowRecordStatus status,
             DateOnly dueDate,
-            DateOnly pickupDeadline
+            DateOnly pickupDeadline,
+            BorrowRecordStatus status=BorrowRecordStatus.Waiting
         )
         {
             List<Error> errors = [];
@@ -90,7 +90,8 @@ namespace Lms.Domain.Circulation
             Guid id,
             decimal amount,
             string description,
-            DateTimeOffset? fineDate=null
+            DateTimeOffset? fineDate=null,
+            FineStatus status=FineStatus.Unpaid
         )
         {
             var fine = _fines.FirstOrDefault(fine => fine.Id == id);
@@ -101,7 +102,7 @@ namespace Lms.Domain.Circulation
             }
 
             fineDate ??= DateTimeOffset.UtcNow;
-            var fineResult = Fine.Create(id, MemberId, Id, amount, description, fineDate.Value);
+            var fineResult = Fine.Create(id, MemberId, Id, amount, description, fineDate.Value, status);
 
             if (fineResult.IsError)
             {
@@ -120,6 +121,7 @@ namespace Lms.Domain.Circulation
             }
 
             var fine = _fines.FirstOrDefault(fine => fine.Id == id);
+
             if (fine is null)
             {
                 return BorrowRecordErrors.FineNotFound;
