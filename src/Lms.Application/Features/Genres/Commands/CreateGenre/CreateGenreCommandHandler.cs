@@ -38,9 +38,10 @@ namespace Lms.Application.Features.Genres.Commands.CreateGenre
                 return genreCreationResult.Errors!;
             }
 
+            db.Genres.Add(genreCreationResult.Value);
+            var genre = genreCreationResult.Value.ToDto();
             await db.SaveChangesAsync(cancellationToken);
             await cache.RemoveByTagAsync("genre", cancellationToken);
-            var genre = genreCreationResult.Value.ToDto();
 
             if (logger.IsEnabled(LogLevel.Information))
             {
