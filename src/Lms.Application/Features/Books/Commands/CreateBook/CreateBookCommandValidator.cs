@@ -3,7 +3,7 @@ using Lms.Application.Common.Errors;
 
 namespace Lms.Application.Features.Books.Commands.CreateBook
 {
-    public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
+    public sealed class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
     {
         public CreateBookCommandValidator()
         {

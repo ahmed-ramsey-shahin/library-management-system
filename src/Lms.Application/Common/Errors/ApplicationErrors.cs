@@ -40,5 +40,9 @@ namespace Lms.Application.Common.Errors
         public static Error BookDescriptionLength => Error.Validation("ApplicationErrors.Book.Description.Length", "Book description length cannot exceed 1024 characetrs.");
         public static Error IsbnAlreadyExists => Error.Conflict("ApplicationErrors.Book.Isbn.AlreadyExists", "A book with this ISBN already exists.");
         public static Error IssnAlreadyExists => Error.Conflict("ApplicationErrors.Book.Issn.AlreadyExists", "A book with this ISSN already exists.");
+
+        public static Error BarcodeInvalid => Error.Validation("ApplicationErrors.BookCopy.Barcode.Invalid", "The barcode value must start with 'CPY-' followed by exactly 8 numeric digits.");
+        public static Error LocationLength => Error.Validation("ApplicationErrors.BookCopy.Location.Length", "Theme location length cannot exceed 100 characetrs.");
+        public static Error BarcodeAlreadyExists => Error.Conflict("ApplicationErrors.BookCopy.BarcodeAlreadyExists", "A book copy with this barcode already exists.");
     }
 }
