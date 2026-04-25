@@ -33,6 +33,7 @@ namespace Lms.Domain.Catalog
         public IReadOnlyCollection<BookAudience> BookAudiences => _bookAudiences.AsReadOnly();
         private readonly List<BookAuthor> _bookAuthors = [];
         public IReadOnlyCollection<BookAuthor> BookAuthors => _bookAuthors.AsReadOnly();
+        public int AvailableCopies => _bookCopies.Count(copy => copy.State == BookCopyState.Available);
 
         private Book()
         {}
