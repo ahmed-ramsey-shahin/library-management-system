@@ -38,6 +38,12 @@ namespace Lms.Application.Features.Books.Commands.DeleteBook
 
             await db.SaveChangesAsync(cancellationToken);
             await cache.RemoveByTagAsync("book", cancellationToken);
+
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation("Book {BookId} was deleted.", request.BookId);
+            }
+
             return Result.Deleted;
         }
     }

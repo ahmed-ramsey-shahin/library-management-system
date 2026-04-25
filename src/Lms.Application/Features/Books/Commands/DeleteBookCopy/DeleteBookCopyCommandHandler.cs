@@ -39,6 +39,12 @@ namespace Lms.Application.Features.Books.Commands.DeleteBookCopy
 
             await db.SaveChangesAsync(cancellationToken);
             await cache.RemoveByTagAsync(["book", "book-copy"], cancellationToken);
+
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation("Book copy {CopyId} was deleted.", request.CopyId);
+            }
+
             return Result.Deleted;
         }
     }
