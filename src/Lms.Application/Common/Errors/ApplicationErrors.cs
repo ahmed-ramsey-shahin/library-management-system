@@ -5,6 +5,7 @@ namespace Lms.Application.Common.Errors
     public static class ApplicationErrors
     {
         public static Error BookNotFound => Error.NotFound("ApplicationErrors.Book.BookNotFound", "The required book was not found.");
+        public static Error BookCopyNotFound => Error.NotFound("ApplicationErrors.BookCopy.BookCopyNotFound", "The required book copy was not found.");
 
         public static Error GenreNameLength => Error.Validation("ApplicationErrors.Genre.GenreNameLength", "Genre name length cannot exceed 50 characetrs.");
         public static Error GenreAlreadyExists => Error.Conflict("ApplicationErrors.Genre.GenreAlreadyExists", "This genre already exists.");

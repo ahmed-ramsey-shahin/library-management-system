@@ -1,0 +1,45 @@
+using Lms.Application.Common.Errors;
+using Lms.Application.Common.Interfaces;
+using Lms.Domain.Common.Results;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Logging;
+
+namespace Lms.Application.Features.Books.Commands.DeleteBookCopy
+{
+    public sealed class DeleteBookCopyCommandHandler(
+        ILogger<DeleteBookCopyCommandHandler> logger,
+        HybridCache cache,
+        IAppDbContext db
+    ) : IRequestHandler<DeleteBookCopyCommand, Result<Deleted>>
+    {
+        public async Task<Result<Deleted>> Handle(DeleteBookCopyCommand request, CancellationToken cancellationToken)
+        {
+            var book = await db.Books
+                .Include(book => book.BookCopies.Where(copy => copy.Id == request.CopyId))
+                .FirstOrDefaultAsync(book => book.BookCopies.Any(copy => copy.Id == request.CopyId), cancellationToken);
+
+            if (book is null)
+            {
+                if (logger.IsEnabled(LogLevel.Warning))
+                {
+                    logger.LogWarning("Book copy deletion aborted. No book copy was found with ID {CopyId}", request.CopyId);
+                }
+
+                return ApplicationErrors.BookCopyNotFound;
+            }
+
+            var removalResult = book.RemoveCopy(request.CopyId);
+
+            if (removalResult.IsError)
+            {
+                return removalResult.Errors!;
+            }
+
+            await db.SaveChangesAsync(cancellationToken);
+            await cache.RemoveByTagAsync(["book", "book-copy"], cancellationToken);
+            return Result.Deleted;
+        }
+    }
+}
