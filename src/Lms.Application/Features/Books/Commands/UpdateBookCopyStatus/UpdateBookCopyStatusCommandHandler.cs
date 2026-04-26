@@ -6,15 +6,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 
-namespace Lms.Application.Features.Books.Commands.UpdateCopyStatus
+namespace Lms.Application.Features.Books.Commands.UpdateBookCopyStatus
 {
-    public sealed class UpdateCopyStatusCommandHandler(
+    public sealed class UpdateBookCopyStatusCommandHandler(
         IAppDbContext db,
-        ILogger<UpdateCopyStatusCommandHandler> logger,
+        ILogger<UpdateBookCopyStatusCommandHandler> logger,
         HybridCache cache
-    ) : IRequestHandler<UpdateCopyStatusCommand, Result<Updated>>
+    ) : IRequestHandler<UpdateBookCopyStatusCommand, Result<Updated>>
     {
-        public async Task<Result<Updated>> Handle(UpdateCopyStatusCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Updated>> Handle(UpdateBookCopyStatusCommand request, CancellationToken cancellationToken)
         {
             var book = await db.Books
                 .Include(book => book.BookCopies.Where(copy => copy.Id == request.CopyId))
