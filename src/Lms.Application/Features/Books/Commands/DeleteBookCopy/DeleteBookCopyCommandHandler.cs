@@ -18,7 +18,7 @@ namespace Lms.Application.Features.Books.Commands.DeleteBookCopy
         {
             var book = await db.Books
                 .Include(book => book.BookCopies.Where(copy => copy.Id == request.CopyId))
-                .FirstOrDefaultAsync(book => book.BookCopies.Any(copy => copy.Id == request.CopyId), cancellationToken);
+                .FirstOrDefaultAsync(book => book.Id == request.BookId && book.BookCopies.Any(copy => copy.Id == request.CopyId), cancellationToken);
 
             if (book is null)
             {

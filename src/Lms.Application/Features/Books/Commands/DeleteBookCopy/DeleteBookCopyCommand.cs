@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Lms.Application.Features.Books.Commands.DeleteBookCopy
 {
-    public sealed record DeleteBookCopyCommand(Guid CopyId) : IRequest<Result<Deleted>>;
+    public sealed record DeleteBookCopyCommand(Guid BookId, Guid CopyId) : IRequest<Result<Deleted>>;
 }
