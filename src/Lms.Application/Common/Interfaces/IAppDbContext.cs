@@ -29,6 +29,7 @@ namespace Lms.Application.Common.Interfaces
         public DbSet<BookTheme> BookThemes { get; }
         public DbSet<BookGenre> BookGenres { get; }
 
+        void SetOriginalVersion<TEntity>(TEntity entity, byte[] version) where TEntity : class;
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

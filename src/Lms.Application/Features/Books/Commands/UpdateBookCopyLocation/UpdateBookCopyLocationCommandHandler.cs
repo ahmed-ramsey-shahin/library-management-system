@@ -24,7 +24,7 @@ namespace Lms.Application.Features.Books.Commands.UpdateBookCopyLocation
             {
                 if (logger.IsEnabled(LogLevel.Warning))
                 {
-                    logger.LogWarning("Book copy deletion aborted. No book was found with ID {BookId}", request.BookId);
+                    logger.LogWarning("Book copy update aborted. No book was found with ID {BookId}", request.BookId);
                 }
 
                 return ApplicationErrors.BookNotFound;
@@ -32,18 +32,32 @@ namespace Lms.Application.Features.Books.Commands.UpdateBookCopyLocation
 
             var updateResult = book.ChangeCopyLocation(request.CopyId, request.Location);
 
-
             if (updateResult.IsError)
             {
                 return updateResult.Errors!;
             }
 
-            await db.SaveChangesAsync(cancellationToken);
+            var bookCopy = book.BookCopies.FirstOrDefault(copy => copy.Id == request.CopyId);
+            db.SetOriginalVersion(bookCopy!, request.Version);
+
+            try
+            {
+                await db.SaveChangesAsync(cancellationToken);
+            } catch(DbUpdateConcurrencyException)
+            {
+                if (logger.IsEnabled(LogLevel.Error))
+                {
+                    logger.LogError("Book copy update aborted beacuse of a concurrency conflict.");
+                }
+
+                return ApplicationErrors.ConcurrencyConflict;
+            }
+
             await cache.RemoveByTagAsync("book-copy", cancellationToken);
 
             if (logger.IsEnabled(LogLevel.Information))
             {
-                logger.LogInformation("Marked book copy {CopyId} as borrowed.", request.CopyId);
+                logger.LogInformation("Changed book copy {CopyId} location.", request.CopyId);
             }
 
             return Result.Updated;

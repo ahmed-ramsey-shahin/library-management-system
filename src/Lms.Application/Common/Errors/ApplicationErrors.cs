@@ -45,5 +45,7 @@ namespace Lms.Application.Common.Errors
         public static Error BarcodeInvalid => Error.Validation("ApplicationErrors.BookCopy.Barcode.Invalid", "The barcode value must start with 'CPY-' followed by exactly 8 numeric digits.");
         public static Error LocationLength => Error.Validation("ApplicationErrors.BookCopy.Location.Length", "Theme location length cannot exceed 100 characetrs.");
         public static Error BarcodeAlreadyExists => Error.Conflict("ApplicationErrors.BookCopy.BarcodeAlreadyExists", "A book copy with this barcode already exists.");
+
+        public static Error ConcurrencyConflict => Error.Conflict("ApplicationErrors.ConcurrencyConflict", "Couldnot perform the required operation because of a concurrency conflict.");
     }
 }
