@@ -38,7 +38,7 @@ namespace Lms.Application.Features.Books.Commands.DeleteBookCopy
             }
 
             await db.SaveChangesAsync(cancellationToken);
-            await cache.RemoveByTagAsync(["book", "book-copy"], cancellationToken);
+            await cache.RemoveByTagAsync("book-copy", cancellationToken);
 
             if (logger.IsEnabled(LogLevel.Information))
             {

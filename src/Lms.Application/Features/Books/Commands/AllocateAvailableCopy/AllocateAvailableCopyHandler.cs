@@ -39,7 +39,7 @@ namespace Lms.Application.Features.Books.Commands.AllocateAvailableCopy
             }
 
             await db.SaveChangesAsync(cancellationToken);
-            await cache.RemoveByTagAsync(["book", "book-copy"], cancellationToken);
+            await cache.RemoveByTagAsync("book-copy", cancellationToken);
             var copy = allocationResult.Value;
 
             if (logger.IsEnabled(LogLevel.Information))
