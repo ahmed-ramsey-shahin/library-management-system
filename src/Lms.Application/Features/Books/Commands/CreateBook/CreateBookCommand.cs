@@ -1,9 +1,10 @@
+using Lms.Application.Common.Interfaces;
 using Lms.Domain.Common.Results;
 using MediatR;
 
 namespace Lms.Application.Features.Books.Commands.CreateBook
 {
-    public sealed record CreateBookCommand : IRequest<Result<Guid>>
+    public sealed record CreateBookCommand : IRequest<Result<Guid>>, IIdempotentCommand
     {
         public string Isbn { get; init; } = null!;
         public string Issn { get; init; } = null!;
@@ -24,5 +25,6 @@ namespace Lms.Application.Features.Books.Commands.CreateBook
         public List<Guid> GenreIds { get; init; } = null!;
         public List<Guid> AudienceIds { get; init; } = null!;
         public List<Guid> AuthorIds { get; init; } = null!;
+        public Guid IdempotencyKey { get; init; }
     }
 }

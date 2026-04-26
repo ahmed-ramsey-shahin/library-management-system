@@ -1,3 +1,4 @@
+using Lms.Application.Common.Interfaces;
 using Lms.Domain.Catalog;
 using Lms.Domain.Common.Results;
 using MediatR;
@@ -10,6 +11,7 @@ namespace Lms.Application.Features.Books.Commands.CreateBookCopy
         BookCopyStatus? Status,
         BookCopyState? State,
         string Location,
-        DateOnly? AcquisitionDate
-    ) : IRequest<Result<Guid>>;
+        DateOnly? AcquisitionDate,
+        Guid IdempotencyKey
+    ) : IRequest<Result<Guid>>, IIdempotentCommand;
 }
