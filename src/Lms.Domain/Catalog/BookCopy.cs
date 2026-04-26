@@ -53,7 +53,7 @@ namespace Lms.Domain.Catalog
 
             if (string.IsNullOrWhiteSpace(barcode))
             {
-                errors.Add(BookCopyErrors.BookIdRequired);
+                errors.Add(BookCopyErrors.BarcodeRequired);
             }
 
             if (string.IsNullOrWhiteSpace(location))
