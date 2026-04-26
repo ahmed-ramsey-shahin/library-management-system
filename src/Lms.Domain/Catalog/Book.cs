@@ -527,5 +527,65 @@ namespace Lms.Domain.Catalog
 
             return copy;
         }
+
+        public Result<Updated> ChangeCopyStatus(Guid copyId, BookCopyStatus status)
+        {
+            var copy = _bookCopies.FirstOrDefault(copy => copy.Id == copyId);
+
+            if (copy is null)
+            {
+                return BookErrors.CopyNotFound;
+            }
+
+            return copy.ChangeStatus(status);
+        }
+
+        public Result<Updated> MarkCopyAsBorrowed(Guid copyId)
+        {
+            var copy = _bookCopies.FirstOrDefault(copy => copy.Id == copyId);
+
+            if (copy is null)
+            {
+                return BookErrors.CopyNotFound;
+            }
+
+            return copy.MarkAsBorrowed();
+        }
+
+        public Result<Updated> MarkCopyAsAvailable(Guid copyId)
+        {
+            var copy = _bookCopies.FirstOrDefault(copy => copy.Id == copyId);
+
+            if (copy is null)
+            {
+                return BookErrors.CopyNotFound;
+            }
+
+            return copy.MarkAsAvailable();
+        }
+
+        public Result<Updated> MarkCopyAsMaintenance(Guid copyId)
+        {
+            var copy = _bookCopies.FirstOrDefault(copy => copy.Id == copyId);
+
+            if (copy is null)
+            {
+                return BookErrors.CopyNotFound;
+            }
+
+            return copy.MarkAsMaintenance();
+        }
+
+        public Result<Updated> ChangeCopyLocation(Guid copyId, string location)
+        {
+            var copy = _bookCopies.FirstOrDefault(copy => copy.Id == copyId);
+
+            if (copy is null)
+            {
+                return BookErrors.CopyNotFound;
+            }
+
+            return copy.ChangeLocation(location);
+        }
     }
 }
