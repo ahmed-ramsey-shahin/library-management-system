@@ -39,99 +39,123 @@ namespace Lms.Application.Features.Books.Commands.CreateBook
             }
 
             var authorIds = request.AuthorIds.Distinct().ToList();
-            var existingAuthors = await db.Authors.CountAsync(
-                a => authorIds.Contains(a.Id),
-                cancellationToken
-            );
 
-            if (existingAuthors != authorIds.Count)
+            if (authorIds.Count > 0)
             {
-                if (logger.IsEnabled(LogLevel.Warning))
-                {
-                    logger.LogWarning("Book creation aborted. One or more authors are invalid.");
-                }
+                var existingAuthors = await db.Authors.CountAsync(
+                    a => authorIds.Contains(a.Id),
+                    cancellationToken
+                );
 
-                return ApplicationErrors.AuthorNotFound;
+                if (existingAuthors != authorIds.Count)
+                {
+                    if (logger.IsEnabled(LogLevel.Warning))
+                    {
+                        logger.LogWarning("Book creation aborted. One or more authors are invalid.");
+                    }
+
+                    return ApplicationErrors.AuthorNotFound;
+                }
             }
 
             var categoryIds = request.CategoryIds.Distinct().ToList();
-            var existingCategories = await db.Categories.CountAsync(
-                c => categoryIds.Contains(c.Id),
-                cancellationToken
-            );
 
-            if (existingCategories != categoryIds.Count)
+            if (categoryIds.Count > 0)
             {
-                if (logger.IsEnabled(LogLevel.Warning))
-                {
-                    logger.LogWarning("Book creation aborted. One or more categories are invalid.");
-                }
+                var existingCategories = await db.Categories.CountAsync(
+                    c => categoryIds.Contains(c.Id),
+                    cancellationToken
+                );
 
-                return ApplicationErrors.CategoryNotFound;
+                if (existingCategories != categoryIds.Count)
+                {
+                    if (logger.IsEnabled(LogLevel.Warning))
+                    {
+                        logger.LogWarning("Book creation aborted. One or more categories are invalid.");
+                    }
+
+                    return ApplicationErrors.CategoryNotFound;
+                }
             }
 
             var keywordIds = request.KeywordIds.Distinct().ToList();
-            var existingKeywords = await db.Keywords.CountAsync(
-                k => keywordIds.Contains(k.Id),
-                cancellationToken
-            );
 
-            if (existingKeywords != keywordIds.Count)
+            if (keywordIds.Count > 0)
             {
-                if (logger.IsEnabled(LogLevel.Warning))
-                {
-                    logger.LogWarning("Book creation aborted. One or more keywords are invalid.");
-                }
+                var existingKeywords = await db.Keywords.CountAsync(
+                    k => keywordIds.Contains(k.Id),
+                    cancellationToken
+                );
 
-                return ApplicationErrors.KeywordNotFound;
+                if (existingKeywords != keywordIds.Count)
+                {
+                    if (logger.IsEnabled(LogLevel.Warning))
+                    {
+                        logger.LogWarning("Book creation aborted. One or more keywords are invalid.");
+                    }
+
+                    return ApplicationErrors.KeywordNotFound;
+                }
             }
 
             var themeIds = request.ThemeIds.Distinct().ToList();
-            var existingThemes = await db.Themes.CountAsync(
-                t => themeIds.Contains(t.Id),
-                cancellationToken
-            );
 
-            if (existingThemes != themeIds.Count)
+            if (themeIds.Count > 0)
             {
-                if (logger.IsEnabled(LogLevel.Warning))
-                {
-                    logger.LogWarning("Book creation aborted. One or more themes are invalid.");
-                }
+                var existingThemes = await db.Themes.CountAsync(
+                    t => themeIds.Contains(t.Id),
+                    cancellationToken
+                );
 
-                return ApplicationErrors.ThemeNotFound;
+                if (existingThemes != themeIds.Count)
+                {
+                    if (logger.IsEnabled(LogLevel.Warning))
+                    {
+                        logger.LogWarning("Book creation aborted. One or more themes are invalid.");
+                    }
+
+                    return ApplicationErrors.ThemeNotFound;
+                }
             }
 
             var genreIds = request.GenreIds.Distinct().ToList();
-            var existingGenres = await db.Genres.CountAsync(
-                g => genreIds.Contains(g.Id),
-                cancellationToken
-            );
 
-            if (existingGenres != genreIds.Count)
+            if (genreIds.Count > 0)
             {
-                if (logger.IsEnabled(LogLevel.Warning))
-                {
-                    logger.LogWarning("Book creation aborted. One more genres are invalid.");
-                }
+                var existingGenres = await db.Genres.CountAsync(
+                    g => genreIds.Contains(g.Id),
+                    cancellationToken
+                );
 
-                return ApplicationErrors.GenreNotFound;
+                if (existingGenres != genreIds.Count)
+                {
+                    if (logger.IsEnabled(LogLevel.Warning))
+                    {
+                        logger.LogWarning("Book creation aborted. One more genres are invalid.");
+                    }
+
+                    return ApplicationErrors.GenreNotFound;
+                }
             }
 
             var audienceIds = request.AudienceIds.Distinct().ToList();
-            var existingAudiences = await db.Audiences.CountAsync(
-                a => audienceIds.Contains(a.Id),
-                cancellationToken
-            );
 
-            if (existingAudiences != audienceIds.Count)
+            if (audienceIds.Count > 0)
             {
-                if (logger.IsEnabled(LogLevel.Warning))
-                {
-                    logger.LogWarning("Book creation aborted. One or more audiences are invalid.");
-                }
+                var existingAudiences = await db.Audiences.CountAsync(
+                    a => audienceIds.Contains(a.Id),
+                    cancellationToken
+                );
 
-                return ApplicationErrors.AudienceNotFound;
+                if (existingAudiences != audienceIds.Count)
+                {
+                    if (logger.IsEnabled(LogLevel.Warning))
+                    {
+                        logger.LogWarning("Book creation aborted. One or more audiences are invalid.");
+                    }
+
+                    return ApplicationErrors.AudienceNotFound;
+                }
             }
 
             var duplicateBook = await db
