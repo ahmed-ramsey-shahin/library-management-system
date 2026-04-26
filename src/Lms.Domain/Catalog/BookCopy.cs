@@ -74,7 +74,7 @@ namespace Lms.Domain.Catalog
             return new BookCopy(id, bookId, barcode, status, state, location, acquisitionDate.Value);
         }
 
-        public Result<Deleted> Delete()
+        internal Result<Deleted> Delete()
         {
             if (State == BookCopyState.Borrowed)
             {
@@ -85,7 +85,7 @@ namespace Lms.Domain.Catalog
             return Result.Deleted;
         }
 
-        public Result<Updated> ChangeStatus(BookCopyStatus status)
+        internal Result<Updated> ChangeStatus(BookCopyStatus status)
         {
             if (State == BookCopyState.Borrowed)
             {
@@ -96,7 +96,7 @@ namespace Lms.Domain.Catalog
             return Result.Updated;
         }
 
-        public Result<Updated> MarkAsWaitingApproval()
+        internal Result<Updated> MarkAsWaitingApproval()
         {
             if (Status != BookCopyStatus.Good)
             {
@@ -117,7 +117,7 @@ namespace Lms.Domain.Catalog
             return Result.Updated;
         }
 
-        public Result<Updated> MarkAsBorrowed()
+        internal Result<Updated> MarkAsBorrowed()
         {
             if (Status != BookCopyStatus.Good)
             {
@@ -133,19 +133,19 @@ namespace Lms.Domain.Catalog
             return Result.Updated;
         }
 
-        public Result<Updated> MarkAsAvailable()
+        internal Result<Updated> MarkAsAvailable()
         {
             State = BookCopyState.Available;
             return Result.Updated;
         }
 
-        public Result<Updated> MarkAsMaintenance()
+        internal Result<Updated> MarkAsMaintenance()
         {
             State = BookCopyState.Maintenance;
             return Result.Updated;
         }
 
-        public Result<Updated> ChangeLocation(string location)
+        internal Result<Updated> ChangeLocation(string location)
         {
             if (string.IsNullOrWhiteSpace(location))
             {
