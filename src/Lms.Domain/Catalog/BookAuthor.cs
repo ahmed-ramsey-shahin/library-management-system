@@ -6,7 +6,7 @@ namespace Lms.Domain.Catalog
         public Guid AuthorId { get; }
 
         public Book Book { get; } = null!;
-        public Author Authors { get; } = null!;
+        public Author Author { get; } = null!;
 
         private BookAuthor()
         {}
