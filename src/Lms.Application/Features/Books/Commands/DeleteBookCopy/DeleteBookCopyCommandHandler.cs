@@ -18,16 +18,16 @@ namespace Lms.Application.Features.Books.Commands.DeleteBookCopy
         {
             var book = await db.Books
                 .Include(book => book.BookCopies.Where(copy => copy.Id == request.CopyId))
-                .FirstOrDefaultAsync(book => book.Id == request.BookId && book.BookCopies.Any(copy => copy.Id == request.CopyId), cancellationToken);
+                .FirstOrDefaultAsync(book => book.Id == request.BookId, cancellationToken);
 
             if (book is null)
             {
                 if (logger.IsEnabled(LogLevel.Warning))
                 {
-                    logger.LogWarning("Book copy deletion aborted. No book copy was found with ID {CopyId}", request.CopyId);
+                    logger.LogWarning("Book copy deletion aborted. No book was found with ID {BookId}", request.BookId);
                 }
 
-                return ApplicationErrors.BookCopyNotFound;
+                return ApplicationErrors.BookNotFound;
             }
 
             var removalResult = book.RemoveCopy(request.CopyId);

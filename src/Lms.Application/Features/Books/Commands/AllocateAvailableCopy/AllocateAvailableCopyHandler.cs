@@ -25,7 +25,7 @@ namespace Lms.Application.Features.Books.Commands.AllocateAvailableCopy
             {
                 if (logger.IsEnabled(LogLevel.Warning))
                 {
-                    logger.LogWarning("Book copy allocation aborted. No book was found with ID {BookId}", request.BookId);
+                    logger.LogWarning("Book copy allocation aborted. No book was found with ID {BookId}.", request.BookId);
                 }
 
                 return ApplicationErrors.BookNotFound;
