@@ -35,6 +35,9 @@ namespace Lms.Domain.Catalog
         public IReadOnlyCollection<BookAuthor> BookAuthors => _bookAuthors.AsReadOnly();
         public int AvailableCopies => _bookCopies.Count(copy => copy.State == BookCopyState.Available);
 
+        // readonly navigation
+        public Publisher Publisher { get; } = null!;
+
         private Book()
         {}
 

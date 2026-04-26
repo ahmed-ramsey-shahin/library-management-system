@@ -14,6 +14,9 @@ namespace Lms.Domain.Catalog
         public DateOnly AcquisitionDate { get; private set; } = DateOnly.FromDateTime(DateTime.UtcNow);
         public byte[] Version { get; } = null!;
 
+        // readonly navigation
+        public Book Book { get; } = null!;
+
         private BookCopy()
         {}
 
