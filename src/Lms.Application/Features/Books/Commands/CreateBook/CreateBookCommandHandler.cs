@@ -192,58 +192,46 @@ namespace Lms.Application.Features.Books.Commands.CreateBook
 
             var book = bookCreationResult.Value;
 
-            foreach (var category in categoryIds)
+            var upsertingAudiencesResult = book.UpsertAudiences(audienceIds);
+
+            if (upsertingAudiencesResult.IsError)
             {
-                var result = book.AddCategory(category);
-                if (result.IsError)
-                {
-                    return result.Errors!;
-                }
+                return upsertingAudiencesResult.Errors!;
             }
 
-            foreach (var keyword in keywordIds)
+            var upsertingAuthorsResult = book.UpsertAuthors(authorIds);
+
+            if (upsertingAuthorsResult.IsError)
             {
-                var result = book.AddKeyword(keyword);
-                if (result.IsError)
-                {
-                    return result.Errors!;
-                }
+                return upsertingAuthorsResult.Errors!;
             }
 
-            foreach (var theme in themeIds)
+            var upsertingCategoriesResult = book.UpsertCategories(categoryIds);
+
+            if (upsertingCategoriesResult.IsError)
             {
-                var result = book.AddTheme(theme);
-                if (result.IsError)
-                {
-                    return result.Errors!;
-                }
+                return upsertingCategoriesResult.Errors!;
             }
 
-            foreach (var genre in genreIds)
+            var upsertingGenresResult = book.UpsertGenres(genreIds);
+
+            if (upsertingGenresResult.IsError)
             {
-                var result = book.AddGenre(genre);
-                if (result.IsError)
-                {
-                    return result.Errors!;
-                }
+                return upsertingGenresResult.Errors!;
             }
 
-            foreach (var audience in audienceIds)
+            var upsertingKeywordsResult = book.UpsertKeywords(keywordIds);
+
+            if (upsertingKeywordsResult.IsError)
             {
-                var result = book.AddAudience(audience);
-                if (result.IsError)
-                {
-                    return result.Errors!;
-                }
+                return upsertingKeywordsResult.Errors!;
             }
 
-            foreach (var author in authorIds)
+            var upsertingThemesResult = book.UpsertThemes(themeIds);
+
+            if (upsertingThemesResult.IsError)
             {
-                var result = book.AddAuthor(author);
-                if (result.IsError)
-                {
-                    return result.Errors!;
-                }
+                return upsertingThemesResult.Errors!;
             }
 
             db.Books.Add(book);

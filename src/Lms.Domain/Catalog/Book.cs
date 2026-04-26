@@ -301,195 +301,165 @@ namespace Lms.Domain.Catalog
             return Result.Updated;
         }
 
-        public Result<Updated> AddCategory(Guid categoryId)
+        public Result<Updated> UpsertAudiences(IEnumerable<Guid> audienceIds)
         {
-            if (categoryId == Guid.Empty)
-            {
-                return BookErrors.CategoryIdRequired;
-            }
+            var hasEmptyId = audienceIds.Contains(Guid.Empty);
 
-            if (_bookCategories.Any(category => category.CategoryId == categoryId))
-            {
-                return BookErrors.CategoryAlreadyAssigned;
-            }
-
-            _bookCategories.Add(new BookCategory(Id, categoryId));
-            return Result.Updated;
-        }
-
-        public Result<Updated> RemoveCategory(Guid categoryId)
-        {
-            if (categoryId == Guid.Empty)
-            {
-                return BookErrors.CategoryIdRequired;
-            }
-
-            if (!_bookCategories.Any(category => category.CategoryId == categoryId))
-            {
-                return BookErrors.CategoryNotAssigned;
-            }
-
-            _bookCategories.RemoveAll(c => c.CategoryId == categoryId);
-            return Result.Updated;
-        }
-
-        public Result<Updated> AddAuthor(Guid authorId)
-        {
-            if (authorId == Guid.Empty)
-            {
-                return BookErrors.AuthorIdRequired;
-            }
-
-            if (_bookAuthors.Any(a => a.AuthorId == authorId))
-            {
-                return BookErrors.AuthorAlreadyAssigned;
-            }
-
-            _bookAuthors.Add(new BookAuthor(Id, authorId));
-            return Result.Updated;
-        }
-
-        public Result<Updated> RemoveAuthor(Guid authorId)
-        {
-            if (authorId == Guid.Empty)
-            {
-                return BookErrors.AuthorIdRequired;
-            }
-
-            if (!_bookAuthors.Any(a => a.AuthorId == authorId))
-            {
-                return BookErrors.AuthorNotAssigned;
-            }
-
-            _bookAuthors.RemoveAll(a => a.AuthorId == authorId);
-            return Result.Updated;
-        }
-
-        public Result<Updated> AddKeyword(Guid keywordId)
-        {
-            if (keywordId == Guid.Empty)
-            {
-                return BookErrors.KeywordIdRequired;
-            }
-
-            if (_bookKeywords.Any(a => a.KeywordId == keywordId))
-            {
-                return BookErrors.KeywordAlreadyAssigned;
-            }
-
-            _bookKeywords.Add(new BookKeyword(Id, keywordId));
-            return Result.Updated;
-        }
-
-        public Result<Updated> RemoveKeyword(Guid keywordId)
-        {
-            if (keywordId == Guid.Empty)
-            {
-                return BookErrors.KeywordIdRequired;
-            }
-
-            if (!_bookKeywords.Any(a => a.KeywordId == keywordId))
-            {
-                return BookErrors.KeywordNotAssigned;
-            }
-
-            _bookKeywords.RemoveAll(a => a.KeywordId == keywordId);
-            return Result.Updated;
-        }
-
-        public Result<Updated> AddAudience(Guid audienceId)
-        {
-            if (audienceId == Guid.Empty)
+            if (hasEmptyId)
             {
                 return BookErrors.AudienceIdRequired;
             }
 
-            if (_bookAudiences.Any(a => a.AudienceId == audienceId))
+            audienceIds = [.. audienceIds.Distinct()];
+            List<Guid> currentAudiences = [.. _bookAudiences.Select(bookAudience => bookAudience.AudienceId)];
+            List<Guid> audiencesToAdd = [.. audienceIds.Except(currentAudiences)];
+            List<Guid> audiencesToRemove = [.. currentAudiences.Except(audienceIds)];
+
+            if (audiencesToRemove.Count > 0)
             {
-                return BookErrors.AudienceAlreadyAssigned;
+                _bookAudiences.RemoveAll(bookAudience => audiencesToRemove.Contains(bookAudience.AudienceId));
             }
 
-            _bookAudiences.Add(new BookAudience(Id, audienceId));
+            foreach (var audienceId in audiencesToAdd)
+            {
+                _bookAudiences.Add(new BookAudience(Id, audienceId));
+            }
+
             return Result.Updated;
         }
 
-        public Result<Updated> RemoveAudience(Guid audienceId)
+        public Result<Updated> UpsertAuthors(IEnumerable<Guid> authorIds)
         {
-            if (audienceId == Guid.Empty)
+            var hasEmptyId = authorIds.Contains(Guid.Empty);
+
+            if (hasEmptyId)
             {
-                return BookErrors.AudienceIdRequired;
+                return BookErrors.AuthorIdRequired;
             }
 
-            if (!_bookAudiences.Any(a => a.AudienceId == audienceId))
+            authorIds = [.. authorIds.Distinct()];
+            List<Guid> currentAuthors = [.. _bookAuthors.Select(bookAuthor => bookAuthor.AuthorId)];
+            List<Guid> authorsToAdd = [.. authorIds.Except(currentAuthors)];
+            List<Guid> authorsToRemove = [.. currentAuthors.Except(authorIds)];
+
+            if (authorsToRemove.Count > 0)
             {
-                return BookErrors.AudienceNotAssigned;
+                _bookAuthors.RemoveAll(bookAuthor => authorsToRemove.Contains(bookAuthor.AuthorId));
             }
 
-            _bookAudiences.RemoveAll(a => a.AudienceId == audienceId);
+            foreach (var authorId in authorsToAdd)
+            {
+                _bookAuthors.Add(new BookAuthor(Id, authorId));
+            }
+
             return Result.Updated;
         }
 
-        public Result<Updated> AddTheme(Guid themeId)
+        public Result<Updated> UpsertCategories(IEnumerable<Guid> categoryIds)
         {
-            if (themeId == Guid.Empty)
+            var hasEmptyId = categoryIds.Contains(Guid.Empty);
+
+            if (hasEmptyId)
             {
-                return BookErrors.ThemeIdRequired;
+                return BookErrors.CategoryIdRequired;
             }
 
-            if (_bookThemes.Any(a => a.ThemeId == themeId))
+            categoryIds = [.. categoryIds.Distinct()];
+            List<Guid> currentCategories = [.. _bookCategories.Select(bookCategory => bookCategory.CategoryId)];
+            List<Guid> categoriesToAdd = [.. categoryIds.Except(currentCategories)];
+            List<Guid> categoriesToRemove = [.. currentCategories.Except(categoryIds)];
+
+            if (categoriesToRemove.Count > 0)
             {
-                return BookErrors.ThemeAlreadyAssigned;
+                _bookCategories.RemoveAll(bookCategory => categoriesToRemove.Contains(bookCategory.CategoryId));
             }
 
-            _bookThemes.Add(new BookTheme(Id, themeId));
+            foreach (var categoryId in categoriesToAdd)
+            {
+                _bookCategories.Add(new BookCategory(Id, categoryId));
+            }
+
             return Result.Updated;
         }
 
-        public Result<Updated> RemoveTheme(Guid themeId)
+        public Result<Updated> UpsertGenres(IEnumerable<Guid> genreIds)
         {
-            if (themeId == Guid.Empty)
-            {
-                return BookErrors.ThemeIdRequired;
-            }
+            var hasEmptyId = genreIds.Contains(Guid.Empty);
 
-            if (!_bookThemes.Any(a => a.ThemeId == themeId))
-            {
-                return BookErrors.ThemeNotAssigned;
-            }
-
-            _bookThemes.RemoveAll(a => a.ThemeId == themeId);
-            return Result.Updated;
-        }
-
-        public Result<Updated> AddGenre(Guid genreId)
-        {
-            if (genreId == Guid.Empty)
+            if (hasEmptyId)
             {
                 return BookErrors.GenreIdRequired;
             }
 
-            if (_bookGenres.Any(a => a.GenreId == genreId))
+            genreIds = [.. genreIds.Distinct()];
+            List<Guid> currentGenres = [.. _bookGenres.Select(bookGenre => bookGenre.GenreId)];
+            List<Guid> genresToAdd = [.. genreIds.Except(currentGenres)];
+            List<Guid> genresToRemove = [.. currentGenres.Except(genreIds)];
+
+            if (genresToRemove.Count > 0)
             {
-                return BookErrors.GenreAlreadyAssigned;
+                _bookGenres.RemoveAll(bookGenre => genresToRemove.Contains(bookGenre.GenreId));
             }
 
-            _bookGenres.Add(new BookGenre(Id, genreId));
+            foreach (var genreId in genresToAdd)
+            {
+                _bookGenres.Add(new BookGenre(Id, genreId));
+            }
+
             return Result.Updated;
         }
 
-        public Result<Updated> RemoveGenre(Guid genreId)
+        public Result<Updated> UpsertKeywords(IEnumerable<Guid> keywordIds)
         {
-            if (genreId == Guid.Empty)
+            var hasEmptyId = keywordIds.Contains(Guid.Empty);
+
+            if (hasEmptyId)
             {
-                return BookErrors.GenreIdRequired;
+                return BookErrors.KeywordIdRequired;
             }
 
-            if (!_bookGenres.Any(a => a.GenreId == genreId))
+            keywordIds = [.. keywordIds.Distinct()];
+            List<Guid> currentKeywords = [.. _bookKeywords.Select(bookKeyword => bookKeyword.KeywordId)];
+            List<Guid> keywordsToAdd = [.. keywordIds.Except(currentKeywords)];
+            List<Guid> keywordsToRemove = [.. currentKeywords.Except(keywordIds)];
+
+            if (keywordsToRemove.Count > 0)
             {
-                return BookErrors.GenreNotAssigned;
+                _bookKeywords.RemoveAll(bookKeyword => keywordsToRemove.Contains(bookKeyword.KeywordId));
             }
 
-            _bookGenres.RemoveAll(a => a.GenreId == genreId);
+            foreach (var keywordId in keywordsToAdd)
+            {
+                _bookKeywords.Add(new BookKeyword(Id, keywordId));
+            }
+
+            return Result.Updated;
+        }
+
+        public Result<Updated> UpsertThemes(IEnumerable<Guid> themeIds)
+        {
+            var hasEmptyId = themeIds.Contains(Guid.Empty);
+
+            if (hasEmptyId)
+            {
+                return BookErrors.ThemeIdRequired;
+            }
+
+            themeIds = [.. themeIds.Distinct()];
+            List<Guid> currentThemes = [.. _bookThemes.Select(bookTheme => bookTheme.ThemeId)];
+            List<Guid> themesToAdd = [.. themeIds.Except(currentThemes)];
+            List<Guid> themesToRemove = [.. currentThemes.Except(themeIds)];
+
+            if (themesToRemove.Count > 0)
+            {
+                _bookThemes.RemoveAll(bookTheme => themesToRemove.Contains(bookTheme.ThemeId));
+            }
+
+            foreach (var themeId in themesToAdd)
+            {
+                _bookThemes.Add(new BookTheme(Id, themeId));
+            }
+
             return Result.Updated;
         }
 
