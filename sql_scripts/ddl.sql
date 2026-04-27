@@ -55,7 +55,7 @@ CREATE TABLE [themes] (
 )
 GO
 
-CREATE TABLE [audience] (
+CREATE TABLE [audiences] (
     [id] uniqueidentifier PRIMARY KEY,
     [name] nvarchar(255) UNIQUE NOT NULL,
     [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
@@ -150,7 +150,7 @@ CREATE TABLE [book_themes] (
 )
 GO
 
-CREATE TABLE [book_audience] (
+CREATE TABLE [book_audiences] (
     [book_id] uniqueidentifier,
     [audience_id] uniqueidentifier,
     PRIMARY KEY ([book_id], [audience_id])
@@ -221,7 +221,7 @@ GO
 CREATE INDEX [IX_Themes_Name] ON [themes] ([name])
 GO
 
-CREATE INDEX [IX_Audience_Name] ON [audience] ([name])
+CREATE INDEX [IX_Audience_Name] ON [audiences] ([name])
 GO
 
 CREATE INDEX [IX_Categories_Name] ON [categories] ([name])
@@ -275,10 +275,10 @@ GO
 ALTER TABLE [book_themes] ADD FOREIGN KEY ([theme_id]) REFERENCES [themes] ([id])
 GO
 
-ALTER TABLE [book_audience] ADD FOREIGN KEY ([book_id]) REFERENCES [books] ([id])
+ALTER TABLE [book_audiences] ADD FOREIGN KEY ([book_id]) REFERENCES [books] ([id])
 GO
 
-ALTER TABLE [book_audience] ADD FOREIGN KEY ([audience_id]) REFERENCES [audience] ([id])
+ALTER TABLE [book_audiences] ADD FOREIGN KEY ([audience_id]) REFERENCES [audiences] ([id])
 GO
 
 ALTER TABLE [book_copies] ADD FOREIGN KEY ([book_id]) REFERENCES [books] ([id])
