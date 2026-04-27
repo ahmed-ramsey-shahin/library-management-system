@@ -47,5 +47,12 @@ namespace Lms.Application.Common.Errors
         public static Error BarcodeAlreadyExists => Error.Conflict("ApplicationErrors.BookCopy.BarcodeAlreadyExists", "A book copy with this barcode already exists.");
 
         public static Error ConcurrencyConflict => Error.Conflict("ApplicationErrors.ConcurrencyConflict", "Could not perform the required operation because of a concurrency conflict.");
+
+        public static Error UserNotFound => Error.NotFound("ApplicationErrors.User.UserNotFound", "The required user was not found.");
+        public static Error UserNotMember => Error.Unauthorized("ApplicationErrors.User.NotMember", "This operation is only allowed for members.");
+        public static Error ActiveBorrowsLimitReached => Error.Validation("ApplicationErrors.BorrowRecord.ActiveBorrowsLimitReached", "The user has reached the borrowing limit. Please return at least one book before borrowing another.");
+        public static Error LateBorrowsLimitReached => Error.Validation("ApplicationErrors.BorrowRecord.LateBorrowsLimitReached", "The user has reached the maximum number of late borrows. Please return overdue books before borrowing another.");
+        public static Error UnpaidFinesLimitReached => Error.Validation("ApplicationErrors.BorrowRecord.UnpaidFinesLimitReached", "The user has unpaid fines. Please pay all fines before borrowing.");
+        public static Error AnotherCopyAlreadyBorrowed = Error.Forbidden("ApplicationErrors.BorrowRecord.AnotherCopyAlreadyBorrowed", "The user has already borrowed another copy of this book.");
     }
 }

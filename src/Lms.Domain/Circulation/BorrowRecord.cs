@@ -1,3 +1,4 @@
+using Lms.Domain.Catalog;
 using Lms.Domain.Common;
 using Lms.Domain.Common.Results;
 using Lms.Domain.Identity;
@@ -9,6 +10,7 @@ namespace Lms.Domain.Circulation
         public Guid Id { get; }
         public Guid MemberId { get; }
         public Guid BookCopyId { get; }
+        public BookCopy BookCopy { get; } = null!;
         public BorrowRecordStatus Status { get; private set; } = BorrowRecordStatus.Waiting;
         public DateOnly DueDate { get; private set; }
         public decimal BorrowingCost { get; private set; }
