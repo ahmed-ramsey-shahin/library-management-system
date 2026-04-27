@@ -5,6 +5,7 @@ namespace Lms.Application.Features.Books.Commands.MarkBookCopyAsMaintenance
 {
     public sealed record MarkBookCopyAsMaintenanceCommand(
         Guid BookId,
-        Guid CopyId
+        Guid CopyId,
+        byte[] Version
     ) : IRequest<Result<Updated>>;
 }

@@ -5,6 +5,7 @@ namespace Lms.Application.Features.Books.Commands.MarkBookCopyAsBorrowed
 {
     public sealed record MarkBookCopyAsBorrowedCommand(
         Guid BookId,
-        Guid CopyId
+        Guid CopyId,
+        byte[] Version
     ) : IRequest<Result<Updated>>;
 }

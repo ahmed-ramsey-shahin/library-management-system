@@ -43,7 +43,8 @@ namespace Lms.Application.Features.Books.Commands.UpdateBookCopyLocation
             try
             {
                 await db.SaveChangesAsync(cancellationToken);
-            } catch(DbUpdateConcurrencyException)
+            }
+            catch(DbUpdateConcurrencyException)
             {
                 if (logger.IsEnabled(LogLevel.Error))
                 {
