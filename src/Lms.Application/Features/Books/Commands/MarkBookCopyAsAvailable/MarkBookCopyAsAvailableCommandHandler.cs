@@ -47,7 +47,7 @@ namespace Lms.Application.Features.Books.Commands.MarkBookCopyAsAvailable
             {
                 if (logger.IsEnabled(LogLevel.Error))
                 {
-                    logger.LogError("Book copy update aborted beacuse of a concurrency conflict.");
+                    logger.LogError("Book copy update aborted because of a concurrency conflict.");
                 }
 
                 return ApplicationErrors.ConcurrencyConflict;
