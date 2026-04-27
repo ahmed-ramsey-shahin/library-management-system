@@ -19,5 +19,7 @@ namespace Lms.Domain.Circulation
         public static Error RejectInvalid(BorrowRecordStatus status) => Error.Forbidden("BorrowRecord.RejectInvalid", $"This request canot be rejected because it is already {status}");
         public static Error PayFineInvalid => Error.Forbidden("BorrowRecord.PayFineInvalid", "Cannot pay fine for this record.");
         public static Error CannotMarkAsLate => Error.Forbidden("BorrowRecord.CannotMarkAsLate", "Cannot mark this record as late.");
+        public static Error DueDateLessThanWeek => Error.Forbidden("BorrowRecord.DueDate.DueDateLessThanWeek", "Due date must be more than a week.");
+        public static Error PickupDeadlineLessThanDay => Error.Forbidden("BorrowRecord.PickupDeadline.PickupDeadlineLessThanDay", "Pickup deadline can no be less than a day.");
     }
 }

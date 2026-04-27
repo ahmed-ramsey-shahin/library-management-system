@@ -68,6 +68,16 @@ namespace Lms.Domain.Circulation
                 errors.Add(BorrowRecordErrors.BookCopyId);
             }
 
+            if (dueDate <= DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)))
+            {
+                errors.Add(BorrowRecordErrors.DueDateLessThanWeek);
+            }
+
+            if (pickupDeadline <= DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)))
+            {
+                errors.Add(BorrowRecordErrors.PickupDeadlineLessThanDay);
+            }
+
             if (dueDate > DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
             {
                 errors.Add(BorrowRecordErrors.DueDateInvalid);
