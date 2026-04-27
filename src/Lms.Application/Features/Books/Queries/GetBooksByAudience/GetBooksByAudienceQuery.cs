@@ -7,7 +7,7 @@ namespace Lms.Application.Features.Books.Queries.GetBooksByAudience
 {
     public sealed record GetBooksByAudienceQuery(Guid AudienceId, int PageSize, int Page) : ICachedQuery<Result<PaginatedList<BookSummaryDto>>>
     {
-        public string CacheKey => $"audience:{AudienceId}:book:{PageSize}:{Page}";
+        public string CacheKey => $"audiences:{AudienceId}:book:{PageSize}:{Page}";
 
         public string[] Tags => ["book"];
 
