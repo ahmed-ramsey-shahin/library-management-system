@@ -20,12 +20,13 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
     {
         public async Task<Result<Guid>> Handle(BorrowBookCommand request, CancellationToken cancellationToken)
         {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
             var member = await db.Users
                 .AsNoTracking()
-                .Include(user => user.BorrowRecords)
+                .Include(user => user.BorrowRecords.Where(borrowRecord => borrowRecord.Status != BorrowRecordStatus.Rejected && borrowRecord.Status != BorrowRecordStatus.Returned))
                 .ThenInclude(borrowRecord => borrowRecord.BookCopy)
                 .ThenInclude(copy => copy.Book)
-                .Include(user => user.Fines)
+                .Include(user => user.Fines.Where(fine => fine.Status == FineStatus.Unpaid))
                 .FirstOrDefaultAsync(user => user.Id == request.UserId, cancellationToken);
 
             if (member is null)
@@ -130,7 +131,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
                 copy.Id,
                 request.DueDate,
                 request.PickupDeadline,
-                book.BorrowPricePerDay * (request.DueDate.DayNumber - DateOnly.FromDateTime(DateTime.UtcNow).DayNumber)
+                book.BorrowPricePerDay * (request.DueDate.DayNumber - today.DayNumber)
             );
 
             if (borrowRecordCreationResult.IsError)
@@ -139,8 +140,15 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
             }
 
             db.BorrowRecords.Add(borrowRecordCreationResult.Value);
+            db.SetOriginalVersion(copy, copy.Version);
             await db.SaveChangesAsync(cancellationToken);
             await cache.RemoveByTagAsync(["book-copy"], cancellationToken);
+
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation("Borrow request {BorrowRecordId} submitted.", borrowRecordCreationResult.Value.Id);
+            }
+
             return borrowRecordCreationResult.Value.Id;
         }
     }
