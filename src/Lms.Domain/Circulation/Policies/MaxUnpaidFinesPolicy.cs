@@ -2,7 +2,7 @@ using Lms.Domain.Common.Results;
 
 namespace Lms.Domain.Circulation.Policies
 {
-    public class MaxUnpaidFinesPolicy(int maxUnpaidFines) : IBorrowPolicy
+    public class MaxUnpaidFinesPolicy(int maxUnpaidFines) : IBorrowPolicy, IRenewalPolicy
     {
         public Result<Success> Evaluate(BorrowStats stats)
         {

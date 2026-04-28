@@ -28,8 +28,16 @@ namespace Lms.Application
                 return [
                     new MaxActiveBorrowsPolicy(settings.MaxActiveBorrows),
                     new MaxLateBorrowsPolicy(settings.MaxLateBorrows),
-                    new MaxRenewalCountPolicy(settings.MaxRenewalCount),
                     new MaxUnpaidFinesPolicy(settings.MaxUnpaidFines),
+                ];
+            });
+            services.AddScoped<IEnumerable<IRenewalPolicy>>(services =>
+            {
+                var settings = services.GetRequiredService<IOptionsSnapshot<BorrowSettings>>().Value;
+                return [
+                    new MaxLateBorrowsPolicy(settings.MaxLateBorrows),
+                    new MaxUnpaidFinesPolicy(settings.MaxUnpaidFines),
+                    new MaxRenewalCountPolicy(settings.MaxRenewalCount),
                 ];
             });
             return services;

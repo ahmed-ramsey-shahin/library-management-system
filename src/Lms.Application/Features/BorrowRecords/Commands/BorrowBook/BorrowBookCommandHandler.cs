@@ -27,6 +27,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
                 .ThenInclude(borrowRecord => borrowRecord.BookCopy)
                 .ThenInclude(copy => copy.Book)
                 .Include(user => user.Fines.Where(fine => fine.Status == FineStatus.Unpaid))
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(user => user.Id == request.UserId, cancellationToken);
 
             if (member is null)

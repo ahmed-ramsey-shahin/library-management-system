@@ -2,7 +2,7 @@ using Lms.Domain.Common.Results;
 
 namespace Lms.Domain.Circulation.Policies
 {
-    public class MaxRenewalCountPolicy(int maxRenewalCount) : IBorrowPolicy
+    public class MaxRenewalCountPolicy(int maxRenewalCount) : IRenewalPolicy
     {
         public Result<Success> Evaluate(BorrowStats stats)
         {
