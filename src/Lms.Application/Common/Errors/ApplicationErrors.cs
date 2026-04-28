@@ -57,7 +57,7 @@ namespace Lms.Application.Common.Errors
 
         public static Error BorrowRecordNotFound => Error.NotFound("ApplicationErrors.BorrowRecord.BorrowRecordNotFound", "The required borrow record was not found.");
 
-        public static Error BorrowRecordStatusInvalid => Error.Validation("ApplicationErrors.BorrowRecord.BorrowRecordStatusInvalid", "The status of this record is no suitable for renewal.");
+        public static Error BorrowRecordStatusInvalid => Error.Validation("ApplicationErrors.BorrowRecord.BorrowRecordStatusInvalid", "The status of this record is no suitable for this operation.");
         public static Error NewDueDateInvalid => Error.Validation("ApplicationErrors.BorrowRecord.NewDueDateInvlid", "The new due date must be after the old due date.");
     }
 }

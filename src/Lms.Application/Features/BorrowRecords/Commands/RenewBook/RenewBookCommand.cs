@@ -9,5 +9,4 @@ namespace Lms.Application.Features.BorrowRecords.Commands.RenewBook
         DateOnly DueDate,
         Guid IdempotencyKey
     ) : IIdempotentCommand, IRequest<Result<Updated>>;
-
 }
