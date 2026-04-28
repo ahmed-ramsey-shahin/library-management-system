@@ -212,43 +212,6 @@ namespace Lms.Domain.Identity
             return Result.Deleted;
         }
 
-        public Result<bool> CanBorrow(MemberBorrowState state, LibraryPolicy policy)
-        {
-            if (Role != Role.Member)
-            {
-                return UserErrors.NotMember;
-
-            }
-            List<Error> errors = [];
-
-            if (state.ActiveBorrows > policy.MaxActiveBorrows)
-            {
-                errors.Add(UserErrors.MaxActiveBorrowsReached(policy.MaxActiveBorrows));
-            }
-
-            if (state.UnpaidFines > policy.MaxUnpaidFines)
-            {
-                errors.Add(UserErrors.MaxUnpaidFines(policy.MaxUnpaidFines));
-            }
-
-            if (state.LateBorrows > policy.MaxLateBorrows)
-            {
-                errors.Add(UserErrors.MaxLateBorrows(policy.MaxLateBorrows));
-            }
-
-            if (Status == UserStatus.Suspended)
-            {
-                errors.Add(UserErrors.UserSuspended);
-            }
-
-            if (errors.Count > 0)
-            {
-                return errors;
-            }
-
-            return true;
-        }
-
         public Result<Updated> AddCategory(Guid categoryId)
         {
             if (Role != Role.Librarian)

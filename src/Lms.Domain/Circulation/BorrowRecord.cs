@@ -9,6 +9,7 @@ namespace Lms.Domain.Circulation
     {
         public Guid Id { get; }
         public Guid MemberId { get; }
+        public User Member { get; } = null!;
         public Guid BookCopyId { get; }
         public BookCopy BookCopy { get; } = null!;
         public BorrowRecordStatus Status { get; private set; } = BorrowRecordStatus.Waiting;
@@ -186,16 +187,11 @@ namespace Lms.Domain.Circulation
             return BorrowRecordErrors.ReturnInvalid(Status);
         }
 
-        public Result<Updated> Renew(decimal renewalCost, DateOnly newDueDate, LibraryPolicy policy)
+        public Result<Updated> Renew(decimal renewalCost, DateOnly newDueDate)
         {
             if (Status != BorrowRecordStatus.Accepted)
             {
                 return BorrowRecordErrors.RenewInvalid(Status);
-            }
-
-            if (RenewalCount + 1 > policy.MaxRenewalCount)
-            {
-                return BorrowRecordErrors.MaxRenewalCountExceeded;
             }
 
             RenewalCount++;

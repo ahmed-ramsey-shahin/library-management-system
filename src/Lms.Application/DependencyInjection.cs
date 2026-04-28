@@ -1,7 +1,10 @@
 using System.Reflection;
 using FluentValidation;
 using Lms.Application.Common.Behaviors;
+using Lms.Application.Common.Configurations;
+using Lms.Domain.Circulation.Policies;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Lms.Application
 {
@@ -18,6 +21,16 @@ namespace Lms.Application
                 configuration.AddOpenBehavior(typeof(PerformanceBehavior<,>));
                 configuration.AddOpenBehavior(typeof(CachingBehavior<,>));
                 configuration.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            });
+            services.AddScoped<IEnumerable<IBorrowPolicy>>(services =>
+            {
+                var settings = services.GetRequiredService<IOptionsSnapshot<BorrowSettings>>().Value;
+                return [
+                    new MaxActiveBorrowsPolicy(settings.MaxActiveBorrows),
+                    new MaxLateBorrowsPolicy(settings.MaxLateBorrows),
+                    new MaxRenewalCountPolicy(settings.MaxRenewalCount),
+                    new MaxUnpaidFinesPolicy(settings.MaxUnpaidFines),
+                ];
             });
             return services;
         }

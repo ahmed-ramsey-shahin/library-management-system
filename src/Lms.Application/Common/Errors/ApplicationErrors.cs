@@ -53,6 +53,8 @@ namespace Lms.Application.Common.Errors
         public static Error ActiveBorrowsLimitReached => Error.Validation("ApplicationErrors.BorrowRecord.ActiveBorrowsLimitReached", "The user has reached the borrowing limit. Please return at least one book before borrowing another.");
         public static Error LateBorrowsLimitReached => Error.Validation("ApplicationErrors.BorrowRecord.LateBorrowsLimitReached", "The user has reached the maximum number of late borrows. Please return overdue books before borrowing another.");
         public static Error UnpaidFinesLimitReached => Error.Validation("ApplicationErrors.BorrowRecord.UnpaidFinesLimitReached", "The user has unpaid fines. Please pay all fines before borrowing.");
-        public static Error AnotherCopyAlreadyBorrowed = Error.Forbidden("ApplicationErrors.BorrowRecord.AnotherCopyAlreadyBorrowed", "The user has already borrowed another copy of this book.");
+        public static Error AnotherCopyAlreadyBorrowed => Error.Forbidden("ApplicationErrors.BorrowRecord.AnotherCopyAlreadyBorrowed", "The user has already borrowed another copy of this book.");
+
+        public static Error BorrowRecordNotFound => Error.NotFound("ApplicationErrors.BorrowRecord.BorrowRecordNotFound", "The required borrow record was not found.");
     }
 }
