@@ -194,6 +194,16 @@ namespace Lms.Domain.Circulation
                 return BorrowRecordErrors.RenewInvalid(Status);
             }
 
+            if (newDueDate <= DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)))
+            {
+                return BorrowRecordErrors.DueDateLessThanWeek;
+            }
+
+            if (newDueDate > DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
+            {
+                return BorrowRecordErrors.DueDateInvalid;
+            }
+
             RenewalCount++;
             DueDate = newDueDate;
             BorrowingCost += renewalCost;
