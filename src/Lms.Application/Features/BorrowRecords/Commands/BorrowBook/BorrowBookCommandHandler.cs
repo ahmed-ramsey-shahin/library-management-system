@@ -1,12 +1,12 @@
 using Lms.Application.Common.Errors;
 using Lms.Application.Common.Interfaces;
 using Lms.Domain.Circulation;
+using Lms.Domain.Circulation.Policies;
 using Lms.Domain.Common.Results;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
@@ -15,7 +15,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
         IAppDbContext db,
         ILogger<BorrowBookCommandHandler> logger,
         HybridCache cache,
-        IConfiguration config
+        IEnumerable<IBorrowPolicy> borrowPolicies
     ) : IRequestHandler<BorrowBookCommand, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(BorrowBookCommand request, CancellationToken cancellationToken)
@@ -49,41 +49,25 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
                 return ApplicationErrors.UserNotMember;
             }
 
-            var activeBorrows = member.BorrowRecords.Count(borrowRecord => borrowRecord.Status == BorrowRecordStatus.Accepted);
-            var lateBorrows = member.BorrowRecords.Count(borrowRecord => borrowRecord.Status == BorrowRecordStatus.Late);
-            var unpaidFine = member.Fines.Count(fine => fine.Status == FineStatus.Unpaid);
-            var maximumActiveBorrows = int.Parse(config["maximumActiveBorrows"]!);
-            var maximumLateBorrows = int.Parse(config["maximumLateBorrows"]!);
-            var maximumUnpaidFines = int.Parse(config["maximumUnpaidFines"]!);
+            var borrowStats = new BorrowStats(
+                member.BorrowRecords.Count(borrowRecord => borrowRecord.Status == BorrowRecordStatus.Accepted),
+                member.BorrowRecords.Count(borrowRecord => borrowRecord.Status == BorrowRecordStatus.Late),
+                member.Fines.Count(fine => fine.Status == FineStatus.Unpaid),
+                0
+            );
 
-            if (activeBorrows >= maximumActiveBorrows)
+            foreach (var borrowPolicy in borrowPolicies)
             {
-                if (logger.IsEnabled(LogLevel.Warning))
+                var canBorrow = borrowPolicy.Evaluate(borrowStats);
+                if (canBorrow.IsError)
                 {
-                    logger.LogWarning("Borrow request creation aborted. User {UserId} has {ActiveBorrows} currently active borrows.", request.UserId, activeBorrows);
+                    if (logger.IsEnabled(LogLevel.Warning))
+                    {
+                        logger.LogWarning("Operation aborted. {@Errors}", canBorrow.Errors!);
+                    }
+
+                    return canBorrow.Errors!;
                 }
-
-                return ApplicationErrors.ActiveBorrowsLimitReached;
-            }
-
-            if (lateBorrows >= maximumLateBorrows)
-            {
-                if (logger.IsEnabled(LogLevel.Warning))
-                {
-                    logger.LogWarning("Borrow request creation aborted. User {UserId} has {LateBorrows} currently late borrows.", request.UserId, lateBorrows);
-                }
-
-                return ApplicationErrors.LateBorrowsLimitReached;
-            }
-
-            if (unpaidFine >= maximumUnpaidFines)
-            {
-                if (logger.IsEnabled(LogLevel.Warning))
-                {
-                    logger.LogWarning("Borrow request creation aborted. User {UserId} has unpaid fines.", request.UserId);
-                }
-
-                return ApplicationErrors.UnpaidFinesLimitReached;
             }
 
             var book = await db.Books
