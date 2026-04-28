@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 
-namespace Lms.Application.Features.BorrowRecords.Commands.RenewBorrow
+namespace Lms.Application.Features.BorrowRecords.Commands.RenewBook
 {
     public sealed class RenewBookCommandHandler(
         HybridCache cache,
