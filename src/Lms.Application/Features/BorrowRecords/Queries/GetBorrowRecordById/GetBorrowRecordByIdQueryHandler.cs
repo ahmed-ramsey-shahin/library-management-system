@@ -18,6 +18,7 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById
             CancellationToken cancellationToken
         )
         {
+            // TODO: Complete the borrow record dto after making the fine and user commands.
             var borrowRecord = await db.BorrowRecords
                 .AsNoTracking()
                 .Where(record => record.Id == request.BorrowRecordId)
