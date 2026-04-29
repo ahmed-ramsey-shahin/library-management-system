@@ -288,5 +288,16 @@ namespace Lms.Domain.Circulation
             AddEvent(new BorrowRecordMarkedAsLateEvent(Id));
             return Result.Updated;
         }
+
+        public Result<Deleted> Cancel()
+        {
+            if (Status != BorrowRecordStatus.Waiting)
+            {
+                return BorrowRecordErrors.CancellationInvalid(Status);
+            }
+
+            Status = BorrowRecordStatus.Canceled;
+            return Result.Deleted;
+        }
     }
 }

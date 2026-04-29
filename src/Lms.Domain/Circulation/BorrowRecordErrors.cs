@@ -15,6 +15,7 @@ namespace Lms.Domain.Circulation
         public static Error ReturnInvalid(BorrowRecordStatus status) => Error.Forbidden("BorrowRecord.ReturnInvalid", $"This copy cannot be returned because its already {status}");
         public static Error MemberNotApplicable => Error.Forbidden("BorrowRecord.UserNotApplicable", "This request cannot be accepted because the user is not eligible to borrow additional books.");
         public static Error RenewInvalid(BorrowRecordStatus status) => Error.Forbidden("BorrowRecord.RenewInvalid", $"This record cannot be renewed because its already {status}");
+        public static Error CancellationInvalid(BorrowRecordStatus status) => Error.Forbidden("BorrowRecord.CancellationInvalid", $"This record cannot be canceled because its already {status}");
         public static Error MaxRenewalCountExceeded => Error.Forbidden("BorrowRecord.MaxRenewalCountExceeded", "This operation cannot be done because the maximum number of renewals is exceeded.");
         public static Error RejectInvalid(BorrowRecordStatus status) => Error.Forbidden("BorrowRecord.RejectInvalid", $"This request canot be rejected because it is already {status}");
         public static Error PayFineInvalid => Error.Forbidden("BorrowRecord.PayFineInvalid", "Cannot pay fine for this record.");

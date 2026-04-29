@@ -7,5 +7,6 @@ namespace Lms.Domain.Circulation
         Rejected,
         Late,
         Returned,
+        Canceled,
     }
 }
