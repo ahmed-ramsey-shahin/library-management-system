@@ -144,6 +144,16 @@ namespace Lms.Domain.Catalog
 
         internal Result<Updated> MarkAsMaintenance()
         {
+            if (State == BookCopyState.Maintenance)
+            {
+                return  Result.Updated;
+            }
+
+            if (State != BookCopyState.Available)
+            {
+                return BookCopyErrors.CantChangeStateOfBorrowedBook;
+            }
+
             State = BookCopyState.Maintenance;
             return Result.Updated;
         }
