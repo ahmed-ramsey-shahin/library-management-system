@@ -59,5 +59,7 @@ namespace Lms.Application.Common.Errors
 
         public static Error BorrowRecordStatusInvalid => Error.Validation("ApplicationErrors.BorrowRecord.BorrowRecordStatusInvalid", "The status of this record is no suitable for this operation.");
         public static Error NewDueDateInvalid => Error.Validation("ApplicationErrors.BorrowRecord.NewDueDateInvlid", "The new due date must be after the old due date.");
+
+        public static Error NotLate => Error.Validation("ApplicationErrors.BorrowRecord.NotLate", "The specified borrow record is not late. Can not mark it as late.");
     }
 }
