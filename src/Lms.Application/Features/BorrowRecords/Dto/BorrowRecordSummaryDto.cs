@@ -1,6 +1,6 @@
 namespace Lms.Application.Features.BorrowRecords.Dto
 {
-    public sealed record BorrowRecordSummary
+    public sealed record BorrowRecordSummaryDto
     {
         public Guid BorrowRecordId { get; init; }
         public Guid MemberId { get; init; }

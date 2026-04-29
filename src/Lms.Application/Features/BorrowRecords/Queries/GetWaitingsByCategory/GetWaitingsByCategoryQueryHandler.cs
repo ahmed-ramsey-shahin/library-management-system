@@ -10,9 +10,9 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetWaitingsByCategory
 {
     public class GetWaitingsByCategoryQueryHandler(
         IAppDbContext db
-    ) : IRequestHandler<GetWaitingsByCategoryQuery, Result<PaginatedList<BorrowRecordSummary>>>
+    ) : IRequestHandler<GetWaitingsByCategoryQuery, Result<PaginatedList<BorrowRecordSummaryDto>>>
     {
-        public async Task<Result<PaginatedList<BorrowRecordSummary>>> Handle(GetWaitingsByCategoryQuery request, CancellationToken cancellationToken)
+        public async Task<Result<PaginatedList<BorrowRecordSummaryDto>>> Handle(GetWaitingsByCategoryQuery request, CancellationToken cancellationToken)
         {
             var borrowRecordsQuery = db.BorrowRecords
                 .AsNoTracking()
@@ -21,7 +21,7 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetWaitingsByCategory
 
             if (totalCount <= 0)
             {
-                return new PaginatedList<BorrowRecordSummary>
+                return new PaginatedList<BorrowRecordSummaryDto>
                 {
                     PageSize = request.PageSize,
                     PageNumber = request.Page,
@@ -35,7 +35,7 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetWaitingsByCategory
                 .OrderBy(record => record.CreatedAt)
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .Select(record => new BorrowRecordSummary
+                .Select(record => new BorrowRecordSummaryDto
                 {
                     BorrowRecordId = record.Id,
                     MemberId = record.MemberId,
@@ -48,7 +48,7 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetWaitingsByCategory
                     PickupDeadline = record.PickupDeadline
                 }).ToListAsync(cancellationToken);
 
-            return new PaginatedList<BorrowRecordSummary>
+            return new PaginatedList<BorrowRecordSummaryDto>
             {
                 PageSize = request.PageSize,
                 PageNumber = request.Page,

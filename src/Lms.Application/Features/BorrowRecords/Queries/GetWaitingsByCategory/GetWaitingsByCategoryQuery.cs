@@ -9,7 +9,7 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetWaitingsByCategory
         Guid CategoryId,
         int PageSize,
         int Page
-    ) : ICachedQuery<Result<PaginatedList<BorrowRecordSummary>>>
+    ) : ICachedQuery<Result<PaginatedList<BorrowRecordSummaryDto>>>
     {
         public string CacheKey => $"borrow-records:{CategoryId}:{PageSize}:{Page}";
 
@@ -17,5 +17,4 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetWaitingsByCategory
 
         public TimeSpan Expiration => TimeSpan.FromMinutes(30);
     }
-
 }
