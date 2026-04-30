@@ -82,6 +82,11 @@ namespace Lms.Domain.Circulation
 
         public Result<Updated> ChangeAmount(decimal amount)
         {
+            if (Status == FineStatus.Paid)
+            {
+                return FineErrors.FineAlreadyPaid;
+            }
+
             if (amount <= 0)
             {
                 return FineErrors.AmountInvalid;

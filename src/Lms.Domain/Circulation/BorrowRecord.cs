@@ -300,5 +300,34 @@ namespace Lms.Domain.Circulation
             Status = BorrowRecordStatus.Canceled;
             return Result.Deleted;
         }
+
+        public Result<Updated> ChangeFineAmount(Guid fineId, decimal amount)
+        {
+            if (Status != BorrowRecordStatus.Accepted && Status != BorrowRecordStatus.Late && Status != BorrowRecordStatus.Returned)
+            {
+                return BorrowRecordErrors.PayFineInvalid;
+            }
+
+            if (fineId == Guid.Empty)
+            {
+                return BorrowRecordErrors.FineNotFound;
+            }
+
+            var fine = _fines.FirstOrDefault(fine => fine.Id == fineId);
+
+            if (fine is null)
+            {
+                return BorrowRecordErrors.FineNotFound;
+            }
+
+            var updateResult = fine.ChangeAmount(amount);
+
+            if (updateResult.IsError)
+            {
+                return updateResult.Errors!;
+            }
+
+            return Result.Updated;
+        }
     }
 }
