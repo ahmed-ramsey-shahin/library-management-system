@@ -1,5 +1,6 @@
 using Lms.Domain.Common;
 using Lms.Domain.Common.Results;
+using Lms.Domain.Identity;
 
 namespace Lms.Domain.Circulation
 {
@@ -7,7 +8,9 @@ namespace Lms.Domain.Circulation
     {
         public Guid Id { get; }
         public Guid MemberId { get; }
+        public User Member { get; private set; } = null!;
         public Guid BorrowRecordId { get; }
+        public BorrowRecord BorrowRecord { get; private set; } = null!;
         public FineStatus Status { get; private set; }
         public decimal Amount { get; private set; }
         public string Description { get; private set; } = string.Empty;
