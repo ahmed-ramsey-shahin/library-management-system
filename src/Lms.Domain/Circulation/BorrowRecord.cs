@@ -107,7 +107,8 @@ namespace Lms.Domain.Circulation
             decimal amount,
             string description,
             DateTimeOffset? fineDate=null,
-            FineStatus status=FineStatus.Unpaid
+            FineStatus status=FineStatus.Unpaid,
+            DateTimeOffset? paidAt=null
         )
         {
             var fine = _fines.FirstOrDefault(fine => fine.Id == id);
@@ -118,7 +119,7 @@ namespace Lms.Domain.Circulation
             }
 
             fineDate ??= DateTimeOffset.UtcNow;
-            var fineResult = Fine.Create(id, MemberId, Id, amount, description, fineDate.Value, status);
+            var fineResult = Fine.Create(id, MemberId, Id, amount, description, fineDate.Value, status, paidAt);
 
             if (fineResult.IsError)
             {
