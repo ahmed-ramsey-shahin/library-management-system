@@ -82,9 +82,9 @@ namespace Lms.Domain.Circulation
 
         public Result<Updated> ChangeAmount(decimal amount)
         {
-            if (Status == FineStatus.Paid)
+            if (Status != FineStatus.Unpaid)
             {
-                return FineErrors.FineAlreadyPaid;
+                return FineErrors.CannotChangeAmount;
             }
 
             if (amount <= 0)
@@ -121,13 +121,19 @@ namespace Lms.Domain.Circulation
 
         public Result<Deleted> Delete()
         {
-            if (Status == FineStatus.Unpaid)
-            {
-                return FineErrors.FineUnpaid;
-            }
-
             IsDeleted = true;
             return Result.Deleted;
+        }
+
+        public Result<Updated> MarkAsWaived()
+        {
+            if (Status != FineStatus.Unpaid)
+            {
+                return FineErrors.CannotWaivePaidFines;
+            }
+
+            Status = FineStatus.Waived;
+            return Result.Updated;
         }
     }
 }

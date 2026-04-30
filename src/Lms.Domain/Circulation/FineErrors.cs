@@ -12,5 +12,7 @@ namespace Lms.Domain.Circulation
         public static Error FineDateInvalid => Error.Validation("Fine.FineDate.Invalid", "The fine date cannot be in the future.");
         public static Error FineUnpaid => Error.Forbidden("Fine.Unpaid", "Cannot deleted an unpaid fine.");
         public static Error FineAlreadyPaid => Error.Conflict("Fine.AlreadyPaid", "This fine is already paid.");
+        public static Error CannotChangeAmount => Error.Conflict("Fine.CannotChangeAmount", "The amount of this fine can not be changed.");
+        public static Error CannotWaivePaidFines => Error.Conflict("Fine.CannotWaivePaidFines", "This fine is paid and can not be waived.");
     }
 }

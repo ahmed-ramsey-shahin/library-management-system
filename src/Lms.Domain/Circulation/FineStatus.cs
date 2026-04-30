@@ -4,5 +4,6 @@ namespace Lms.Domain.Circulation
     {
         Paid,
         Unpaid,
+        Waived,
     }
 }

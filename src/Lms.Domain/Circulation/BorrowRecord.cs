@@ -329,5 +329,29 @@ namespace Lms.Domain.Circulation
 
             return Result.Updated;
         }
+
+        public Result<Updated> MarkFineWaived(Guid fineId)
+        {
+            if (fineId == Guid.Empty)
+            {
+                return BorrowRecordErrors.FineNotFound;
+            }
+
+            var fine = _fines.FirstOrDefault(fine => fine.Id == fineId);
+
+            if (fine is null)
+            {
+                return BorrowRecordErrors.FineNotFound;
+            }
+
+            var updateResult = fine.MarkAsWaived();
+
+            if (updateResult.IsError)
+            {
+                return updateResult.Errors!;
+            }
+
+            return Result.Updated;
+        }
     }
 }
