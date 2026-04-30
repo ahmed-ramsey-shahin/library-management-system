@@ -61,5 +61,7 @@ namespace Lms.Application.Common.Errors
         public static Error NewDueDateInvalid => Error.Validation("ApplicationErrors.BorrowRecord.NewDueDateInvlid", "The new due date must be after the old due date.");
 
         public static Error NotLate => Error.Validation("ApplicationErrors.BorrowRecord.NotLate", "The specified borrow record is not late. Can not mark it as late.");
+
+        public static Error FineDescriptionLength => Error.Validation("ApplicationErrors.Fines.FineDescriptionLength", "Fine description length cannot exceed 500 characters.");
     }
 }
