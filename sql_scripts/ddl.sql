@@ -82,7 +82,6 @@ CREATE TABLE [users] (
     [role] nvarchar(50) NOT NULL DEFAULT 'member',
     [status] nvarchar(50) NOT NULL DEFAULT 'active',
     [password] varchar(512) NOT NULL,
-    [salt] varchar(64) NOT NULL,
     [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
 )

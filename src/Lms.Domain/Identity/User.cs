@@ -16,7 +16,6 @@ namespace Lms.Domain.Identity
         public Role Role { get; private set; } = Role.Member;
         public UserStatus Status { get; private set; } = UserStatus.Active;
         public string Password { get; private set; } = string.Empty;
-        public string Salt { get; private set; } = string.Empty;
         private readonly List<LibrarianCategory> _librarianCategories = [];
         public IReadOnlyCollection<LibrarianCategory> LibrarianCategories => _librarianCategories.AsReadOnly();
         private readonly List<RefreshToken> _refreshTokens = [];
@@ -41,7 +40,6 @@ namespace Lms.Domain.Identity
             string address,
             string libraryCardNumber,
             string passwordHash,
-            string salt,
             Role role=Role.Member,
             UserStatus status=UserStatus.Active
         )
@@ -56,7 +54,6 @@ namespace Lms.Domain.Identity
             Role = role;
             Status = status;
             Password = passwordHash;
-            Salt = salt;
         }
 
         public static Result<User> Create(
@@ -68,7 +65,6 @@ namespace Lms.Domain.Identity
             string address,
             string libraryCardNumber,
             string passwordHash,
-            string salt,
             Role role=Role.Member,
             UserStatus status=UserStatus.Active
         )
@@ -88,11 +84,6 @@ namespace Lms.Domain.Identity
             if (string.IsNullOrWhiteSpace(passwordHash))
             {
                 errors.Add(UserErrors.PasswordRequired);
-            }
-
-            if (string.IsNullOrWhiteSpace(salt))
-            {
-                errors.Add(UserErrors.SaltRequired);
             }
 
             if (string.IsNullOrWhiteSpace(firstName))
@@ -125,7 +116,7 @@ namespace Lms.Domain.Identity
                 return errors;
             }
 
-            return new User(id, email, firstName, lastName, phoneNumber, address, libraryCardNumber, passwordHash, salt, role, status);
+            return new User(id, email, firstName, lastName, phoneNumber, address, libraryCardNumber, passwordHash, role, status);
         }
 
         public Result<Updated> Update(string email, Role role=Role.Member)
@@ -153,7 +144,7 @@ namespace Lms.Domain.Identity
             return Result.Updated;
         }
 
-        public Result<Updated> ChangePassword(string passwordHash, string salt)
+        public Result<Updated> ChangePassword(string passwordHash)
         {
             List<Error> errors = [];
 
@@ -162,18 +153,12 @@ namespace Lms.Domain.Identity
                 errors.Add(UserErrors.PasswordRequired);
             }
 
-            if (string.IsNullOrWhiteSpace(salt))
-            {
-                errors.Add(UserErrors.SaltRequired);
-            }
-
             if (errors.Count > 0)
             {
                 return errors;
             }
 
             Password = passwordHash;
-            Salt = salt;
             return Result.Updated;
         }
 
@@ -315,6 +300,78 @@ namespace Lms.Domain.Identity
             }
 
             return Result.Updated;
+        }
+
+        public static string GenerateLibraryNumber()
+        {
+            var year = DateTimeOffset.UtcNow.ToString("yy");
+            var randomDigits = Random.Shared.Next(1000000, 9999999).ToString();
+            var baseNumber = year + randomDigits;
+            var checkDigit = CalculateLuhnCheckDigit(baseNumber);
+            return baseNumber + checkDigit;
+        }
+
+        public static string CalculateLuhnCheckDigit(string number)
+        {
+            int sum = 0;
+            bool alternate = true;
+
+            for (int i = number.Length - 1; i >= 0; i--)
+            {
+                int n = int.Parse(number[i].ToString());
+
+                if (alternate)
+                {
+                    n *= 2;
+
+                    if (n > 9)
+                    {
+                        n -= 9;
+                    }
+                }
+
+                sum += n;
+                alternate = !alternate;
+            }
+
+            int checkDigit = (10 - (sum % 10)) % 10;
+            return checkDigit.ToString();
+        }
+
+        public static bool IsValidLibraryNumber(string cardNumber)
+        {
+            if (string.IsNullOrWhiteSpace(cardNumber) || cardNumber.Length != 10)
+            {
+                return false;
+            }
+
+            if (!cardNumber.All(char.IsDigit))
+            {
+                return false;
+            }
+
+            var alternate = false;
+            var sum = 0;
+
+            for (int i = cardNumber.Length - 1; i >= 0; i--)
+            {
+                int n = int.Parse(cardNumber[i].ToString());
+
+                if (alternate)
+                {
+                    n *= 2;
+
+                    if (n > 9)
+                    {
+                        n -= 9;
+                    }
+                }
+
+                sum += n;
+                alternate = !alternate;
+            }
+
+            return sum % 10 == 0;
         }
     }
 }
