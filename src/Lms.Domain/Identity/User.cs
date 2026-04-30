@@ -1,3 +1,4 @@
+using Lms.Domain.Catalog;
 using Lms.Domain.Circulation;
 using Lms.Domain.Common;
 using Lms.Domain.Common.Results;
@@ -197,7 +198,7 @@ namespace Lms.Domain.Identity
             return Result.Deleted;
         }
 
-        public Result<Updated> AddCategory(Guid categoryId)
+        public Result<Updated> UpsertCategories(IEnumerable<Guid> categoryIds)
         {
             if (Role != Role.Librarian)
             {
@@ -209,35 +210,11 @@ namespace Lms.Domain.Identity
                 return UserErrors.UserSuspended;
             }
 
-            if (_librarianCategories.Any(lc => lc.CategoryId == categoryId))
-            {
-                return UserErrors.CategoryAlreadyAssigned;
-            }
-
-            _librarianCategories.Add(new LibrarianCategory(Id, categoryId));
-            AddEvent(new CategoryAdded(Id, categoryId));
-            return Result.Updated;
-        }
-
-        public Result<Updated> RemoveCategory(Guid categoryId)
-        {
-            if (Role != Role.Librarian)
-            {
-                return UserErrors.NotLibrarian;
-            }
-
-            if (Status == UserStatus.Suspended)
-            {
-                return UserErrors.UserSuspended;
-            }
-
-            if (!_librarianCategories.Any(lc => lc.CategoryId == categoryId))
-            {
-                return UserErrors.CategoryNotAssigned;
-            }
-
-            _librarianCategories.RemoveAll(lc => lc.CategoryId == categoryId);
-            AddEvent(new CategoryRemoved(Id, categoryId));
+            var uniqueCategoryIds = categoryIds.Distinct().ToList();
+            var categoriesToDelete = _librarianCategories.ExceptBy(uniqueCategoryIds, librarianCategory => librarianCategory.CategoryId).ToList();
+            var categoriesToAdd = uniqueCategoryIds.Except(_librarianCategories.Select(librarianCategory => librarianCategory.CategoryId)).ToList();
+            _librarianCategories.AddRange(categoriesToAdd.Select(category => new LibrarianCategory(Id, category)));
+            _librarianCategories.RemoveAll(categoriesToDelete.Contains);
             return Result.Updated;
         }
 
