@@ -6,15 +6,15 @@ using Lms.Domain.Common.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Lms.Application.Features.Fines.Queries.GetUnpaidFines
+namespace Lms.Application.Features.Fines.Queries.GetUnpaidFinesByCategory
 {
-    public sealed class GetUnpaidFinesQueryHandler(IAppDbContext db) : IRequestHandler<GetUnpaidFinesQuery, Result<PaginatedList<FineDto>>>
+    public sealed class GetUnpaidFinesByCategoryQueryHandler(IAppDbContext db) : IRequestHandler<GetUnpaidFinesByCategoryQuery, Result<PaginatedList<FineDto>>>
     {
-        public async Task<Result<PaginatedList<FineDto>>> Handle(GetUnpaidFinesQuery request, CancellationToken cancellationToken)
+        public async Task<Result<PaginatedList<FineDto>>> Handle(GetUnpaidFinesByCategoryQuery request, CancellationToken cancellationToken)
         {
             var finesQuery = db.Fines
                 .AsNoTracking()
-                .Where(fine => fine.Status == FineStatus.Unpaid);
+                .Where(fine => fine.Status == FineStatus.Unpaid && fine.BorrowRecord.BookCopy.Book.BookCategories.Any(bookCategory => bookCategory.CategoryId == request.CategoryId));
             var totalCount = await finesQuery.CountAsync(cancellationToken);
 
             if (totalCount <= 0)
