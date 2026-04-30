@@ -192,7 +192,8 @@ CREATE TABLE [fines] (
     [status] varchar(50) NOT NULL DEFAULT 'unpaid',
     [amount] money NOT NULL DEFAULT (0),
     [description] nvarchar(500),
-    [fine_date] datetime2 NOT NULL DEFAULT GETUTCDATE()
+    [fine_date] datetime2 NOT NULL DEFAULT GETUTCDATE(),
+    [paid_at] datetime2
 )
 GO
 

@@ -12,11 +12,12 @@ namespace Lms.Domain.Circulation
         public decimal Amount { get; private set; }
         public string Description { get; private set; } = string.Empty;
         public DateTimeOffset FineDate { get; }
+        public DateTimeOffset? PaidAt { get; private set; }
 
         private Fine()
         {}
 
-        private Fine(Guid id, Guid memberId, Guid borrowRecordId, FineStatus status, decimal amount, string description, DateTimeOffset fineDate)
+        private Fine(Guid id, Guid memberId, Guid borrowRecordId, FineStatus status, decimal amount, string description, DateTimeOffset fineDate, DateTimeOffset? paidAt)
         {
             Id = id;
             MemberId = memberId;
@@ -25,6 +26,7 @@ namespace Lms.Domain.Circulation
             Amount = amount;
             Description = description;
             FineDate = fineDate;
+            PaidAt = paidAt;
         }
 
         internal static Result<Fine> Create(
@@ -34,7 +36,8 @@ namespace Lms.Domain.Circulation
             decimal amount,
             string description,
             DateTimeOffset fineDate,
-            FineStatus status=FineStatus.Unpaid
+            FineStatus status=FineStatus.Unpaid,
+            DateTimeOffset? paidAt=null
         )
         {
             List<Error> errors = [];
@@ -74,7 +77,7 @@ namespace Lms.Domain.Circulation
                 return errors;
             }
 
-            return new Fine(id, memberId, borrowRecordId, status, amount, description, fineDate);
+            return new Fine(id, memberId, borrowRecordId, status, amount, description, fineDate, paidAt);
         }
 
         public Result<Updated> ChangeAmount(decimal amount)
@@ -96,6 +99,7 @@ namespace Lms.Domain.Circulation
             }
 
             Status = FineStatus.Paid;
+            PaidAt = DateTimeOffset.UtcNow;
             return Result.Updated;
         }
 
