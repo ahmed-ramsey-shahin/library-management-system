@@ -65,5 +65,12 @@ namespace Lms.Application.Common.Errors
         public static Error FineDescriptionLength => Error.Validation("ApplicationErrors.Fines.FineDescriptionLength", "Fine description length cannot exceed 500 characters.");
 
         public static Error FineNotFound => Error.NotFound("ApplicationErrors.Fine.FineNotFound", "The required fine was not found.");
+
+        public static Error EmailInvalid => Error.Validation("ApplicationErrors.User.EmailInvalid", "Invalid email.");
+        public static Error PhoneNumberInvalid => Error.Validation("ApplicationErrors.User.PhoneNumberInvalid", "Invalid phone number.");
+        public static Error NameLength => Error.Validation("ApplicationErrors.User.NameLength", "The first or last name must be less than 50 caharacters.");
+        public static Error AddressLength => Error.Validation("ApplicationErrors.User.AddressLength", "The address must be less than 512 caharacters.");
+        public static Error EmailIsUsed => Error.Conflict("ApplicationErrors.User.EmailIsUsed", "This email is used by another user.");
+        public static Error PhoneNumberIsUsed => Error.Conflict("ApplicationErrors.User.PhoneNumberIsUsed", "This phone number is used by another user.");
     }
 }
