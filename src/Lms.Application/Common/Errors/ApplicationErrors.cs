@@ -72,5 +72,7 @@ namespace Lms.Application.Common.Errors
         public static Error AddressLength => Error.Validation("ApplicationErrors.User.AddressLength", "The address must be less than 512 caharacters.");
         public static Error EmailIsUsed => Error.Conflict("ApplicationErrors.User.EmailIsUsed", "This email is used by another user.");
         public static Error PhoneNumberIsUsed => Error.Conflict("ApplicationErrors.User.PhoneNumberIsUsed", "This phone number is used by another user.");
+
+        public static Error UserHasUnpaidFines => Error.Failure("ApplicationErrors.User.UserHasUnpaidFines", "This user still has unpaid fines.");
     }
 }
