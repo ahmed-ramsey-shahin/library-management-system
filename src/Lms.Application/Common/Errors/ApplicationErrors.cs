@@ -74,5 +74,6 @@ namespace Lms.Application.Common.Errors
         public static Error PhoneNumberIsUsed => Error.Conflict("ApplicationErrors.User.PhoneNumberIsUsed", "This phone number is used by another user.");
 
         public static Error UserHasUnpaidFines => Error.Failure("ApplicationErrors.User.UserHasUnpaidFines", "This user still has unpaid fines.");
+        public static Error NotLibrarian => Error.Unauthorized("ApplicationErrors.User.NotLibrarian", "This operation is only allowed for librarians.");
     }
 }
