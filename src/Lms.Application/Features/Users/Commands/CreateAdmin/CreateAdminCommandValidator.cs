@@ -32,6 +32,11 @@ namespace Lms.Application.Features.Users.Commands.CreateAdmin
                 .MaximumLength(512)
                 .WithErrorCode(ApplicationErrors.AddressLength.Code)
                 .WithMessage(ApplicationErrors.AddressLength.Description);
+
+            RuleFor(command => command.Password)
+                .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
+                .WithErrorCode(ApplicationErrors.PasswordInvalid.Code)
+                .WithMessage(ApplicationErrors.PasswordInvalid.Description);
         }
     }
 }

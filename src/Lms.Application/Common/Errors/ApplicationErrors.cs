@@ -75,5 +75,7 @@ namespace Lms.Application.Common.Errors
 
         public static Error UserHasUnpaidFines => Error.Failure("ApplicationErrors.User.UserHasUnpaidFines", "This user still has unpaid fines.");
         public static Error NotLibrarian => Error.Unauthorized("ApplicationErrors.User.NotLibrarian", "This operation is only allowed for librarians.");
+
+        public static Error PasswordInvalid => Error.Validation("ApplicationErrors.User.PasswordInvalid", "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).");
     }
 }
