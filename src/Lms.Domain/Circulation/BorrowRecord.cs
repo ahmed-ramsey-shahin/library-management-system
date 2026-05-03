@@ -111,11 +111,19 @@ namespace Lms.Domain.Circulation
             DateTimeOffset? paidAt=null
         )
         {
+            var today = DateTimeOffset.UtcNow.Date;
             var fine = _fines.FirstOrDefault(fine => fine.Id == id);
 
             if (fine is not null)
             {
                 return BorrowRecordErrors.FineAlreadyExists;
+            }
+
+            var alreadyFinedToday = _fines.Any(fine => fine.FineDate.Date == today);
+
+            if (alreadyFinedToday)
+            {
+                return BorrowRecordErrors.DailyFineAlreadyAssessed;
             }
 
             fineDate ??= DateTimeOffset.UtcNow;

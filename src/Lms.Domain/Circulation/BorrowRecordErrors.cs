@@ -22,5 +22,6 @@ namespace Lms.Domain.Circulation
         public static Error CannotMarkAsLate => Error.Forbidden("BorrowRecord.CannotMarkAsLate", "Cannot mark this record as late.");
         public static Error DueDateLessThanWeek => Error.Forbidden("BorrowRecord.DueDate.DueDateLessThanWeek", "Due date must be more than a week.");
         public static Error PickupDeadlineLessThanDay => Error.Forbidden("BorrowRecord.PickupDeadline.PickupDeadlineLessThanDay", "Pickup deadline can no be less than a day.");
+        public static Error DailyFineAlreadyAssessed => Error.Forbidden("BorrowRecord.Fines.DailyFineAlreadyAsseseed", "The daily fine for this borrow record is already assessed.");
     }
 }
