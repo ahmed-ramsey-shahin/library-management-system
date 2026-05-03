@@ -6,15 +6,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 
-namespace Lms.Application.Features.BorrowRecords.Commands.ProcessLateBorrowRecords
+namespace Lms.Application.Features.BorrowRecords.Commands.MarkOverdueBorrowRecords
 {
-    public sealed class ProcessLateBorrowRecordsCommandHandler(
+    public sealed class MarkOverdueBorrowRecordsCommandHandler(
         IAppDbContext db,
-        ILogger<ProcessLateBorrowRecordsCommandHandler> logger,
+        ILogger<MarkOverdueBorrowRecordsCommandHandler> logger,
         HybridCache cache
-    ) : IRequestHandler<ProcessLateBorrowRecordsCommand, Result<Updated>>
+    ) : IRequestHandler<MarkOverdueBorrowRecordsCommand, Result<Updated>>
     {
-        public async Task<Result<Updated>> Handle(ProcessLateBorrowRecordsCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Updated>> Handle(MarkOverdueBorrowRecordsCommand request, CancellationToken cancellationToken)
         {
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
             List<Error> errors = [];
