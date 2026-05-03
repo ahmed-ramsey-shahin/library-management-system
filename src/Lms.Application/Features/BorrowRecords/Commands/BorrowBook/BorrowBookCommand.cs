@@ -9,7 +9,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
         Guid BookId,
         DateOnly DueDate,
         DateOnly PickupDeadline,
-        Guid IdempotencyKey
+        string IdempotencyKey
     ) : IRequest<Result<Guid>>, IIdempotentCommand;
 
 }

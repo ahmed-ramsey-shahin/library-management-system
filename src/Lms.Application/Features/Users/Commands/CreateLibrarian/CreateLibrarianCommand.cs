@@ -12,6 +12,6 @@ namespace Lms.Application.Features.Users.Commands.CreateLibrarian
         string Address,
         string Password,
         List<Guid> CategoryIds,
-        Guid IdempotencyKey
+        string IdempotencyKey
     ) : IRequest<Result<Guid>>, IIdempotentCommand;
 }

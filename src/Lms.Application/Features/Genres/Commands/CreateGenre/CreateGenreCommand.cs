@@ -5,5 +5,5 @@ using MediatR;
 
 namespace Lms.Application.Features.Genres.Commands.CreateGenre
 {
-    public sealed record CreateGenreCommand(string Name, Guid IdempotencyKey) : IRequest<Result<GenreDto>>, IIdempotentCommand;
+    public sealed record CreateGenreCommand(string Name, string IdempotencyKey) : IRequest<Result<GenreDto>>, IIdempotentCommand;
 }

@@ -5,5 +5,5 @@ using MediatR;
 
 namespace Lms.Application.Features.Categories.Commands.CreateCategory
 {
-    public sealed record CreateCategoryCommand(string Name, Guid IdempotencyKey) : IRequest<Result<CategoryDto>>, IIdempotentCommand;
+    public sealed record CreateCategoryCommand(string Name, string IdempotencyKey) : IRequest<Result<CategoryDto>>, IIdempotentCommand;
 }

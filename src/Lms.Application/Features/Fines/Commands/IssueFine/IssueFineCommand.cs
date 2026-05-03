@@ -9,6 +9,6 @@ namespace Lms.Application.Features.Fines.Commands.IssueFine
         decimal Amount,
         string Description,
         DateTimeOffset FineDate,
-        Guid IdempotencyKey
+        string IdempotencyKey
     ) : IRequest<Result<Guid>>, IIdempotentCommand;
 }

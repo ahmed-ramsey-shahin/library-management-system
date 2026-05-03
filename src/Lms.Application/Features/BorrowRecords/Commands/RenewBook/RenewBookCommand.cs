@@ -7,6 +7,6 @@ namespace Lms.Application.Features.BorrowRecords.Commands.RenewBook
     public sealed record RenewBookCommand(
         Guid BorrowRecordId,
         DateOnly DueDate,
-        Guid IdempotencyKey
+        string IdempotencyKey
     ) : IIdempotentCommand, IRequest<Result<Updated>>;
 }

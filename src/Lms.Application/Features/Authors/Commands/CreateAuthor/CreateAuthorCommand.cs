@@ -5,5 +5,5 @@ using MediatR;
 
 namespace Lms.Application.Features.Authors.Commands.CreateAuthor
 {
-    public sealed record CreateAuthorCommand(string Name, Guid IdempotencyKey) : IRequest<Result<AuthorDto>>, IIdempotentCommand;
+    public sealed record CreateAuthorCommand(string Name, string IdempotencyKey) : IRequest<Result<AuthorDto>>, IIdempotentCommand;
 }

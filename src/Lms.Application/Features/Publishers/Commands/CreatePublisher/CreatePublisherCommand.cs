@@ -5,5 +5,5 @@ using MediatR;
 
 namespace Lms.Application.Features.Publishers.Commands.CreatePublisher
 {
-    public sealed record CreatePublisherCommand(string Name, Guid IdempotencyKey) : IRequest<Result<PublisherDto>>, IIdempotentCommand;
+    public sealed record CreatePublisherCommand(string Name, string IdempotencyKey) : IRequest<Result<PublisherDto>>, IIdempotentCommand;
 }

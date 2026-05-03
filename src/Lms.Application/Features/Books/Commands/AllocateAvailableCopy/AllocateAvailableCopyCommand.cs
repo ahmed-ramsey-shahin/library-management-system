@@ -6,6 +6,6 @@ namespace Lms.Application.Features.Books.Commands.AllocateAvailableCopy
 {
     public sealed record AllocateAvailableCopyCommand(
         Guid BookId,
-        Guid IdempotencyKey
+        string IdempotencyKey
     ) : IRequest<Result<Guid>>, IIdempotentCommand;
 }

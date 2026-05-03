@@ -5,5 +5,5 @@ using MediatR;
 
 namespace Lms.Application.Features.Keywords.Commands.CreateKeyword
 {
-    public sealed record CreateKeywordCommand(string Name, Guid IdempotencyKey) : IRequest<Result<KeywordDto>>, IIdempotentCommand;
+    public sealed record CreateKeywordCommand(string Name, string IdempotencyKey) : IRequest<Result<KeywordDto>>, IIdempotentCommand;
 }

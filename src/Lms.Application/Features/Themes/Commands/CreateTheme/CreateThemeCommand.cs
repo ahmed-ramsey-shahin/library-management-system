@@ -5,5 +5,5 @@ using MediatR;
 
 namespace Lms.Application.Features.Themes.Commands.CreateTheme
 {
-    public sealed record CreateThemeCommand(string Name, Guid IdempotencyKey) : IRequest<Result<ThemeDto>>, IIdempotentCommand;
+    public sealed record CreateThemeCommand(string Name, string IdempotencyKey) : IRequest<Result<ThemeDto>>, IIdempotentCommand;
 }

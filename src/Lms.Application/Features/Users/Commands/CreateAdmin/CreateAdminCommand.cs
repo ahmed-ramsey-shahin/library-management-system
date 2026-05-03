@@ -11,6 +11,6 @@ namespace Lms.Application.Features.Users.Commands.CreateAdmin
         string PhoneNumber,
         string Address,
         string Password,
-        Guid IdempotencyKey
+        string IdempotencyKey
     ) : IRequest<Result<Guid>>, IIdempotentCommand;
 }

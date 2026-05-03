@@ -5,5 +5,5 @@ using MediatR;
 
 namespace Lms.Application.Features.Audiences.Commands.CreateAudience
 {
-    public sealed record CreateAudienceCommand(string Name, Guid IdempotencyKey) : IRequest<Result<AudienceDto>>, IIdempotentCommand;
+    public sealed record CreateAudienceCommand(string Name, string IdempotencyKey) : IRequest<Result<AudienceDto>>, IIdempotentCommand;
 }

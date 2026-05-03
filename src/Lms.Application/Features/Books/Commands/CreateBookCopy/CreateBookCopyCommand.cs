@@ -12,6 +12,6 @@ namespace Lms.Application.Features.Books.Commands.CreateBookCopy
         BookCopyState? State,
         string Location,
         DateOnly? AcquisitionDate,
-        Guid IdempotencyKey
+        string IdempotencyKey
     ) : IRequest<Result<Guid>>, IIdempotentCommand;
 }
