@@ -14,7 +14,7 @@ namespace Lms.Application.Features.Users.Dtos
         public string Address { get; init; } = null!;
         public string LibraryCardNumber { get; init; } = null!;
         public UserStatus Status { get; init; }
-        public List<BorrowRecordDto> BorrowRecords { get; init; } = null!;
+        public List<BorrowRecordSummaryDto> BorrowRecords { get; init; } = null!;
         public List<FineDto> Fines { get; init; } = null!;
         public List<BookSummaryDto> Books { get; init; } = null!;
     }
