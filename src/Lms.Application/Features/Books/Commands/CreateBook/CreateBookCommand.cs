@@ -25,6 +25,6 @@ namespace Lms.Application.Features.Books.Commands.CreateBook
         public List<Guid> GenreIds { get; init; } = null!;
         public List<Guid> AudienceIds { get; init; } = null!;
         public List<Guid> AuthorIds { get; init; } = null!;
-        public string IdempotencyKey { get; init; }
+        public string IdempotencyKey { get; init; } = null!;
     }
 }
