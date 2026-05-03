@@ -64,7 +64,7 @@ namespace Lms.Application.Features.Users.Commands.UpdateLibrarianCategories
             }
 
             await db.SaveChangesAsync(cancellationToken);
-            await cache.RemoveByTagAsync("user", cancellationToken);
+            await cache.RemoveByTagAsync("librarian", cancellationToken);
 
             if (logger.IsEnabled(LogLevel.Information))
             {

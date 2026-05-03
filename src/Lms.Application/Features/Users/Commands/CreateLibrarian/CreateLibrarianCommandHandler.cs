@@ -87,7 +87,7 @@ namespace Lms.Application.Features.Users.Commands.CreateLibrarian
 
             db.Users.Add(user);
             await db.SaveChangesAsync(cancellationToken);
-            await cache.RemoveByTagAsync("user", cancellationToken);
+            await cache.RemoveByTagAsync("librarian", cancellationToken);
 
             if (logger.IsEnabled(LogLevel.Information))
             {

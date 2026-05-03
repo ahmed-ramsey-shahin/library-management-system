@@ -65,7 +65,7 @@ namespace Lms.Application.Features.Users.Commands.CreateMember
             var user = userCreationResult.Value;
             db.Users.Add(user);
             await db.SaveChangesAsync(cancellationToken);
-            await cache.RemoveByTagAsync("user", cancellationToken);
+            await cache.RemoveByTagAsync("member", cancellationToken);
 
             if (logger.IsEnabled(LogLevel.Information))
             {
