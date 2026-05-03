@@ -19,6 +19,9 @@ namespace Lms.Application.Features.Users.Queries.GetLibrariansByCategory
                 .Where(user => Role.Librarian == user.Role && user.LibrarianCategories.Any(librarianCategory => librarianCategory.CategoryId == request.CategoryId));
             var totalCount = await librariansQuery.CountAsync(cancellationToken);
             var librarians = await librariansQuery
+                .OrderBy(librarian => librarian.Id)
+                .Skip((request.Page - 1) * request.PageSize)
+                .Take(request.PageSize)
                 .Select(librarian => new LibrarianSummaryDto
                 {
                     LibrarianId = librarian.Id,
