@@ -18,7 +18,7 @@ namespace Lms.Application.Features.Users.Queries.GetAdminById
         {
             var admin = await db.Users
                 .AsNoTracking()
-                .Where(user => user.Role == Role.Admin)
+                .Where(user => user.Role == Role.Admin && user.Id == request.AdminId)
                 .Select(admin => new AdminDto
                 {
                     AdminId = admin.Id,
