@@ -17,6 +17,7 @@ namespace Lms.Domain.Circulation
         public decimal BorrowingCost { get; private set; }
         public int RenewalCount { get; private set; }
         public DateOnly PickupDeadline { get; private set; }
+        public bool PickedUp { get; private set; }
         private readonly List<Fine> _fines = [];
         public IReadOnlyCollection<Fine> Fines => _fines.AsReadOnly();
 
@@ -376,6 +377,22 @@ namespace Lms.Domain.Circulation
 
             Status = BorrowRecordStatus.Lost;
             AddEvent(new BorrowRecordMarkedAsLostEvent(Id));
+            return Result.Updated;
+        }
+
+        public Result<Updated> Pickup()
+        {
+            if (PickedUp)
+            {
+                return Result.Updated;
+            }
+
+            if (Status != BorrowRecordStatus.Accepted)
+            {
+                return BorrowRecordErrors.AlreadyPickedup;
+            }
+
+            PickedUp = true;
             return Result.Updated;
         }
     }

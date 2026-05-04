@@ -181,6 +181,7 @@ CREATE TABLE [borrow_records] (
     [pickup_deadline] datetime2,
     [created_at] datetime2 NOT NULL DEFAULT GETUTCDATE(),
     [is_deleted] bit NOT NULL DEFAULT (0)
+    [pickedup] bit NOT NULL DEFAULT(0)
 )
 GO
 

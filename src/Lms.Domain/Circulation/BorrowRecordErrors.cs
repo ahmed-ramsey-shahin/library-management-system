@@ -24,5 +24,6 @@ namespace Lms.Domain.Circulation
         public static Error PickupDeadlineLessThanDay => Error.Forbidden("BorrowRecord.PickupDeadline.PickupDeadlineLessThanDay", "Pickup deadline can no be less than a day.");
         public static Error DailyFineAlreadyAssessed => Error.Forbidden("BorrowRecord.Fines.DailyFineAlreadyAsseseed", "The daily fine for this borrow record is already assessed.");
         public static Error CannotMarkAsLost => Error.Forbidden("BorrowRecord.CannotMarkAsLost", "Cannot mark this record as lost.");
+        public static Error AlreadyPickedup => Error.Forbidden("BorrowRecord.AlreadyPickedup", "This borrow record is already pickedup.");
     }
 }
