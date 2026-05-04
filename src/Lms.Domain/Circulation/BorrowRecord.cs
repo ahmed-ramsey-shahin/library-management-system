@@ -395,5 +395,16 @@ namespace Lms.Domain.Circulation
             PickedUp = true;
             return Result.Updated;
         }
+
+        public Result<Updated> OverrideDueDate(DateOnly dueDate)
+        {
+            if (dueDate <= DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)))
+            {
+                return BorrowRecordErrors.DueDateLessThanWeek;
+            }
+
+            DueDate = dueDate;
+            return Result.Updated;
+        }
     }
 }
