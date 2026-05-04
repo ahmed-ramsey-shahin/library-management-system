@@ -361,5 +361,22 @@ namespace Lms.Domain.Circulation
 
             return Result.Updated;
         }
+
+        public Result<Updated> MarkAsLost()
+        {
+            if (Status == BorrowRecordStatus.Lost)
+            {
+                return Result.Updated;
+            }
+
+            if (Status != BorrowRecordStatus.Late && Status != BorrowRecordStatus.Accepted)
+            {
+                return BorrowRecordErrors.CannotMarkAsLost;
+            }
+
+            Status = BorrowRecordStatus.Lost;
+            AddEvent(new BorrowRecordMarkedAsLostEvent(Id));
+            return Result.Updated;
+        }
     }
 }
