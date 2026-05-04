@@ -21,6 +21,7 @@ namespace Lms.Application.Features.BorrowRecords.EventHandlers
                 logger.LogInformation("-- Borrow record {BorrowRecordId} marked as lost event started. --", notification.BorrowRecordId);
 
             var borrowRecord = await db.BorrowRecords
+                .AsNoTracking()
                 .Include(record => record.BookCopy)
                 .ThenInclude(copy => copy.Book)
                 .FirstOrDefaultAsync(record => record.Id == notification.BorrowRecordId, cancellationToken);
