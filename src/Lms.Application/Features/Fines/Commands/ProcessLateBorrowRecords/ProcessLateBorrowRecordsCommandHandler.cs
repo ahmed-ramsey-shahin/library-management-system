@@ -12,9 +12,9 @@ namespace Lms.Application.Features.Fines.Commands.ProcessLateBorrowRecords
         IAppDbContext db,
         ILogger<ProcessLateBorrowRecordsCommandHandler> logger,
         HybridCache cache
-    ) : IRequestHandler<ProcessLateBorrowRecordsCommand, Result<Updated>>
+    ) : IRequestHandler<ProcessLateBorrowRecordsCommand>
     {
-        public async Task<Result<Updated>> Handle(ProcessLateBorrowRecordsCommand request, CancellationToken cancellationToken)
+        public async Task Handle(ProcessLateBorrowRecordsCommand request, CancellationToken cancellationToken)
         {
             List<Error> errors = [];
             var lateBorrowRecords = await db.BorrowRecords
@@ -50,17 +50,10 @@ namespace Lms.Application.Features.Fines.Commands.ProcessLateBorrowRecords
                 await cache.RemoveByTagAsync(["borrow-record", "fine"],cancellationToken);
             }
 
-            if (errors.Count > 0)
+            if (errors.Count > 0 && logger.IsEnabled(LogLevel.Warning))
             {
-                if (logger.IsEnabled(LogLevel.Warning))
-                {
-                    logger.LogWarning("Some late borrow records could not be processed. {@Errors}.", errors);
-                }
-
-                return errors;
+                logger.LogWarning("Some late borrow records could not be processed. {@Errors}.", errors);
             }
-
-            return Result.Updated;
         }
     }
 }

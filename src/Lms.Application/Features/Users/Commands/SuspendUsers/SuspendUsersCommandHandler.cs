@@ -1,6 +1,5 @@
 using Lms.Application.Common.Interfaces;
 using Lms.Domain.Circulation;
-using Lms.Domain.Common.Results;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +12,9 @@ namespace Lms.Application.Features.Users.Commands.SuspendUsers
         IAppDbContext db,
         ILogger<SuspendUsersCommandHandler> logger,
         HybridCache cache
-    ) : IRequestHandler<SuspendUsersCommand, Result<Updated>>
+    ) : IRequestHandler<SuspendUsersCommand>
     {
-        public async Task<Result<Updated>> Handle(SuspendUsersCommand request, CancellationToken cancellationToken)
+        public async Task Handle(SuspendUsersCommand request, CancellationToken cancellationToken)
         {
             var usersToSuspend = await db.Users
                 .Where(user => user.Role == Role.Member && user.Status != UserStatus.Suspended && user.Fines.Any(
@@ -48,8 +47,6 @@ namespace Lms.Application.Features.Users.Commands.SuspendUsers
             {
                 logger.LogInformation("{NumberOfSuspendedUsers} users were suspended.", suspendedUsers);
             }
-
-            return Result.Updated;
         }
     }
 }
