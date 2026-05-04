@@ -6,15 +6,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 
-namespace Lms.Application.Features.BorrowRecords.Commands.ExpireUncalimedReservation
+namespace Lms.Application.Features.BorrowRecords.Commands.ExpireUnclaimedReservation
 {
-    public sealed class ExpireUncalimedReservationCommandHandler(
-        ILogger<ExpireUncalimedReservationCommandHandler> logger,
+    public sealed class ExpireUnclaimedReservationCommandHandler(
+        ILogger<ExpireUnclaimedReservationCommandHandler> logger,
         HybridCache cache,
         IAppDbContext db
-    ) : IRequestHandler<ExpireUncalimedReservationCommand>
+    ) : IRequestHandler<ExpireUnclaimedReservationCommand>
     {
-        public async Task Handle(ExpireUncalimedReservationCommand request, CancellationToken cancellationToken)
+        public async Task Handle(ExpireUnclaimedReservationCommand request, CancellationToken cancellationToken)
         {
             logger.LogInformation("Expiring uncliamed reservations ...");
             List<Error> errors = [];
@@ -51,7 +51,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.ExpireUncalimedReserva
 
                 if (markAvailableResult.IsError)
                 {
-                    logger.LogError("Book copy {BookCopyId} could not be marked as avilable. {@Errors}", markAvailableResult.Errors);
+                    logger.LogError("Book copy {BookCopyId} could not be marked as available. {@Errors}", markAvailableResult.Errors);
                 }
             }
 
