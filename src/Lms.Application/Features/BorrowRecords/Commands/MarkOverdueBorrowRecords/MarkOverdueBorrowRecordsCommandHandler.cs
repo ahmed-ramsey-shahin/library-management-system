@@ -12,9 +12,9 @@ namespace Lms.Application.Features.BorrowRecords.Commands.MarkOverdueBorrowRecor
         IAppDbContext db,
         ILogger<MarkOverdueBorrowRecordsCommandHandler> logger,
         HybridCache cache
-    ) : IRequestHandler<MarkOverdueBorrowRecordsCommand, Result<Updated>>
+    ) : IRequestHandler<MarkOverdueBorrowRecordsCommand>
     {
-        public async Task<Result<Updated>> Handle(MarkOverdueBorrowRecordsCommand request, CancellationToken cancellationToken)
+        public async Task Handle(MarkOverdueBorrowRecordsCommand request, CancellationToken cancellationToken)
         {
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
             List<Error> errors = [];
@@ -44,13 +44,6 @@ namespace Lms.Application.Features.BorrowRecords.Commands.MarkOverdueBorrowRecor
             {
                 logger.LogInformation("Processed late borrow records with {NumberOfErrors} Errors.", errors.Count);
             }
-
-            if (errors.Count > 0)
-            {
-                return errors;
-            }
-
-            return Result.Updated;
         }
     }
 }

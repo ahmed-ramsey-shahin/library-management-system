@@ -8,3 +8,4 @@ public sealed record BookReturnedEvent(Guid BorrowRecordId) : DomainEvent;
 public sealed record BookRenewedEvent(Guid BorrowRecordId) : DomainEvent;
 public sealed record BorrowRecordMarkedAsLateEvent(Guid BorrowRecordId) : DomainEvent;
 public sealed record FinePaidEvent(Guid FineId, Guid BorrowRecordId) : DomainEvent;
+public sealed record BorrowRecordMarkedAsLostEvent(Guid BorrowRecordId) : DomainEvent;

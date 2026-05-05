@@ -8,5 +8,6 @@ namespace Lms.Domain.Circulation
         Late,
         Returned,
         Canceled,
+        Lost,
     }
 }

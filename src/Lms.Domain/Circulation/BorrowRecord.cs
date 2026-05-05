@@ -17,6 +17,7 @@ namespace Lms.Domain.Circulation
         public decimal BorrowingCost { get; private set; }
         public int RenewalCount { get; private set; }
         public DateOnly PickupDeadline { get; private set; }
+        public bool PickedUp { get; private set; }
         private readonly List<Fine> _fines = [];
         public IReadOnlyCollection<Fine> Fines => _fines.AsReadOnly();
 
@@ -359,6 +360,50 @@ namespace Lms.Domain.Circulation
                 return updateResult.Errors!;
             }
 
+            return Result.Updated;
+        }
+
+        public Result<Updated> MarkAsLost()
+        {
+            if (Status == BorrowRecordStatus.Lost)
+            {
+                return Result.Updated;
+            }
+
+            if (Status != BorrowRecordStatus.Late && Status != BorrowRecordStatus.Accepted)
+            {
+                return BorrowRecordErrors.CannotMarkAsLost;
+            }
+
+            Status = BorrowRecordStatus.Lost;
+            AddEvent(new BorrowRecordMarkedAsLostEvent(Id));
+            return Result.Updated;
+        }
+
+        public Result<Updated> Pickup()
+        {
+            if (PickedUp)
+            {
+                return Result.Updated;
+            }
+
+            if (Status != BorrowRecordStatus.Accepted)
+            {
+                return BorrowRecordErrors.AlreadyPickedup;
+            }
+
+            PickedUp = true;
+            return Result.Updated;
+        }
+
+        public Result<Updated> OverrideDueDate(DateOnly dueDate)
+        {
+            if (dueDate <= DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)))
+            {
+                return BorrowRecordErrors.DueDateLessThanWeek;
+            }
+
+            DueDate = dueDate;
             return Result.Updated;
         }
     }
