@@ -1,6 +1,7 @@
 using Lms.Application.Common.Errors;
 using Lms.Application.Common.Interfaces;
 using Lms.Application.Features.BorrowRecords.Dto;
+using Lms.Application.Features.Fines.Dtos;
 using Lms.Domain.Common.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,6 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById
             CancellationToken cancellationToken
         )
         {
-            // TODO: Complete the borrow record dto after making the fine and user commands.
             var borrowRecord = await db.BorrowRecords
                 .AsNoTracking()
                 .Where(record => record.Id == request.BorrowRecordId)
@@ -32,7 +32,24 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById
                     DueDate = record.DueDate,
                     PickupDeadline = record.PickupDeadline,
                     BorrowingCost = record.BorrowingCost,
-                    RenewalCount = record.RenewalCount
+                    RenewalCount = record.RenewalCount,
+                    BookTitle = record.BookCopy.Book.Title,
+                    Email = record.Member.Email,
+                    FullName = $"{record.Member.FirstName} {record.Member.LastName}",
+                    LibraryCardNumber = record.Member.LibraryCardNumber,
+                    Fines = record.Fines.Select(fine => new FineDto
+                    {
+                        FineId = fine.Id,
+                        MemberId = fine.MemberId,
+                        MemberName = $"{fine.Member.FirstName} {fine.Member.LastName}",
+                        BorrowRecordId = fine.BorrowRecordId,
+                        BookTitle = fine.BorrowRecord.BookCopy.Book.Title,
+                        Status = fine.Status,
+                        Amount = fine.Amount,
+                        Description = fine.Description,
+                        FineDate = fine.FineDate,
+                        PaidAt = fine.PaidAt
+                    }).ToList()
                 }).FirstOrDefaultAsync(cancellationToken);
 
             if (borrowRecord is null)
