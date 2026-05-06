@@ -42,7 +42,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.ExpireUnclaimedReserva
 
                 if (updateResult.IsError)
                 {
-                    logger.LogError("Borrow record {BorrowRecordId} could not be rejected. {@Errors}.", updateResult.Errors);
+                    logger.LogError("Borrow record {BorrowRecordId} could not be rejected. {@Errors}.", borrowRecord.Id, updateResult.Errors);
                     continue;
                 }
 
@@ -51,7 +51,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.ExpireUnclaimedReserva
 
                 if (markAvailableResult.IsError)
                 {
-                    logger.LogError("Book copy {BookCopyId} could not be marked as available. {@Errors}", markAvailableResult.Errors);
+                    logger.LogError("Book copy {BookCopyId} could not be marked as available. {@Errors}", borrowRecord.Id, markAvailableResult.Errors);
                 }
             }
 
