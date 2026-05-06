@@ -11,11 +11,12 @@
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="libphonenumber-csharp" Version="9.0.29" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Lms.Domain\Lms.Domain.csproj" />
-    <ProjectReference Include="..\Lms.Infrastructure\Lms.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
