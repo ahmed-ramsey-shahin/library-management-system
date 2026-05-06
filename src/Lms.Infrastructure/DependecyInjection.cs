@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Lms.Infrastructure.Services;
 
 namespace Lms.Infrastructure
 {
@@ -22,6 +23,7 @@ namespace Lms.Infrastructure
                 options.UseSqlServer(connectionString);
             });
             services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>()!);
+            services.AddScoped<IEmailService, EmailService>();
             return services;
         }
     }
