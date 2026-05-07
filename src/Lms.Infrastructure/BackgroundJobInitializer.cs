@@ -1,6 +1,8 @@
 using System.Reflection;
 using Hangfire;
+using Lms.Application.Features.BorrowRecords.Commands.ExpireUnclaimedReservation;
 using Lms.Application.Features.Circulations.Commands.RunDailyProcessing;
+using Lms.Application.Features.Users.Commands.SuspendUsers;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +32,24 @@ namespace Lms.Infrastructure
             recurringJobManager.AddOrUpdate<ISender>(
                 "daily-circulation",
                 sender => sender.Send(new RunDailyProcessingCommand(), default),
+                Cron.Daily
+            );
+        }
+
+        private static void ExpireUnclaimedReservation(IRecurringJobManager recurringJobManager)
+        {
+            recurringJobManager.AddOrUpdate<ISender>(
+                "expire-unclaimed-reservation",
+                sender => sender.Send(new ExpireUnclaimedReservationCommand(), default),
+                Cron.Daily
+            );
+        }
+
+        private static void SuspendUsers(IRecurringJobManager recurringJobManager)
+        {
+            recurringJobManager.AddOrUpdate<ISender>(
+                "suspend-users",
+                sender => sender.Send(new SuspendUsersCommand(), default),
                 Cron.Daily
             );
         }
