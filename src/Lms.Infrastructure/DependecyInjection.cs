@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Lms.Infrastructure.Services;
 using Resend;
+using Hangfire;
 
 namespace Lms.Infrastructure
 {
@@ -31,6 +32,9 @@ namespace Lms.Infrastructure
             services.Configure<ResendClientOptions>(options => options.ApiToken = configuration["Email:ApiKey"]!);
             services.AddTransient<IResend, ResendClient>();
             services.AddScoped<IEmailService, EmailService>();
+            // hangfire service configuration
+            services.AddHangfire(config => config.UseSqlServerStorage(connectionString));
+            services.AddHangfireServer();
             return services;
         }
     }
