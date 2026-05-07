@@ -41,7 +41,7 @@ namespace Lms.Infrastructure
             recurringJobManager.AddOrUpdate<ISender>(
                 "expire-unclaimed-reservation",
                 sender => sender.Send(new ExpireUnclaimedReservationCommand(), default),
-                Cron.Daily
+                Cron.Daily(1)
             );
         }
 
@@ -50,7 +50,7 @@ namespace Lms.Infrastructure
             recurringJobManager.AddOrUpdate<ISender>(
                 "suspend-users",
                 sender => sender.Send(new SuspendUsersCommand(), default),
-                Cron.Daily
+                Cron.Daily(2)
             );
         }
 #pragma warning restore
