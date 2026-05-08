@@ -125,8 +125,21 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
             }
 
             db.BorrowRecords.Add(borrowRecordCreationResult.Value);
-            db.SetOriginalVersion(copy, copy.Version);
-            await db.SaveChangesAsync(cancellationToken);
+
+            try
+            {
+                await db.SaveChangesAsync(cancellationToken);
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                if (logger.IsEnabled(LogLevel.Error))
+                {
+                    logger.LogError("Concurrency conflict: Copy {CopyId} of book {BookId} was allocated by another user.", copy.Id, book.Id);
+                }
+
+                return ApplicationErrors.ConcurrencyConflict;
+            }
+
             await cache.RemoveByTagAsync(["book-copy"], cancellationToken);
 
             if (logger.IsEnabled(LogLevel.Information))
