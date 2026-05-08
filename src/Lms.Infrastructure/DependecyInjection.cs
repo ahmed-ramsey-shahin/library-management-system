@@ -8,6 +8,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Lms.Infrastructure.Services;
 using Resend;
 using Hangfire;
+using Lms.Infrastructure.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Lms.Domain.Identity;
 
 namespace Lms.Infrastructure
 {
@@ -35,6 +40,34 @@ namespace Lms.Infrastructure
             // hangfire service configuration
             services.AddHangfire(config => config.UseSqlServerStorage(connectionString));
             services.AddHangfireServer();
+            // interfaces configuration
+            services.AddTransient<IPasswordHasher, PasswordHasher>();
+            services.AddTransient<IIdentityService, IIdentityService>();
+            services.AddTransient<ITokenProvider, TokenProvider>();
+            // authnetication configuration
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                var jwtSettings = configuration.GetSection("JwtSettings");
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]!)),
+                };
+            });
+            services.AddAuthorizationBuilder()
+                .AddPolicy("Admin", policy => policy.RequireRole(nameof(Role.Admin)))
+                .AddPolicy("Librarian", policy => policy.RequireRole(nameof(Role.Librarian)))
+                .AddPolicy("Member", policy => policy.RequireRole(nameof(Role.Member)));
             return services;
         }
     }
