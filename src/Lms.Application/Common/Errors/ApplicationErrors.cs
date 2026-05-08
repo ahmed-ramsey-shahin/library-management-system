@@ -82,6 +82,7 @@ namespace Lms.Application.Common.Errors
         public static Error ExpiredAccessTokenInvalid => Error.Conflict("ApplicationErrors.ExpiredAccessTokenInvalid", "Expired access token is not valid.");
         public static Error UserIdClaimInvalid => Error.Conflict("ApplicationErrors.UserIdClaimInvalid", "Invalid user id claim.");
         public static Error UserIdInvalid => Error.Validation("ApplicationErrors.UserIdInvalid", "Invalid user id.");
-        public static Error RefreshTokenExpired => Error.Validation("ApplicationErrors.RefreshTokenExpired", "Refresh token has expired.");
+        public static Error RefreshTokenExpired => Error.Validation("ApplicationErrors.RefreshTokenExpired", "Refresh token has expired.")
+        public static Error CredentialsInvalid => Error.Validation("ApplicationErrors.CredentialsInvalid", "User credentials invalid.");
     }
 }
