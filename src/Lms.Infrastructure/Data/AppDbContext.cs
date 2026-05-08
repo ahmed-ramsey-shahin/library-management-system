@@ -53,7 +53,7 @@ namespace Lms.Infrastructure.Data
 
         public void SetOriginalVersion<TEntity>(TEntity entity, byte[] version) where TEntity : class
         {
-            throw new NotImplementedException();
+            Entry(entity).OriginalValues["Version"] = version;
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
