@@ -78,5 +78,10 @@ namespace Lms.Application.Common.Errors
 
         public static Error PasswordInvalid => Error.Validation("ApplicationErrors.User.PasswordInvalid", "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).");
         public static Error PasswordsDontMatch => Error.Validation("ApplicationErrors.User.PasswordsDontMatch", "The old password and the real password does not match.");
+
+        public static Error ExpiredAccessTokenInvalid => Error.Conflict("ApplicationErrors.ExpiredAccessTokenInvalid", "Expired access token is not valid.");
+        public static Error UserIdClaimInvalid => Error.Conflict("ApplicationErrors.UserIdClaimInvalid", "Invalid user id claim.");
+        public static Error UserIdInvalid => Error.Validation("ApplicationErrors.UserIdInvalid", "Invalid user id.");
+        public static Error RefreshTokenExpired => Error.Validation("ApplicationErrors.RefreshTokenExpired", "Refresh token has expired.");
     }
 }
