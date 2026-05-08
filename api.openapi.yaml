@@ -1,0 +1,4875 @@
+openapi: 3.1.0
+info:
+  title: Default module
+  description: ''
+  version: 1.0.0
+tags:
+  - name: audience
+  - name: command
+  - name: create
+  - name: delete
+  - name: update
+  - name: get
+  - name: query
+  - name: book
+  - name: author
+  - name: category
+  - name: genre
+  - name: keyword
+  - name: theme
+  - name: publisher
+paths:
+  /api/audiences/:
+    post:
+      summary: Create Audience
+      deprecated: false
+      description: >-
+        Creates a new **audience**.
+
+
+        This endpoint supports idempotency to ensure that retrying a failed or
+        timed-out request does not result in duplicate audience creations. By
+        providing a unique idempotency key, subsequent requests with the same
+        key and payload will return the original successful response without
+        creating a new resource.
+
+
+        ---
+
+
+        **Request Headers**
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Idempotency-Key | string | Yes | A unique, client-generated string
+        (such as a V4 UUID) used to recognize subsequent retries of the same
+        request. If not provided, the server may reject the request or treat it
+        as a standard, non-idempotent operation. |
+
+        | Content-Type | string | Yes | Must be`application/json` |
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the audience (e.g.,
+        "adults"). Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `201 Created`
+
+        The audience was successfully created, or a previous request with the
+        same Idempotency-Key was already successfully processed. The response
+        body returns the unique resource `id` of the audience.
+
+
+        `{"id": "8ac98a8c-1998-4836-9165-00b8c06b4a9c"}`
+
+
+        `400 Bad request`
+
+        The request was malformed or missing required fields (e.g., the name is
+        empty or exceeds character limits).
+
+
+        `409 Conflict`
+
+        An audience with the provided `name` already exists, OR the
+        Idempotency-Key was reused with a different request payload.
+      tags:
+        - audience
+        - command
+        - create
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          description: >-
+            A unique, client-generated string (such as a V4 UUID) used to
+            recognize subsequent retries of the same request. If not provided,
+            the server may reject the request or treat it as a standard,
+            non-idempotent operation.
+          required: false
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the audience (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$music.genre}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '201':
+          description: >-
+            The audience was successfully created, or a previous request with
+            the same Idempotency-Key was already successfully processed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique resource `id` of the audience.
+                    x-apidog-mock: '{{$string.uuid}}'
+                x-apidog-orders:
+                  - id
+                required:
+                  - id
+                x-apidog-ignore-properties: []
+          headers: {}
+          x-apidog-name: Createed
+          x-apidog-ordering: 0
+        '400':
+          description: >-
+            The request was malformed or missing required fields (e.g., the name
+            is empty or exceeds character limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-ignore-properties: []
+                x-apidog-orders: []
+          headers: {}
+          x-apidog-name: Bad request
+          x-apidog-ordering: 1
+        '409':
+          description: >-
+            An audience with the provided `name` already exists, OR the
+            Idempotency-Key was reused with a different request payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-ignore-properties: []
+                x-apidog-orders: []
+          headers: {}
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+      security: []
+      x-apidog-folder: audiences/commands
+      x-apidog-status: developing
+      x-apidog-maintainer: Ahmed Shahin
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35217160-run
+    get:
+      summary: Get All Audiences
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all available audiences. It returns a
+        lightweight payload containing only the essential identifiers and
+        display names, making it ideal for populating dropdown menus, filters,
+        or selection lists in a user interface.
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`AudienceDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`AudienceDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the audience to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the audience (e.g.,
+        "adults"). Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult Fantasy"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Non-Fiction Productivity"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Self-Help/Wellness"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - audience
+        - query
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  audiences:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AudienceDetails'
+                    description: List of audiences
+                x-apidog-orders:
+                  - audiences
+                required:
+                  - audiences
+                x-apidog-ignore-properties: []
+          headers: {}
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+      security: []
+      x-apidog-folder: audiences/queries
+      x-apidog-status: developing
+      x-apidog-maintainer: Ahmed Shahin
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219585-run
+  /api/audiences/{audience-id}:
+    delete:
+      summary: Delete Audience
+      deprecated: false
+      description: >-
+        Permanently deletes an existing audience.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | audience-id | GUID | Yes | The unique identifier of the audience to be
+        deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The audience was successfully deleted. No response body is returned.
+
+
+        `404 Not Found`
+
+        No audience could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        The audience cannot be deleted because it is currently in use (e.g.,
+        attached to an active book).
+      tags:
+        - audience
+        - command
+        - delete
+      parameters:
+        - name: audience-id
+          in: path
+          description: >-
+            The unique identifier of the audience to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The audience was successfully deleted. No response body is returned.
+          headers: {}
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+        '404':
+          description: No audience could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-ignore-properties: []
+                x-apidog-orders: []
+          headers: {}
+          x-apidog-name: Not Found
+          x-apidog-ordering: 1
+        '409':
+          description: >-
+            The audience cannot be deleted because it is currently in use (e.g.,
+            attached to an active book).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-ignore-properties: []
+                x-apidog-orders: []
+          headers: {}
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+      security: []
+      x-apidog-folder: audiences/commands
+      x-apidog-status: developing
+      x-apidog-maintainer: Ahmed Shahin
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35217230-run
+    put:
+      summary: Update Audience
+      deprecated: false
+      description: >-
+        Updates an existing audience.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | audience-id | GUID | Yes | The unique identifier of the audience to be
+        deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Request Headers**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Content-Type | string | Yes | Must be`application/json`|
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the audience (e.g.,
+        "adults"). Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The audience was successfully updated. No response body is returned.
+
+
+        `400 Bad Request`
+
+        The request was malformed or missing required fields (e.g., the `name`
+        is empty, formatted incorrectly, or exceeds character limits).
+
+
+        `404 Not Found`
+
+        No audience could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        An audience with the provided `name` already exists, causing a
+        uniqueness collision.
+      tags:
+        - audience
+        - command
+        - update
+      parameters:
+        - name: audience-id
+          in: path
+          description: >-
+            The unique identifier of the audience to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the audience (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$music.genre}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '204':
+          description: The audience was successfully updated. No response body is returned.
+          headers: {}
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+        '400':
+          description: >-
+            The request was malformed or missing required fields (e.g., the
+            `name` is empty, formatted incorrectly, or exceeds character
+            limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-ignore-properties: []
+                x-apidog-orders: []
+          headers: {}
+          x-apidog-name: Bad Request
+          x-apidog-ordering: 1
+        '404':
+          description: No audience could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-ignore-properties: []
+                x-apidog-orders: []
+          headers: {}
+          x-apidog-name: Not Found
+          x-apidog-ordering: 2
+        '409':
+          description: >-
+            An audience with the provided `name` already exists, causing a
+            uniqueness collision.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-ignore-properties: []
+                x-apidog-orders: []
+          headers: {}
+          x-apidog-name: Conflict
+          x-apidog-ordering: 3
+      security: []
+      x-apidog-folder: audiences/commands
+      x-apidog-status: developing
+      x-apidog-maintainer: Ahmed Shahin
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35217231-run
+  /api/books/{book-id}/audiences:
+    get:
+      summary: Get Audiences By Book Id
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all audiences specifically associated
+        with or targeted by a given book. Similar to the global audiences
+        endpoint, it returns a lightweight payload of essential identifiers and
+        display names, which is highly efficient for UI elements like tags,
+        lists, or filters on a book's detail page.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | book-id | GUID | Yes | The unique identifier of the book whose
+        audiences you want to retrieve (e.g.,
+        90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`AudienceDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`AudienceDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the audience to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the audience (e.g.,
+        "adults"). Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Science Fiction Fans"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Educators"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - audience
+        - query
+        - book
+      parameters:
+        - name: book-id
+          in: path
+          description: ''
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  audiences:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AudienceDetails'
+                    description: List of audiences
+                x-apidog-orders:
+                  - audiences
+                required:
+                  - audiences
+                x-apidog-ignore-properties: []
+          headers: {}
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+      security: []
+      x-apidog-folder: audiences/queries
+      x-apidog-status: developing
+      x-apidog-maintainer: Ahmed Shahin
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219626-run
+  /api/authors/:
+    post:
+      summary: Create Author
+      deprecated: false
+      description: >-
+        Creates a new **author**.
+
+
+        This endpoint supports idempotency to ensure that retrying a failed or
+        timed-out request does not result in duplicate author creations. By
+        providing a unique idempotency key, subsequent requests with the same
+        key and payload will return the original successful response without
+        creating a new resource.
+
+
+        ---
+
+
+        **Request Headers**
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Idempotency-Key | string | Yes | A unique, client-generated string
+        (such as a V4 UUID) used to recognize subsequent retries of the same
+        request. If not provided, the server may reject the request or treat it
+        as a standard, non-idempotent operation. |
+
+        | Content-Type | string | Yes | Must be`application/json` |
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the author (e.g., "adults").
+        Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `201 Created`
+
+        The author was successfully created, or a previous request with the same
+        Idempotency-Key was already successfully processed. The response body
+        returns the unique resource `id` of the author.
+
+
+        `{"id": "8ac98a8c-1998-4836-9165-00b8c06b4a9c"}`
+
+
+        `400 Bad request`
+
+        The request was malformed or missing required fields (e.g., the name is
+        empty or exceeds character limits).
+
+
+        `409 Conflict`
+
+        An author with the provided `name` already exists, OR the
+        Idempotency-Key was reused with a different request payload.
+      tags:
+        - author
+        - command
+        - create
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          description: >-
+            A unique, client-generated string (such as a V4 UUID) used to
+            recognize subsequent retries of the same request. If not provided,
+            the server may reject the request or treat it as a standard,
+            non-idempotent operation.
+          required: false
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the author (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$music.artist}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '201':
+          x-apidog-name: Createed
+          x-apidog-ordering: 0
+          description: >-
+            The author was successfully created, or a previous request with the
+            same Idempotency-Key was already successfully processed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique resource `id` of the author.
+                    x-apidog-mock: '{{$string.uuid}}'
+                x-apidog-orders:
+                  - id
+                required:
+                  - id
+                x-apidog-ignore-properties: []
+          headers: {}
+        '400':
+          x-apidog-name: Bad request
+          x-apidog-ordering: 1
+          description: >-
+            The request was malformed or missing required fields (e.g., the name
+            is empty or exceeds character limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+          description: >-
+            An author with the provided `name` already exists, OR the
+            Idempotency-Key was reused with a different request payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: authors/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219353-run
+    get:
+      summary: Get All Authors
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all available authors. It returns a
+        lightweight payload containing only the essential identifiers and
+        display names, making it ideal for populating dropdown menus, filters,
+        or selection lists in a user interface.
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`AuthorDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`AuthorDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the author to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the author (e.g., "adults").
+        Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult Fantasy"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Non-Fiction Productivity"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Self-Help/Wellness"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - author
+        - query
+      parameters: []
+      responses:
+        '200':
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuthorDetails'
+                    description: List of authors
+                x-apidog-orders:
+                  - authors
+                required:
+                  - authors
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: authors/queries
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220217-run
+  /api/authors/{author-id}:
+    delete:
+      summary: Delete Author
+      deprecated: false
+      description: >-
+        Permanently deletes an existing author.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | author-id | GUID | Yes | The unique identifier of the author to be
+        deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The author was successfully deleted. No response body is returned.
+
+
+        `404 Not Found`
+
+        No author could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        The author cannot be deleted because it is currently in use (e.g.,
+        attached to an active book).
+      tags:
+        - author
+        - command
+        - delete
+      parameters:
+        - name: author-id
+          in: path
+          description: >-
+            The unique identifier of the author to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '204':
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+          description: The author was successfully deleted. No response body is returned.
+          headers: {}
+        '404':
+          x-apidog-name: Not Found
+          x-apidog-ordering: 1
+          description: No author could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+          description: >-
+            The author cannot be deleted because it is currently in use (e.g.,
+            attached to an active book).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: authors/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219354-run
+    put:
+      summary: Update Author
+      deprecated: false
+      description: >-
+        Updates an existing author.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | author-id | GUID | Yes | The unique identifier of the author to be
+        deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Request Headers**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Content-Type | string | Yes | Must be`application/json`|
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the author (e.g., "adults").
+        Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The author was successfully updated. No response body is returned.
+
+
+        `400 Bad Request`
+
+        The request was malformed or missing required fields (e.g., the `name`
+        is empty, formatted incorrectly, or exceeds character limits).
+
+
+        `404 Not Found`
+
+        No author could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        An author with the provided `name` already exists, causing a uniqueness
+        collision.
+      tags:
+        - author
+        - command
+        - update
+      parameters:
+        - name: author-id
+          in: path
+          description: >-
+            The unique identifier of the author to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the author (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$music.artist}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '204':
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+          description: The author was successfully updated. No response body is returned.
+          headers: {}
+        '400':
+          x-apidog-name: Bad Request
+          x-apidog-ordering: 1
+          description: >-
+            The request was malformed or missing required fields (e.g., the
+            `name` is empty, formatted incorrectly, or exceeds character
+            limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '404':
+          x-apidog-name: Not Found
+          x-apidog-ordering: 2
+          description: No author could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 3
+          description: >-
+            An author with the provided `name` already exists, causing a
+            uniqueness collision.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: authors/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219355-run
+  /api/books/{book-id}/authors:
+    get:
+      summary: Get Authors By Book Id
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all authors specifically associated
+        with or targeted by a given book. Similar to the global authors
+        endpoint, it returns a lightweight payload of essential identifiers and
+        display names, which is highly efficient for UI elements like tags,
+        lists, or filters on a book's detail page.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | book-id | GUID | Yes | The unique identifier of the book whose authors
+        you want to retrieve (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`AuthorDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`AuthorDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the author to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the author (e.g., "adults").
+        Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Science Fiction Fans"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Educators"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - author
+        - query
+        - book
+      parameters:
+        - name: book-id
+          in: path
+          description: ''
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '200':
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuthorDetails'
+                    description: List of authors
+                x-apidog-orders:
+                  - authors
+                required:
+                  - authors
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: authors/queries
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220218-run
+  /api/categories/:
+    post:
+      summary: Create Category
+      deprecated: false
+      description: >-
+        Creates a new **category**.
+
+
+        This endpoint supports idempotency to ensure that retrying a failed or
+        timed-out request does not result in duplicate category creations. By
+        providing a unique idempotency key, subsequent requests with the same
+        key and payload will return the original successful response without
+        creating a new resource.
+
+
+        ---
+
+
+        **Request Headers**
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Idempotency-Key | string | Yes | A unique, client-generated string
+        (such as a V4 UUID) used to recognize subsequent retries of the same
+        request. If not provided, the server may reject the request or treat it
+        as a standard, non-idempotent operation. |
+
+        | Content-Type | string | Yes | Must be`application/json` |
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the category (e.g.,
+        "adults"). Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `201 Created`
+
+        The category was successfully created, or a previous request with the
+        same Idempotency-Key was already successfully processed. The response
+        body returns the unique resource `id` of the category.
+
+
+        `{"id": "8ac98a8c-1998-4836-9165-00b8c06b4a9c"}`
+
+
+        `400 Bad request`
+
+        The request was malformed or missing required fields (e.g., the name is
+        empty or exceeds character limits).
+
+
+        `409 Conflict`
+
+        An category with the provided `name` already exists, OR the
+        Idempotency-Key was reused with a different request payload.
+      tags:
+        - category
+        - command
+        - create
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          description: >-
+            A unique, client-generated string (such as a V4 UUID) used to
+            recognize subsequent retries of the same request. If not provided,
+            the server may reject the request or treat it as a standard,
+            non-idempotent operation.
+          required: false
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the category (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$food.ethnicCategory}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '201':
+          x-apidog-name: Createed
+          x-apidog-ordering: 0
+          description: >-
+            The category was successfully created, or a previous request with
+            the same Idempotency-Key was already successfully processed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique resource `id` of the category.
+                    x-apidog-mock: '{{$string.uuid}}'
+                x-apidog-orders:
+                  - id
+                required:
+                  - id
+                x-apidog-ignore-properties: []
+          headers: {}
+        '400':
+          x-apidog-name: Bad request
+          x-apidog-ordering: 1
+          description: >-
+            The request was malformed or missing required fields (e.g., the name
+            is empty or exceeds character limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+          description: >-
+            An category with the provided `name` already exists, OR the
+            Idempotency-Key was reused with a different request payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: categories/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219998-run
+    get:
+      summary: Get All Categories
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all available categories. It returns a
+        lightweight payload containing only the essential identifiers and
+        display names, making it ideal for populating dropdown menus, filters,
+        or selection lists in a user interface.
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`CategoryDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`CategoryDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the category to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the category (e.g.,
+        "adults"). Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult Fantasy"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Non-Fiction Productivity"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Self-Help/Wellness"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - category
+        - query
+      parameters: []
+      responses:
+        '200':
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CategoryDetails'
+                    description: List of categories
+                x-apidog-orders:
+                  - categories
+                required:
+                  - categories
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: categories/queries
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220370-run
+  /api/categories/{category-id}:
+    delete:
+      summary: Delete Category
+      deprecated: false
+      description: >-
+        Permanently deletes an existing category.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | category-id | GUID | Yes | The unique identifier of the category to be
+        deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The category was successfully deleted. No response body is returned.
+
+
+        `404 Not Found`
+
+        No category could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        The category cannot be deleted because it is currently in use (e.g.,
+        attached to an active book).
+      tags:
+        - category
+        - command
+        - delete
+      parameters:
+        - name: category-id
+          in: path
+          description: >-
+            The unique identifier of the category to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '204':
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+          description: The category was successfully deleted. No response body is returned.
+          headers: {}
+        '404':
+          x-apidog-name: Not Found
+          x-apidog-ordering: 1
+          description: No category could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+          description: >-
+            The category cannot be deleted because it is currently in use (e.g.,
+            attached to an active book).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: categories/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219999-run
+    put:
+      summary: Update Category
+      deprecated: false
+      description: >-
+        Updates an existing category.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | category-id | GUID | Yes | The unique identifier of the category to be
+        deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Request Headers**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Content-Type | string | Yes | Must be`application/json`|
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the category (e.g.,
+        "adults"). Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The category was successfully updated. No response body is returned.
+
+
+        `400 Bad Request`
+
+        The request was malformed or missing required fields (e.g., the `name`
+        is empty, formatted incorrectly, or exceeds character limits).
+
+
+        `404 Not Found`
+
+        No category could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        An category with the provided `name` already exists, causing a
+        uniqueness collision.
+      tags:
+        - category
+        - command
+        - update
+      parameters:
+        - name: category-id
+          in: path
+          description: >-
+            The unique identifier of the category to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the category (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$food.ethnicCategory}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '204':
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+          description: The category was successfully updated. No response body is returned.
+          headers: {}
+        '400':
+          x-apidog-name: Bad Request
+          x-apidog-ordering: 1
+          description: >-
+            The request was malformed or missing required fields (e.g., the
+            `name` is empty, formatted incorrectly, or exceeds character
+            limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '404':
+          x-apidog-name: Not Found
+          x-apidog-ordering: 2
+          description: No category could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 3
+          description: >-
+            An category with the provided `name` already exists, causing a
+            uniqueness collision.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: categories/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220000-run
+  /api/books/{book-id}/categories:
+    get:
+      summary: Get Categories By Book Id
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all categories specifically associated
+        with or targeted by a given book. Similar to the global categories
+        endpoint, it returns a lightweight payload of essential identifiers and
+        display names, which is highly efficient for UI elements like tags,
+        lists, or filters on a book's detail page.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | book-id | GUID | Yes | The unique identifier of the book whose
+        categories you want to retrieve (e.g.,
+        90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`CategoryDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`CategoryDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the category to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the category (e.g.,
+        "adults"). Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Science Fiction Fans"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Educators"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - category
+        - query
+        - book
+      parameters:
+        - name: book-id
+          in: path
+          description: ''
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '200':
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CategoryDetails'
+                    description: List of categories
+                x-apidog-orders:
+                  - categories
+                required:
+                  - categories
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: categories/queries
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220371-run
+  /api/genres/:
+    post:
+      summary: Create Genre
+      deprecated: false
+      description: >-
+        Creates a new **genre**.
+
+
+        This endpoint supports idempotency to ensure that retrying a failed or
+        timed-out request does not result in duplicate genre creations. By
+        providing a unique idempotency key, subsequent requests with the same
+        key and payload will return the original successful response without
+        creating a new resource.
+
+
+        ---
+
+
+        **Request Headers**
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Idempotency-Key | string | Yes | A unique, client-generated string
+        (such as a V4 UUID) used to recognize subsequent retries of the same
+        request. If not provided, the server may reject the request or treat it
+        as a standard, non-idempotent operation. |
+
+        | Content-Type | string | Yes | Must be`application/json` |
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the genre (e.g., "adults").
+        Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `201 Created`
+
+        The genre was successfully created, or a previous request with the same
+        Idempotency-Key was already successfully processed. The response body
+        returns the unique resource `id` of the genre.
+
+
+        `{"id": "8ac98a8c-1998-4836-9165-00b8c06b4a9c"}`
+
+
+        `400 Bad request`
+
+        The request was malformed or missing required fields (e.g., the name is
+        empty or exceeds character limits).
+
+
+        `409 Conflict`
+
+        An genre with the provided `name` already exists, OR the Idempotency-Key
+        was reused with a different request payload.
+      tags:
+        - genre
+        - command
+        - create
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          description: >-
+            A unique, client-generated string (such as a V4 UUID) used to
+            recognize subsequent retries of the same request. If not provided,
+            the server may reject the request or treat it as a standard,
+            non-idempotent operation.
+          required: false
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the genre (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$music.genre}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+        required: true
+      responses:
+        '201':
+          x-apidog-name: Createed
+          x-apidog-ordering: 0
+          description: >-
+            The genre was successfully created, or a previous request with the
+            same Idempotency-Key was already successfully processed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique resource `id` of the genre.
+                    x-apidog-mock: '{{$string.uuid}}'
+                x-apidog-orders:
+                  - id
+                required:
+                  - id
+                x-apidog-ignore-properties: []
+          headers: {}
+        '400':
+          x-apidog-name: Bad request
+          x-apidog-ordering: 1
+          description: >-
+            The request was malformed or missing required fields (e.g., the name
+            is empty or exceeds character limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+          description: >-
+            An genre with the provided `name` already exists, OR the
+            Idempotency-Key was reused with a different request payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: genres/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219448-run
+    get:
+      summary: Get All Genres
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all available genres. It returns a
+        lightweight payload containing only the essential identifiers and
+        display names, making it ideal for populating dropdown menus, filters,
+        or selection lists in a user interface.
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`GenreDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`GenreDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the genre to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the genre (e.g., "adults").
+        Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult Fantasy"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Non-Fiction Productivity"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Self-Help/Wellness"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - genre
+        - query
+      parameters: []
+      responses:
+        '200':
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  genres:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GenreDetails'
+                    description: List of genres
+                x-apidog-orders:
+                  - genres
+                required:
+                  - genres
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: genres/queries
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220383-run
+  /api/genres/{genre-id}:
+    delete:
+      summary: Delete Genre
+      deprecated: false
+      description: >-
+        Permanently deletes an existing genre.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | genre-id | GUID | Yes | The unique identifier of the genre to be
+        deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The genre was successfully deleted. No response body is returned.
+
+
+        `404 Not Found`
+
+        No genre could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        The genre cannot be deleted because it is currently in use (e.g.,
+        attached to an active book).
+      tags:
+        - genre
+        - command
+        - delete
+      parameters:
+        - name: genre-id
+          in: path
+          description: >-
+            The unique identifier of the genre to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '204':
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+          description: The genre was successfully deleted. No response body is returned.
+          headers: {}
+        '404':
+          x-apidog-name: Not Found
+          x-apidog-ordering: 1
+          description: No genre could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+          description: >-
+            The genre cannot be deleted because it is currently in use (e.g.,
+            attached to an active book).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: genres/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219449-run
+    put:
+      summary: Update Genre
+      deprecated: false
+      description: >-
+        Updates an existing genre.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | genre-id | GUID | Yes | The unique identifier of the genre to be
+        deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Request Headers**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Content-Type | string | Yes | Must be`application/json`|
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the genre (e.g., "adults").
+        Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The genre was successfully updated. No response body is returned.
+
+
+        `400 Bad Request`
+
+        The request was malformed or missing required fields (e.g., the `name`
+        is empty, formatted incorrectly, or exceeds character limits).
+
+
+        `404 Not Found`
+
+        No genre could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        An genre with the provided `name` already exists, causing a uniqueness
+        collision.
+      tags:
+        - genre
+        - command
+        - update
+      parameters:
+        - name: genre-id
+          in: path
+          description: >-
+            The unique identifier of the genre to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the genre (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$music.genre}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+        required: true
+      responses:
+        '204':
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+          description: The genre was successfully updated. No response body is returned.
+          headers: {}
+        '400':
+          x-apidog-name: Bad Request
+          x-apidog-ordering: 1
+          description: >-
+            The request was malformed or missing required fields (e.g., the
+            `name` is empty, formatted incorrectly, or exceeds character
+            limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '404':
+          x-apidog-name: Not Found
+          x-apidog-ordering: 2
+          description: No genre could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 3
+          description: >-
+            An genre with the provided `name` already exists, causing a
+            uniqueness collision.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: genres/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219450-run
+  /api/books/{book-id}/genres:
+    get:
+      summary: Get Genres By Book Id
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all genres specifically associated
+        with or targeted by a given book. Similar to the global genres endpoint,
+        it returns a lightweight payload of essential identifiers and display
+        names, which is highly efficient for UI elements like tags, lists, or
+        filters on a book's detail page.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | book-id | GUID | Yes | The unique identifier of the book whose genres
+        you want to retrieve (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`GenreDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`GenreDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the genre to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the genre (e.g., "adults").
+        Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Science Fiction Fans"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Educators"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - genre
+        - query
+        - book
+      parameters:
+        - name: book-id
+          in: path
+          description: ''
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '200':
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  genres:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GenreDetails'
+                    description: List of genres
+                x-apidog-orders:
+                  - genres
+                required:
+                  - genres
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: genres/queries
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220384-run
+  /api/keywords/:
+    post:
+      summary: Create Keyword
+      deprecated: false
+      description: >-
+        Creates a new **keyword**.
+
+
+        This endpoint supports idempotency to ensure that retrying a failed or
+        timed-out request does not result in duplicate keyword creations. By
+        providing a unique idempotency key, subsequent requests with the same
+        key and payload will return the original successful response without
+        creating a new resource.
+
+
+        ---
+
+
+        **Request Headers**
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Idempotency-Key | string | Yes | A unique, client-generated string
+        (such as a V4 UUID) used to recognize subsequent retries of the same
+        request. If not provided, the server may reject the request or treat it
+        as a standard, non-idempotent operation. |
+
+        | Content-Type | string | Yes | Must be`application/json` |
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the keyword (e.g.,
+        "adults"). Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `201 Created`
+
+        The keyword was successfully created, or a previous request with the
+        same Idempotency-Key was already successfully processed. The response
+        body returns the unique resource `id` of the keyword.
+
+
+        `{"id": "8ac98a8c-1998-4836-9165-00b8c06b4a9c"}`
+
+
+        `400 Bad request`
+
+        The request was malformed or missing required fields (e.g., the name is
+        empty or exceeds character limits).
+
+
+        `409 Conflict`
+
+        An keyword with the provided `name` already exists, OR the
+        Idempotency-Key was reused with a different request payload.
+      tags:
+        - keyword
+        - command
+        - create
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          description: >-
+            A unique, client-generated string (such as a V4 UUID) used to
+            recognize subsequent retries of the same request. If not provided,
+            the server may reject the request or treat it as a standard,
+            non-idempotent operation.
+          required: false
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the keyword (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$music.genre}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '201':
+          x-apidog-name: Createed
+          x-apidog-ordering: 0
+          description: >-
+            The keyword was successfully created, or a previous request with the
+            same Idempotency-Key was already successfully processed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique resource `id` of the keyword.
+                    x-apidog-mock: '{{$string.uuid}}'
+                x-apidog-orders:
+                  - id
+                required:
+                  - id
+                x-apidog-ignore-properties: []
+          headers: {}
+        '400':
+          x-apidog-name: Bad request
+          x-apidog-ordering: 1
+          description: >-
+            The request was malformed or missing required fields (e.g., the name
+            is empty or exceeds character limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+          description: >-
+            An keyword with the provided `name` already exists, OR the
+            Idempotency-Key was reused with a different request payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: keywords/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219453-run
+    get:
+      summary: Get All Keywords
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all available keywords. It returns a
+        lightweight payload containing only the essential identifiers and
+        display names, making it ideal for populating dropdown menus, filters,
+        or selection lists in a user interface.
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`KeywordDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`KeywordDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the keyword to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the keyword (e.g.,
+        "adults"). Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult Fantasy"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Non-Fiction Productivity"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Self-Help/Wellness"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - keyword
+        - query
+      parameters: []
+      responses:
+        '200':
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keywords:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/KeywordDetails'
+                    description: List of keywords
+                x-apidog-orders:
+                  - keywords
+                required:
+                  - keywords
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: keywords/queries
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220373-run
+  /api/keywords/{keyword-id}:
+    delete:
+      summary: Delete Keyword
+      deprecated: false
+      description: >-
+        Permanently deletes an existing keyword.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | keyword-id | GUID | Yes | The unique identifier of the keyword to be
+        deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The keyword was successfully deleted. No response body is returned.
+
+
+        `404 Not Found`
+
+        No keyword could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        The keyword cannot be deleted because it is currently in use (e.g.,
+        attached to an active book).
+      tags:
+        - keyword
+        - command
+        - delete
+      parameters:
+        - name: keyword-id
+          in: path
+          description: >-
+            The unique identifier of the keyword to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '204':
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+          description: The keyword was successfully deleted. No response body is returned.
+          headers: {}
+        '404':
+          x-apidog-name: Not Found
+          x-apidog-ordering: 1
+          description: No keyword could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+          description: >-
+            The keyword cannot be deleted because it is currently in use (e.g.,
+            attached to an active book).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: keywords/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219454-run
+    put:
+      summary: Update Keyword
+      deprecated: false
+      description: >-
+        Updates an existing keyword.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | keyword-id | GUID | Yes | The unique identifier of the keyword to be
+        deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Request Headers**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Content-Type | string | Yes | Must be`application/json`|
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the keyword (e.g.,
+        "adults"). Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The keyword was successfully updated. No response body is returned.
+
+
+        `400 Bad Request`
+
+        The request was malformed or missing required fields (e.g., the `name`
+        is empty, formatted incorrectly, or exceeds character limits).
+
+
+        `404 Not Found`
+
+        No keyword could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        An keyword with the provided `name` already exists, causing a uniqueness
+        collision.
+      tags:
+        - keyword
+        - command
+        - update
+      parameters:
+        - name: keyword-id
+          in: path
+          description: >-
+            The unique identifier of the keyword to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the keyword (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$music.genre}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '204':
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+          description: The keyword was successfully updated. No response body is returned.
+          headers: {}
+        '400':
+          x-apidog-name: Bad Request
+          x-apidog-ordering: 1
+          description: >-
+            The request was malformed or missing required fields (e.g., the
+            `name` is empty, formatted incorrectly, or exceeds character
+            limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '404':
+          x-apidog-name: Not Found
+          x-apidog-ordering: 2
+          description: No keyword could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 3
+          description: >-
+            An keyword with the provided `name` already exists, causing a
+            uniqueness collision.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: keywords/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219455-run
+  /api/books/{book-id}/keywords:
+    get:
+      summary: Get Keywords By Book Id
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all keywords specifically associated
+        with or targeted by a given book. Similar to the global keywords
+        endpoint, it returns a lightweight payload of essential identifiers and
+        display names, which is highly efficient for UI elements like tags,
+        lists, or filters on a book's detail page.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | book-id | GUID | Yes | The unique identifier of the book whose
+        keywords you want to retrieve (e.g.,
+        90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`KeywordDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`KeywordDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the keyword to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the keyword (e.g.,
+        "adults"). Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Science Fiction Fans"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Educators"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - keyword
+        - query
+        - book
+      parameters:
+        - name: book-id
+          in: path
+          description: ''
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '200':
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keywords:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/KeywordDetails'
+                    description: List of keywords
+                x-apidog-orders:
+                  - keywords
+                required:
+                  - keywords
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: keywords/queries
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220374-run
+  /api/themes/:
+    post:
+      summary: Create Theme
+      deprecated: false
+      description: >-
+        Creates a new **theme**.
+
+
+        This endpoint supports idempotency to ensure that retrying a failed or
+        timed-out request does not result in duplicate theme creations. By
+        providing a unique idempotency key, subsequent requests with the same
+        key and payload will return the original successful response without
+        creating a new resource.
+
+
+        ---
+
+
+        **Request Headers**
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Idempotency-Key | string | Yes | A unique, client-generated string
+        (such as a V4 UUID) used to recognize subsequent retries of the same
+        request. If not provided, the server may reject the request or treat it
+        as a standard, non-idempotent operation. |
+
+        | Content-Type | string | Yes | Must be`application/json` |
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the theme (e.g., "adults").
+        Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `201 Created`
+
+        The theme was successfully created, or a previous request with the same
+        Idempotency-Key was already successfully processed. The response body
+        returns the unique resource `id` of the theme.
+
+
+        `{"id": "8ac98a8c-1998-4836-9165-00b8c06b4a9c"}`
+
+
+        `400 Bad request`
+
+        The request was malformed or missing required fields (e.g., the name is
+        empty or exceeds character limits).
+
+
+        `409 Conflict`
+
+        An theme with the provided `name` already exists, OR the Idempotency-Key
+        was reused with a different request payload.
+      tags:
+        - theme
+        - command
+        - create
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          description: >-
+            A unique, client-generated string (such as a V4 UUID) used to
+            recognize subsequent retries of the same request. If not provided,
+            the server may reject the request or treat it as a standard,
+            non-idempotent operation.
+          required: false
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the theme (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$music.genre}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '201':
+          x-apidog-name: Createed
+          x-apidog-ordering: 0
+          description: >-
+            The theme was successfully created, or a previous request with the
+            same Idempotency-Key was already successfully processed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique resource `id` of the theme.
+                    x-apidog-mock: '{{$string.uuid}}'
+                x-apidog-orders:
+                  - id
+                required:
+                  - id
+                x-apidog-ignore-properties: []
+          headers: {}
+        '400':
+          x-apidog-name: Bad request
+          x-apidog-ordering: 1
+          description: >-
+            The request was malformed or missing required fields (e.g., the name
+            is empty or exceeds character limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+          description: >-
+            An theme with the provided `name` already exists, OR the
+            Idempotency-Key was reused with a different request payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: themes/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219459-run
+    get:
+      summary: Get All Themes
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all available themes. It returns a
+        lightweight payload containing only the essential identifiers and
+        display names, making it ideal for populating dropdown menus, filters,
+        or selection lists in a user interface.
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`ThemeDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`ThemeDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the theme to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the theme (e.g., "adults").
+        Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult Fantasy"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Non-Fiction Productivity"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Self-Help/Wellness"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - theme
+        - query
+      parameters: []
+      responses:
+        '200':
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  themes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ThemeDetails'
+                    description: List of themes
+                x-apidog-orders:
+                  - themes
+                required:
+                  - themes
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: themes/queries
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220377-run
+  /api/themes/{theme-id}:
+    delete:
+      summary: Delete Theme
+      deprecated: false
+      description: >-
+        Permanently deletes an existing theme.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | theme-id | GUID | Yes | The unique identifier of the theme to be
+        deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The theme was successfully deleted. No response body is returned.
+
+
+        `404 Not Found`
+
+        No theme could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        The theme cannot be deleted because it is currently in use (e.g.,
+        attached to an active book).
+      tags:
+        - theme
+        - command
+        - delete
+      parameters:
+        - name: theme-id
+          in: path
+          description: >-
+            The unique identifier of the theme to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '204':
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+          description: The theme was successfully deleted. No response body is returned.
+          headers: {}
+        '404':
+          x-apidog-name: Not Found
+          x-apidog-ordering: 1
+          description: No theme could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+          description: >-
+            The theme cannot be deleted because it is currently in use (e.g.,
+            attached to an active book).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: themes/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219460-run
+    put:
+      summary: Update Theme
+      deprecated: false
+      description: >-
+        Updates an existing theme.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | theme-id | GUID | Yes | The unique identifier of the theme to be
+        deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Request Headers**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Content-Type | string | Yes | Must be`application/json`|
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the theme (e.g., "adults").
+        Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The theme was successfully updated. No response body is returned.
+
+
+        `400 Bad Request`
+
+        The request was malformed or missing required fields (e.g., the `name`
+        is empty, formatted incorrectly, or exceeds character limits).
+
+
+        `404 Not Found`
+
+        No theme could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        An theme with the provided `name` already exists, causing a uniqueness
+        collision.
+      tags:
+        - theme
+        - command
+        - update
+      parameters:
+        - name: theme-id
+          in: path
+          description: >-
+            The unique identifier of the theme to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the theme (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$music.genre}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '204':
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+          description: The theme was successfully updated. No response body is returned.
+          headers: {}
+        '400':
+          x-apidog-name: Bad Request
+          x-apidog-ordering: 1
+          description: >-
+            The request was malformed or missing required fields (e.g., the
+            `name` is empty, formatted incorrectly, or exceeds character
+            limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '404':
+          x-apidog-name: Not Found
+          x-apidog-ordering: 2
+          description: No theme could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 3
+          description: >-
+            An theme with the provided `name` already exists, causing a
+            uniqueness collision.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: themes/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219461-run
+  /api/books/{book-id}/themes:
+    get:
+      summary: Get Themes By Book Id
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all themes specifically associated
+        with or targeted by a given book. Similar to the global themes endpoint,
+        it returns a lightweight payload of essential identifiers and display
+        names, which is highly efficient for UI elements like tags, lists, or
+        filters on a book's detail page.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | book-id | GUID | Yes | The unique identifier of the book whose themes
+        you want to retrieve (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`ThemeDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`ThemeDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the theme to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the theme (e.g., "adults").
+        Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Science Fiction Fans"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Educators"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - theme
+        - query
+        - book
+      parameters:
+        - name: book-id
+          in: path
+          description: ''
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '200':
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  themes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ThemeDetails'
+                    description: List of themes
+                x-apidog-orders:
+                  - themes
+                required:
+                  - themes
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: themes/queries
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220378-run
+  /api/publishers/:
+    post:
+      summary: Create Publisher
+      deprecated: false
+      description: >-
+        Creates a new **publisher**.
+
+
+        This endpoint supports idempotency to ensure that retrying a failed or
+        timed-out request does not result in duplicate publisher creations. By
+        providing a unique idempotency key, subsequent requests with the same
+        key and payload will return the original successful response without
+        creating a new resource.
+
+
+        ---
+
+
+        **Request Headers**
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Idempotency-Key | string | Yes | A unique, client-generated string
+        (such as a V4 UUID) used to recognize subsequent retries of the same
+        request. If not provided, the server may reject the request or treat it
+        as a standard, non-idempotent operation. |
+
+        | Content-Type | string | Yes | Must be`application/json` |
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the publisher (e.g.,
+        "adults"). Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `201 Created`
+
+        The publisher was successfully created, or a previous request with the
+        same Idempotency-Key was already successfully processed. The response
+        body returns the unique resource `id` of the publisher.
+
+
+        `{"id": "8ac98a8c-1998-4836-9165-00b8c06b4a9c"}`
+
+
+        `400 Bad request`
+
+        The request was malformed or missing required fields (e.g., the name is
+        empty or exceeds character limits).
+
+
+        `409 Conflict`
+
+        An publisher with the provided `name` already exists, OR the
+        Idempotency-Key was reused with a different request payload.
+      tags:
+        - publisher
+        - command
+        - create
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          description: >-
+            A unique, client-generated string (such as a V4 UUID) used to
+            recognize subsequent retries of the same request. If not provided,
+            the server may reject the request or treat it as a standard,
+            non-idempotent operation.
+          required: false
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the publisher (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$internet.domainName}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '201':
+          x-apidog-name: Createed
+          x-apidog-ordering: 0
+          description: >-
+            The publisher was successfully created, or a previous request with
+            the same Idempotency-Key was already successfully processed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique resource `id` of the publisher.
+                    x-apidog-mock: '{{$string.uuid}}'
+                x-apidog-orders:
+                  - id
+                required:
+                  - id
+                x-apidog-ignore-properties: []
+          headers: {}
+        '400':
+          x-apidog-name: Bad request
+          x-apidog-ordering: 1
+          description: >-
+            The request was malformed or missing required fields (e.g., the name
+            is empty or exceeds character limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+          description: >-
+            An publisher with the provided `name` already exists, OR the
+            Idempotency-Key was reused with a different request payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: publishers/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219465-run
+    get:
+      summary: Get All Publishers
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all available publishers. It returns a
+        lightweight payload containing only the essential identifiers and
+        display names, making it ideal for populating dropdown menus, filters,
+        or selection lists in a user interface.
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`PublisherDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`PublisherDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the publisher to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the publisher (e.g.,
+        "adults"). Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult Fantasy"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Non-Fiction Productivity"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Self-Help/Wellness"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - publisher
+        - query
+      parameters: []
+      responses:
+        '200':
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  publishers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublisherDetails'
+                    description: List of publishers
+                x-apidog-orders:
+                  - publishers
+                required:
+                  - publishers
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: publishers/queries
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220380-run
+  /api/publishers/{publisher-id}:
+    delete:
+      summary: Delete Publisher
+      deprecated: false
+      description: >-
+        Permanently deletes an existing publisher.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | publisher-id | GUID | Yes | The unique identifier of the publisher to
+        be deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The publisher was successfully deleted. No response body is returned.
+
+
+        `404 Not Found`
+
+        No publisher could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        The publisher cannot be deleted because it is currently in use (e.g.,
+        attached to an active book).
+      tags:
+        - publisher
+        - command
+        - delete
+      parameters:
+        - name: publisher-id
+          in: path
+          description: >-
+            The unique identifier of the publisher to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '204':
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+          description: >-
+            The publisher was successfully deleted. No response body is
+            returned.
+          headers: {}
+        '404':
+          x-apidog-name: Not Found
+          x-apidog-ordering: 1
+          description: No publisher could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+          description: >-
+            The publisher cannot be deleted because it is currently in use
+            (e.g., attached to an active book).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: publishers/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219466-run
+    put:
+      summary: Update Publisher
+      deprecated: false
+      description: >-
+        Updates an existing publisher.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | publisher-id | GUID | Yes | The unique identifier of the publisher to
+        be deleted (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Request Headers**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Content-Type | string | Yes | Must be`application/json`|
+
+
+        ---
+
+
+        **Request Body**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Name | string | Yes | The display name of the publisher (e.g.,
+        "adults"). Must be unique within the system.|
+
+
+        ---
+
+
+        **Example request payload**
+
+
+        `{"name": "adults"}`
+
+
+        ---
+
+
+        **Responses**
+
+
+        `204 No Content`
+
+        The publisher was successfully updated. No response body is returned.
+
+
+        `400 Bad Request`
+
+        The request was malformed or missing required fields (e.g., the `name`
+        is empty, formatted incorrectly, or exceeds character limits).
+
+
+        `404 Not Found`
+
+        No publisher could be found matching the provided `id`.
+
+
+        `409 Conflict`
+
+        An publisher with the provided `name` already exists, causing a
+        uniqueness collision.
+      tags:
+        - publisher
+        - command
+        - update
+      parameters:
+        - name: publisher-id
+          in: path
+          description: >-
+            The unique identifier of the publisher to be deleted (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          description: Must be`application/json`
+          required: false
+          example: application/json
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The display name of the publisher (e.g., "adults"). Must be
+                    unique within the system.
+                  x-apidog-mock: '{{$internet.domainName}}'
+              x-apidog-orders:
+                - name
+              required:
+                - name
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '204':
+          x-apidog-name: No Content
+          x-apidog-ordering: 0
+          description: >-
+            The publisher was successfully updated. No response body is
+            returned.
+          headers: {}
+        '400':
+          x-apidog-name: Bad Request
+          x-apidog-ordering: 1
+          description: >-
+            The request was malformed or missing required fields (e.g., the
+            `name` is empty, formatted incorrectly, or exceeds character
+            limits).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '404':
+          x-apidog-name: Not Found
+          x-apidog-ordering: 2
+          description: No publisher could be found matching the provided `id`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+        '409':
+          x-apidog-name: Conflict
+          x-apidog-ordering: 3
+          description: >-
+            An publisher with the provided `name` already exists, causing a
+            uniqueness collision.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: publishers/commands
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35219467-run
+  /api/books/{book-id}/publishers:
+    get:
+      summary: Get Publishers By Book Id
+      deprecated: false
+      description: >-
+        This endpoint retrieves a list of all publishers specifically associated
+        with or targeted by a given book. Similar to the global publishers
+        endpoint, it returns a lightweight payload of essential identifiers and
+        display names, which is highly efficient for UI elements like tags,
+        lists, or filters on a book's detail page.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | book-id | GUID | Yes | The unique identifier of the book whose
+        publishers you want to retrieve (e.g.,
+        90870800-9c33-4d42-858b-fa4969fd7455). |
+
+
+        ---
+
+
+        **Response Details**
+
+        - 
+
+        - Status Code:`200 OK`
+
+        - Content-Type:`application/json`
+
+        - Response Structure: An array of`PublisherDetails` objects.
+
+
+        ---
+
+
+        Data Scheme:`PublisherDetails`
+
+
+        | Field Name | Type | Required | Description |
+
+        | ---------- | ---- | -------- | ----------- |
+
+        | id | GUID | Yes | The unique identifier of the publisher to be deleted
+        (e.g., 90870800-9c33-4d42-858b-fa4969fd7455). |
+
+        | name | string | Yes | The display name of the publisher (e.g.,
+        "adults"). Must be unique within the system. |
+
+
+        ---
+
+
+        **Example Response Payload**
+
+
+        ```json
+
+        [
+            {
+                "id: "1a339b21-0e22-43d0-a6e3-09edd4717c0c",
+                "name": "Young Adult"
+            },
+            {
+                "id: "99307cd1-63ee-4d12-aef2-96b6a4bb1aa7",
+                "name": "Science Fiction Fans"
+            },
+            {
+                "id: "8a4d10de-096d-4438-85ed-44fa72f46f60",
+                "name": "Educators"
+            },
+            {
+                "id: "928b43fe-13fa-47e7-b8c6-cf1b2fbdaa6f",
+                "name": "Literary Fiction"
+            },
+        ]
+
+        ```
+      tags:
+        - get
+        - publisher
+        - query
+        - book
+      parameters:
+        - name: book-id
+          in: path
+          description: ''
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '200':
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  publishers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublisherDetails'
+                    description: List of publishers
+                x-apidog-orders:
+                  - publishers
+                required:
+                  - publishers
+                x-apidog-ignore-properties: []
+          headers: {}
+      security: []
+      x-apidog-maintainer: Ahmed Shahin
+      x-apidog-folder: publishers/queries
+      x-apidog-status: developing
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220381-run
+webhooks: {}
+components:
+  schemas:
+    AudienceDetails:
+      type: object
+      properties:
+        Id:
+          type: string
+          x-apidog-mock: '{{$string.uuid}}'
+          description: >-
+            The unique identifier of the audience (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+        name:
+          type: string
+          x-apidog-mock: '{{$music.genre}}'
+          description: The display name of the audience (e.g., "adults").
+      x-apidog-orders:
+        - Id
+        - name
+      required:
+        - Id
+        - name
+      x-apidog-ignore-properties: []
+      x-apidog-folder: ''
+    AuthorDetails:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: >-
+            The unique identifier of the author (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          x-apidog-mock: '{{$string.uuid}}'
+        name:
+          type: string
+          description: The display name of the author (e.g., "adults").
+          x-apidog-mock: '{{$person.fullName}}'
+      x-apidog-orders:
+        - Id
+        - name
+      required:
+        - Id
+        - name
+      x-apidog-folder: ''
+      x-apidog-ignore-properties: []
+    CategoryDetails:
+      type: object
+      properties:
+        Id:
+          type: string
+          x-apidog-mock: '{{$string.uuid}}'
+          description: >-
+            The unique identifier of the category (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+        name:
+          type: string
+          x-apidog-mock: '{{$music.genre}}'
+          description: The display name of the category (e.g., "adults").
+      x-apidog-orders:
+        - Id
+        - name
+      required:
+        - Id
+        - name
+      x-apidog-folder: ''
+      x-apidog-ignore-properties: []
+    KeywordDetails:
+      type: object
+      properties:
+        Id:
+          type: string
+          x-apidog-mock: '{{$string.uuid}}'
+          description: >-
+            The unique identifier of the keyword (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+        name:
+          type: string
+          x-apidog-mock: '{{$music.genre}}'
+          description: The display name of the keyword (e.g., "adults").
+      x-apidog-orders:
+        - Id
+        - name
+      required:
+        - Id
+        - name
+      x-apidog-folder: ''
+      x-apidog-ignore-properties: []
+    ThemeDetails:
+      type: object
+      properties:
+        Id:
+          type: string
+          x-apidog-mock: '{{$string.uuid}}'
+          description: >-
+            The unique identifier of the theme (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+        name:
+          type: string
+          x-apidog-mock: '{{$music.genre}}'
+          description: The display name of the theme (e.g., "adults").
+      x-apidog-orders:
+        - Id
+        - name
+      required:
+        - Id
+        - name
+      x-apidog-folder: ''
+      x-apidog-ignore-properties: []
+    PublisherDetails:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: >-
+            The unique identifier of the publisher (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          x-apidog-mock: '{{$string.uuid}}'
+        name:
+          type: string
+          description: The display name of the publisher (e.g., "adults").
+          x-apidog-mock: '{{$internet.domainName}}'
+      x-apidog-orders:
+        - Id
+        - name
+      required:
+        - Id
+        - name
+      x-apidog-folder: ''
+      x-apidog-ignore-properties: []
+    GenreDetails:
+      type: object
+      properties:
+        Id:
+          type: string
+          x-apidog-mock: '{{$string.uuid}}'
+          description: >-
+            The unique identifier of the genre (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+        name:
+          type: string
+          x-apidog-mock: '{{$music.genre}}'
+          description: The display name of the genre (e.g., "adults").
+      x-apidog-orders:
+        - Id
+        - name
+      required:
+        - Id
+        - name
+      x-apidog-folder: ''
+      x-apidog-ignore-properties: []
+  responses: {}
+  securitySchemes: {}
+servers:
+  - url: http://localhost:7258
+    description: Develop Env
+  - url: http://localhost:5099
+    description: Develop Env HTTP
+security: []
