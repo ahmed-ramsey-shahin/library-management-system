@@ -42,7 +42,7 @@ namespace Lms.Infrastructure
             services.AddHangfireServer();
             // interfaces configuration
             services.AddTransient<IPasswordHasher, PasswordHasher>();
-            services.AddTransient<IIdentityService, IIdentityService>();
+            services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<ITokenProvider, TokenProvider>();
             // authnetication configuration
             services.AddAuthentication(options =>
