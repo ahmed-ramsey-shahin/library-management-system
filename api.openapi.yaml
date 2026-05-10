@@ -15,6 +15,8 @@ tags:
   - name: author
   - name: book-copy
   - name: patch
+  - name: post
+  - name: auth
   - name: category
   - name: genre
   - name: keyword
@@ -1665,6 +1667,265 @@ paths:
       x-apidog-status: developing
       x-apidog-maintainer: Ahmed Shahin
       x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35266139-run
+  /api/books/:
+    post:
+      summary: Create Book
+      deprecated: false
+      description: >-
+        Creates a new master book record in the system. This endpoint accepts
+        core metadata, financial parameters (borrowing costs and fines), and
+        establishes relationships with existing authors, categories, genres, and
+        publishers. This endpoint is idempotent; sending the same request with
+        the same `Idempotency-Key` will safely return the previously created
+        book ID without duplicating the record.
+      tags:
+        - command
+        - post
+        - book
+        - create
+        - auth
+      parameters:
+        - name: Content-Type
+          in: header
+          description: ''
+          required: false
+          example: application/json
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          description: >-
+            A unique client-generated key used to safely retry requests without
+            creating duplicate books.
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Isbn:
+                  type: string
+                  x-apidog-mock: '{{$commerce.isbn}}'
+                  description: The International Standard Book Number (ISBN-10 or ISBN-13).
+                Issn:
+                  type: string
+                  description: The International Standard Serial Number.
+                Title:
+                  type: string
+                  x-apidog-mock: '{{$music.album}}'
+                  description: The full title of the book.
+                Description:
+                  type: string
+                  x-apidog-mock: '{{$commerce.productDescription}}'
+                  description: A summary or blurb about the book's contents.
+                Page Count:
+                  type: integer
+                  x-apidog-mock: '{{$number.int(min=1)}}'
+                  description: The total number of pages in the book.
+                PublisherId:
+                  type: string
+                  x-apidog-mock: '{{$string.uuid}}'
+                  description: The unique identifier of the publisher.
+                PublishingDate:
+                  type: string
+                  description: 'The original date of publication (Format: YYYY-MM-DD).'
+                  x-apidog-mock: '{{$date.birthdate}}'
+                  format: date
+                Language:
+                  type: string
+                  description: >-
+                    The primary language the book is written in (e.g.,
+                    "English", "Arabic").
+                Edition:
+                  type: string
+                  description: The edition of the book (e.g., "1st Edition", "Revised").
+                BorrowPricePerDay:
+                  type: number
+                  x-apidog-mock: '{{$commerce.price}}'
+                  description: The daily cost to borrow this book.
+                ' FinePerDay':
+                  type: number
+                  x-apidog-mock: '{{$commerce.price}}'
+                  description: The daily penalty fee if the book is returned late.
+                LostFee:
+                  type: number
+                  x-apidog-mock: '{{$commerce.price}}'
+                  description: The replacement fee charged to the user if the book is lost.
+                DamageFee:
+                  type: number
+                  x-apidog-mock: '{{$commerce.price}}'
+                  description: The base fee charged if the book is returned damaged.
+                CategoryIds:
+                  type: array
+                  items:
+                    type: string
+                    x-apidog-mock: '{{$string.uuid}}'
+                  description: A list of Category IDs associated with this book.
+                KeywordIds:
+                  type: array
+                  items:
+                    type: string
+                    x-apidog-mock: '{{$string.uuid}}'
+                  description: A list of Keyword IDs associated with this book.
+                ThemeIds:
+                  type: array
+                  items:
+                    type: string
+                    x-apidog-mock: '{{$string.uuid}}'
+                  description: A list of Theme IDs associated with this book.
+                GenreIds:
+                  type: array
+                  items:
+                    type: string
+                    x-apidog-mock: '{{$string.uuid}}'
+                  description: A list of Genre IDs associated with this book.
+                AudienceIds:
+                  type: array
+                  items:
+                    type: string
+                    x-apidog-mock: '{{$string.uuid}}'
+                  description: >-
+                    A list of Audience IDs (e.g., Children, Young Adult)
+                    associated with this book.
+                AuthorIds:
+                  type: array
+                  items:
+                    type: string
+                    x-apidog-mock: '{{$string.uuid}}'
+                  description: A list of Author IDs associated with this book.
+              x-apidog-orders:
+                - Isbn
+                - Issn
+                - Title
+                - Description
+                - Page Count
+                - PublisherId
+                - PublishingDate
+                - Language
+                - Edition
+                - BorrowPricePerDay
+                - ' FinePerDay'
+                - LostFee
+                - DamageFee
+                - CategoryIds
+                - KeywordIds
+                - ThemeIds
+                - GenreIds
+                - AudienceIds
+                - AuthorIds
+              required:
+                - Isbn
+                - Issn
+                - Page Count
+                - PublisherId
+                - PublishingDate
+                - Title
+                - Language
+                - Edition
+                - BorrowPricePerDay
+                - ' FinePerDay'
+                - LostFee
+                - DamageFee
+                - CategoryIds
+                - KeywordIds
+                - ThemeIds
+                - GenreIds
+                - AudienceIds
+                - AuthorIds
+              x-apidog-ignore-properties: []
+            examples: {}
+        required: true
+      responses:
+        '201':
+          description: Returns the unique ID of the newly created book.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  BookId:
+                    type: string
+                    x-apidog-mock: '{{$string.uuid}}'
+                x-apidog-orders:
+                  - BookId
+                required:
+                  - BookId
+                x-apidog-ignore-properties: []
+          headers: {}
+          x-apidog-name: Created
+          x-apidog-ordering: 0
+        '400':
+          description: >-
+            Returned if the payload is missing required fields, fails business
+            rules (e.g., negative fees), or if any of the provided relational
+            IDs (Authors, Genres, Publisher) do not exist in the database.
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  code:
+                    type: string
+                  description:
+                    type: string
+                x-apidog-orders:
+                  - code
+                  - description
+                required:
+                  - code
+                  - description
+                x-apidog-ignore-properties: []
+          headers: {}
+          x-apidog-name: Bad Request
+          x-apidog-ordering: 1
+        '409':
+          description: >-
+            Returned if a book with the provided ISBN already exists in the
+            catalog.
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  code:
+                    type: string
+                  description:
+                    type: string
+                x-apidog-orders:
+                  - code
+                  - description
+                required:
+                  - code
+                  - description
+                x-apidog-ignore-properties: []
+          headers: {}
+          x-apidog-name: Conflict
+          x-apidog-ordering: 2
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
+      x-apidog-folder: books/commands
+      x-apidog-status: developing
+      x-apidog-maintainer: Ahmed Shahin
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35268769-run
   /api/categories/:
     post:
       summary: Create Category
