@@ -13,6 +13,8 @@ tags:
   - name: query
   - name: book
   - name: author
+  - name: book-copy
+  - name: patch
   - name: category
   - name: genre
   - name: keyword
@@ -119,7 +121,7 @@ paths:
             recognize subsequent retries of the same request. If not provided,
             the server may reject the request or treat it as a standard,
             non-idempotent operation.
-          required: false
+          required: true
           example: '{{$string.uuid}}'
           schema:
             type: string
@@ -790,7 +792,7 @@ paths:
             recognize subsequent retries of the same request. If not provided,
             the server may reject the request or treat it as a standard,
             non-idempotent operation.
-          required: false
+          required: true
           example: '{{$string.uuid}}'
           schema:
             type: string
@@ -1360,6 +1362,211 @@ paths:
       x-apidog-folder: authors/queries
       x-apidog-status: developing
       x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35220218-run
+  /api/book/{book-id}/allocate:
+    patch:
+      summary: Allocate Available Book Copy
+      deprecated: false
+      description: >-
+        Scans the inventory for an available physical copy of the specified
+        book. If an available copy exists, its status is immediately changed to
+        waiting-approval to prevent concurrent allocation by other member. This
+        endpoint is idempotent; sending the same request with the same
+        `Idempotency-Key` will safely return the previously allocated copy ID
+        without allocating a second physical copy.
+
+
+        ---
+
+
+        **Path Parameters**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | book-id | GUID | Yes | The unique identifier of the book (e.g.,
+        90870800-9c33-4d42-858b-fa4969fd7455).
+         |
+
+        ---
+
+
+        **Headers**
+
+
+        | Name | Type | Required | Description |
+
+        | ---- | ---- | -------- | ----------- |
+
+        | Idempotency-Key | string | Yes | A unique, client-generated string
+        (such as a V4 UUID) used to recognize subsequent retries of the same
+        request. If not provided, the server may reject the request or treat it
+        as a standard, non-idempotent operation. |
+
+        | Content-Type | string | Yes | Must be`application/json` |
+
+
+        ---
+
+
+        **Responses**
+
+
+        `200 OK`
+
+        Returns the unique ID of the specific physical `BookCopy` that was
+        reserved.
+
+        Content-Type: `application/json`
+
+        ```json
+
+        {
+          "BookCopyId": "90870800-9c33-4d42-858b-fa4969fd7455"
+        }
+
+        ```
+
+
+        `400 Bad Request`
+
+        Returned if the allocation process fails.
+
+        Content-Type: `application/json`
+
+        ```json
+
+        {
+          "code": "Book.NoAvailableCopies",
+          "description": "No available copies."
+        }
+
+        ```
+
+
+        `404 Not Found`
+
+        Returned if no book exists in the catalog matching the provided
+        `book-id`.
+
+
+        `409 Conflict`
+
+        Returned if another user allocated the exact same copy at the exact same
+        millisecond.
+      tags:
+        - book
+        - book-copy
+        - patch
+        - command
+      parameters:
+        - name: book-id
+          in: path
+          description: >-
+            The unique identifier of the book (e.g.,
+            90870800-9c33-4d42-858b-fa4969fd7455).
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          description: Must be application/json
+          required: false
+          example: application/json
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          description: >-
+            A unique, client-generated string (such as a V4 UUID) used to
+            recognize subsequent retries of the same request. If not provided,
+            the server may reject the request or treat it as a standard,
+            non-idempotent operation.
+          required: true
+          example: '{{$string.uuid}}'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: >-
+            Returns the unique ID of the specific physical BookCopy that was
+            reserved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  BookCopyId:
+                    type: string
+                    x-apidog-mock: '{{$string.uuid}}'
+                    description: The unique identifier of the allocated book copy.
+                x-apidog-orders:
+                  - BookCopyId
+                required:
+                  - BookCopyId
+                x-apidog-ignore-properties: []
+          headers: {}
+          x-apidog-name: Success
+          x-apidog-ordering: 0
+        '400':
+          description: Returned if the allocation process fails.
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: error code
+                  description:
+                    type: string
+                    description: error description
+                x-apidog-orders:
+                  - code
+                  - description
+                required:
+                  - code
+                  - description
+                x-apidog-ignore-properties: []
+          headers: {}
+          x-apidog-name: Bad Request
+          x-apidog-ordering: 1
+        '404':
+          description: >-
+            Returned if no book exists in the catalog matching the provided
+            bookId.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-ignore-properties: []
+                x-apidog-orders: []
+          headers: {}
+          x-apidog-name: Not Found
+          x-apidog-ordering: 2
+        '409':
+          description: >-
+            Returned if another user allocated the exact same copy at the exact
+            same millisecond.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                x-apidog-ignore-properties: []
+                x-apidog-orders: []
+          headers: {}
+          x-apidog-name: Conflict
+          x-apidog-ordering: 3
+      security: []
+      x-apidog-folder: books/commands
+      x-apidog-status: developing
+      x-apidog-maintainer: Ahmed Shahin
+      x-run-in-apidog: https://app.apidog.com/web/project/1282884/apis/api-35266139-run
   /api/categories/:
     post:
       summary: Create Category
@@ -1460,7 +1667,7 @@ paths:
             recognize subsequent retries of the same request. If not provided,
             the server may reject the request or treat it as a standard,
             non-idempotent operation.
-          required: false
+          required: true
           example: '{{$string.uuid}}'
           schema:
             type: string
@@ -2131,7 +2338,7 @@ paths:
             recognize subsequent retries of the same request. If not provided,
             the server may reject the request or treat it as a standard,
             non-idempotent operation.
-          required: false
+          required: true
           example: '{{$string.uuid}}'
           schema:
             type: string
@@ -2152,6 +2359,7 @@ paths:
               required:
                 - name
               x-apidog-ignore-properties: []
+            examples: {}
         required: true
       responses:
         '201':
@@ -2799,7 +3007,7 @@ paths:
             recognize subsequent retries of the same request. If not provided,
             the server may reject the request or treat it as a standard,
             non-idempotent operation.
-          required: false
+          required: true
           example: '{{$string.uuid}}'
           schema:
             type: string
@@ -3470,7 +3678,7 @@ paths:
             recognize subsequent retries of the same request. If not provided,
             the server may reject the request or treat it as a standard,
             non-idempotent operation.
-          required: false
+          required: true
           example: '{{$string.uuid}}'
           schema:
             type: string
@@ -4140,7 +4348,7 @@ paths:
             recognize subsequent retries of the same request. If not provided,
             the server may reject the request or treat it as a standard,
             non-idempotent operation.
-          required: false
+          required: true
           example: '{{$string.uuid}}'
           schema:
             type: string
@@ -4872,4 +5080,8 @@ servers:
     description: Develop Env
   - url: http://localhost:5099
     description: Develop Env HTTP
+  - url: https://test.your-api-server.com
+    description: Testing Env
+  - url: https://prod.your-api-server.com
+    description: Prod Env
 security: []
