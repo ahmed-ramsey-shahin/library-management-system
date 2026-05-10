@@ -38,7 +38,15 @@ namespace Lms.Application.Features.Books.Commands.AllocateAvailableCopy
                 return allocationResult.Errors!;
             }
 
-            await db.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await db.SaveChangesAsync(cancellationToken);
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                return ApplicationErrors.ConcurrencyConflict;
+            }
+
             await cache.RemoveByTagAsync("book-copy", cancellationToken);
             var copy = allocationResult.Value;
 
