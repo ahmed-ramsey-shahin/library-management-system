@@ -194,7 +194,21 @@ paths:
           headers: {}
           x-apidog-name: Conflict
           x-apidog-ordering: 2
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-folder: audiences/commands
       x-apidog-status: developing
       x-apidog-maintainer: Ahmed Shahin
@@ -387,7 +401,21 @@ paths:
           headers: {}
           x-apidog-name: Conflict
           x-apidog-ordering: 2
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-folder: audiences/commands
       x-apidog-status: developing
       x-apidog-maintainer: Ahmed Shahin
@@ -562,7 +590,21 @@ paths:
           headers: {}
           x-apidog-name: Conflict
           x-apidog-ordering: 3
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-folder: audiences/commands
       x-apidog-status: developing
       x-apidog-maintainer: Ahmed Shahin
@@ -865,7 +907,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: authors/commands
       x-apidog-status: developing
@@ -1058,7 +1114,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: authors/commands
       x-apidog-status: developing
@@ -1233,7 +1303,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: authors/commands
       x-apidog-status: developing
@@ -1562,7 +1646,21 @@ paths:
           headers: {}
           x-apidog-name: Conflict
           x-apidog-ordering: 3
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-folder: books/commands
       x-apidog-status: developing
       x-apidog-maintainer: Ahmed Shahin
@@ -1740,7 +1838,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: categories/commands
       x-apidog-status: developing
@@ -1933,7 +2045,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: categories/commands
       x-apidog-status: developing
@@ -2108,7 +2234,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: categories/commands
       x-apidog-status: developing
@@ -2411,7 +2551,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: genres/commands
       x-apidog-status: developing
@@ -2604,7 +2758,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: genres/commands
       x-apidog-status: developing
@@ -2778,7 +2946,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: genres/commands
       x-apidog-status: developing
@@ -3080,7 +3262,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: keywords/commands
       x-apidog-status: developing
@@ -3273,7 +3469,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: keywords/commands
       x-apidog-status: developing
@@ -3448,7 +3658,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: keywords/commands
       x-apidog-status: developing
@@ -3751,7 +3975,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: themes/commands
       x-apidog-status: developing
@@ -3944,7 +4182,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: themes/commands
       x-apidog-status: developing
@@ -4119,7 +4371,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: themes/commands
       x-apidog-status: developing
@@ -4421,7 +4687,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: publishers/commands
       x-apidog-status: developing
@@ -4616,7 +4896,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: publishers/commands
       x-apidog-status: developing
@@ -4793,7 +5087,21 @@ paths:
                 x-apidog-orders: []
                 x-apidog-ignore-properties: []
           headers: {}
-      security: []
+      security:
+        - jwt: []
+          x-apidog:
+            schemeGroups:
+              - id: 30lybBdb_EXAdF6Fh9vyv
+                schemeIds:
+                  - jwt
+            required: false
+            use:
+              id: 30lybBdb_EXAdF6Fh9vyv
+              configs:
+                jwt:
+                  authConfigs:
+                    x-apidog:
+                      token: '{{ACCESS_TOKEN}}'
       x-apidog-maintainer: Ahmed Shahin
       x-apidog-folder: publishers/commands
       x-apidog-status: developing
@@ -5074,14 +5382,27 @@ components:
       x-apidog-folder: ''
       x-apidog-ignore-properties: []
   responses: {}
-  securitySchemes: {}
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
 servers:
   - url: http://localhost:7258
     description: Develop Env
   - url: http://localhost:5099
     description: Develop Env HTTP
-  - url: https://test.your-api-server.com
-    description: Testing Env
-  - url: https://prod.your-api-server.com
-    description: Prod Env
-security: []
+security:
+  - jwt: []
+    x-apidog:
+      schemeGroups:
+        - id: 30lybBdb_EXAdF6Fh9vyv
+          schemeIds:
+            - jwt
+      required: false
+      use:
+        id: 30lybBdb_EXAdF6Fh9vyv
+        configs:
+          jwt:
+            authConfigs:
+              x-apidog:
+                token: '{{ACCESS_TOKEN}}'
