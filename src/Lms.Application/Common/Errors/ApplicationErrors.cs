@@ -14,7 +14,6 @@ namespace Lms.Application.Common.Errors
         public static Error IssnAlreadyExists => Error.Conflict("Book.IssnConflict", "A book with this ISSN already exists in the catalog.");
 
         // --- Book Copies ---
-        public static Error BookCopyNotFound => Error.NotFound("BookCopy.NotFound", "The requested book copy was not found.");
         public static Error BarcodeInvalid => Error.Validation("BookCopy.InvalidBarcode", "The barcode must start with 'CPY-' followed by exactly 8 numeric digits.");
         public static Error LocationLength => Error.Validation("BookCopy.LocationTooLong", "The location string cannot exceed 100 characters.");
         public static Error BarcodeAlreadyExists => Error.Conflict("BookCopy.BarcodeConflict", "A book copy with this barcode already exists.");
@@ -73,10 +72,6 @@ namespace Lms.Application.Common.Errors
         public static Error BorrowRecordStatusInvalid => Error.Conflict("BorrowRecord.InvalidStatusTransition", "The current status of this record does not allow the requested operation.");
         public static Error NewDueDateInvalid => Error.Validation("BorrowRecord.InvalidDueDate", "The new due date must be later than the current due date.");
         public static Error NotLate => Error.Conflict("BorrowRecord.NotOverdue", "This borrow record is not currently overdue.");
-
-        public static Error ActiveBorrowsLimitReached => Error.Failure("BorrowRecord.ActiveBorrowsLimitReached", "The user has reached their active borrowing limit. Please return at least one book before borrowing another.");
-        public static Error LateBorrowsLimitReached => Error.Failure("BorrowRecord.LateBorrowsLimitReached", "The user has reached the maximum allowed number of overdue borrows. Overdue books must be returned first.");
-        public static Error UnpaidFinesLimitReached => Error.Failure("BorrowRecord.UnpaidFinesLimitReached", "Borrowing privileges are suspended due to unpaid fines.");
         public static Error AnotherCopyAlreadyBorrowed => Error.Conflict("BorrowRecord.DuplicateCopyBorrowed", "The user is already borrowing a copy of this book.");
 
         // --- Fines ---
