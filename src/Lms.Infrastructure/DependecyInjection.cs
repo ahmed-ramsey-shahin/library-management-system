@@ -25,8 +25,8 @@ namespace Lms.Infrastructure
             // time provider configuration
             services.AddSingleton(TimeProvider.System);
             // ef core configuration
-            var sqlServerConnectionString = configuration.GetConnectionString("SqlServerConnection");
-            var redisConnectionString = configuration.GetConnectionString("RedisConnectionString");
+            var sqlServerConnectionString = configuration.GetConnectionString("SqlServer");
+            var redisConnectionString = configuration.GetConnectionString("Redis");
             services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
             services.AddDbContext<AppDbContext>((serviceProvider, options) =>
             {
