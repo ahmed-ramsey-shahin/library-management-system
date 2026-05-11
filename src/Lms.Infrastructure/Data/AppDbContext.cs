@@ -66,6 +66,7 @@ namespace Lms.Infrastructure.Data
         {
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+            builder.Ignore<DomainEvent>();
         }
 
         private async Task DispatchDomainEvents(CancellationToken cancellationToken)
