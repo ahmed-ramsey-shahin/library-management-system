@@ -1,3 +1,4 @@
+using Lms.Api;
 using Lms.Application;
 using Lms.Application.Common.Configurations;
 using Lms.Infrastructure;
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOptions<BorrowSettings>().BindConfiguration("BorrowSettings");
 builder.Services.AddApplicationLayer();
 builder.Services.AddInfrastructureLayer(builder.Configuration);
+builder.Services.AddApi();
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
 var app = builder.Build();
