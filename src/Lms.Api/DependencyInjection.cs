@@ -3,10 +3,14 @@ using System.Threading.RateLimiting;
 using Asp.Versioning;
 using Lms.Api.Infrastructure;
 using Lms.Api.OpenApi.Transformers;
+using Lms.Api.Services;
+using Lms.Application.Common.Interfaces;
+using Lms.Infrastructure.Settings;
 using Microsoft.AspNetCore.RateLimiting;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Serilog;
 
 namespace Lms.Api
 {
@@ -113,7 +117,47 @@ namespace Lms.Api
             return services;
         }
 
-        public static IServiceCollection AddApi(this IServiceCollection services)
+        private static IServiceCollection AddValidation(this IServiceCollection services)
+        {
+            return services;
+        }
+
+        private static IServiceCollection AddIdentityInfrastructure(this IServiceCollection services)
+        {
+            services.AddScoped<IUser, CurrentUserService>();
+            services.AddHttpContextAccessor();
+            return services;
+        }
+
+        private static IServiceCollection AddConfiguredCors(this IServiceCollection services, IConfiguration configuration)
+        {
+            var appSettings = configuration.GetSection("AppSettings").Get<AppSettings>()!;
+            services.AddCors(options => options.AddPolicy(
+                appSettings.CorsPolicyName,
+                policy => policy
+                    .WithOrigins(appSettings.AllowedOrigins!)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+            ));
+            return services;
+        }
+
+        public static IApplicationBuilder UseCoreMiddlewars(this IApplicationBuilder app, IConfiguration configuration)
+        {
+            app.UseExceptionHandler();
+            app.UseStatusCodePages();
+            app.UseHttpsRedirection();
+            app.UseSerilogRequestLogging();
+            app.UseCors(configuration["AppSettings:CorsPolicyName"]!);
+            app.UseRateLimiter();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseOutputCache();
+            return app;
+        }
+
+        public static IServiceCollection AddApi(this IServiceCollection services, IConfiguration configuration)
         {
             services
                 .AddValidation()
@@ -123,7 +167,9 @@ namespace Lms.Api
                 .AddCustomProblemDetails()
                 .AddCustomApiVersioning()
                 .AddExceptionHandling()
-                .AddControllerWithJsonConfiguration();
+                .AddControllerWithJsonConfiguration()
+                .AddIdentityInfrastructure()
+                .AddConfiguredCors(configuration);
             return services;
         }
     }
