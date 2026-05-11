@@ -6,7 +6,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__SqlServer=Server=sqlserver;Database=library_management_system;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
-      - ConnectionStrings__RedisConnectionString=redis:6379,abortConnect=false
+      - ConnectionStrings__Redis=redis:6379,abortConnect=false
     depends_on:
       - sqlserver
       - redis
