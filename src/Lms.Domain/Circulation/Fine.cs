@@ -57,7 +57,7 @@ namespace Lms.Domain.Circulation
 
             if (borrowRecordId == Guid.Empty)
             {
-                errors.Add(FineErrors.BorrowRecordId);
+                errors.Add(FineErrors.BorrowRecordIdRequired);
             }
 
             if (amount <= 0)
