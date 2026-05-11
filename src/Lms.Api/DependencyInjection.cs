@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
 using Lms.Api.Infrastructure;
-using Lms.Api.OpenApi.Transformers;
 using Lms.Api.Services;
 using Lms.Application.Common.Interfaces;
 using Lms.Infrastructure.Settings;
@@ -84,23 +83,6 @@ namespace Lms.Api
                 options.GroupNameFormat = "'v'VVV";
                 options.SubstituteApiVersionInUrl = true;
             });
-            return services;
-        }
-
-        private static IServiceCollection AddApiDocumentation(this IServiceCollection services)
-        {
-            string[] versions = ["v1"];
-
-            foreach (var version in versions)
-            {
-                services.AddOpenApi(version, options =>
-                {
-                    options.AddDocumentTransformer<VersionInfoTransformer>();
-                    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
-                    options.AddOperationTransformer<BearerSecuritySchemeTransformer>();
-                });
-            }
-
             return services;
         }
 
