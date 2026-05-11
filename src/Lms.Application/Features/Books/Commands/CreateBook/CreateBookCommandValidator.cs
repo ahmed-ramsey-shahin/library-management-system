@@ -14,8 +14,8 @@ namespace Lms.Application.Features.Books.Commands.CreateBook
 
             RuleFor(command => command.Issn)
                 .Matches(@"^\d{4}-\d{3}[\dX]$")
-                .WithErrorCode(ApplicationErrors.BookIsbnInvalid.Code)
-                .WithMessage(ApplicationErrors.BookIsbnInvalid.Description);
+                .WithErrorCode(ApplicationErrors.BookIssnInvalid.Code)
+                .WithMessage(ApplicationErrors.BookIssnInvalid.Description);
 
             RuleFor(command => command.Title)
                 .MaximumLength(255)
