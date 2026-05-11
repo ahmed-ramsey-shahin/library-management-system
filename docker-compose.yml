@@ -10,6 +10,24 @@ services:
       - "1433:1433"
     volumes:
       - sqlserver_data:/var/opt/mssql
+    networks:
+      - lms-network
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - lms-network
 
 volumes:
   sqlserver_data: {}
+  redis_data: {}
+
+networks:
+  lms-network:
+    driver: bridge
