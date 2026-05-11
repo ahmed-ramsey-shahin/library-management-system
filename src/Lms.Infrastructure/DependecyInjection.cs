@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Lms.Domain.Identity;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace Lms.Infrastructure
 {
@@ -24,12 +25,13 @@ namespace Lms.Infrastructure
             // time provider configuration
             services.AddSingleton(TimeProvider.System);
             // ef core configuration
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var sqlServerConnectionString = configuration.GetConnectionString("SqlServerConnection");
+            var redisConnectionString = configuration.GetConnectionString("RedisConnectionString");
             services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
             services.AddDbContext<AppDbContext>((serviceProvider, options) =>
             {
                 options.AddInterceptors(serviceProvider.GetService<ISaveChangesInterceptor>()!);
-                options.UseSqlServer(connectionString);
+                options.UseSqlServer(sqlServerConnectionString);
             });
             services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>()!);
             // email service configuration
@@ -38,7 +40,7 @@ namespace Lms.Infrastructure
             services.AddTransient<IResend, ResendClient>();
             services.AddScoped<IEmailService, EmailService>();
             // hangfire service configuration
-            services.AddHangfire(config => config.UseSqlServerStorage(connectionString));
+            services.AddHangfire(config => config.UseSqlServerStorage(sqlServerConnectionString));
             services.AddHangfireServer();
             // interfaces configuration
             services.AddTransient<IPasswordHasher, PasswordHasher>();
@@ -68,6 +70,26 @@ namespace Lms.Infrastructure
                 .AddPolicy("Admin", policy => policy.RequireRole(nameof(Role.Admin)))
                 .AddPolicy("Librarian", policy => policy.RequireRole(nameof(Role.Librarian)))
                 .AddPolicy("Member", policy => policy.RequireRole(nameof(Role.Member)));
+            // Caching configuration
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString("Redis");
+                options.InstanceName = "Lms_";
+            });
+            services.AddHybridCache(options =>
+            {
+                options.DefaultEntryOptions = new HybridCacheEntryOptions
+                {
+                    Expiration = TimeSpan.FromMinutes(5),
+                    LocalCacheExpiration = TimeSpan.FromMinutes(5)
+                };
+            });
+            services.AddDistributedSqlServerCache(options =>
+            {
+                options.ConnectionString = redisConnectionString;
+                options.SchemaName = "dbo";
+                options.TableName = "LmsCache";
+            });
             return services;
         }
     }
