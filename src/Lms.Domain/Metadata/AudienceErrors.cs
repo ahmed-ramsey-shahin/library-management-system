@@ -4,8 +4,8 @@ namespace Lms.Domain.Metadata
 {
     public static class AudienceErrors
     {
-        public static Error IdRequired => Error.Validation("Audience.Id.Required", "Audience id is required.");
-        public static Error NameRequired => Error.Validation("Audience.Name.Required", "Audience name is required.");
-        public static Error AudienceHasBooks => Error.Conflict("Audience.HasBooks", "This operation cannot be completed because this type of audience still has books associated with it.");
+        public static Error IdRequired => Error.Validation("Audience.IdRequired", "Audience ID is required.");
+        public static Error NameRequired => Error.Validation("Audience.NameRequired", "Audience name is required.");
+        public static Error AudienceHasBooks => Error.Conflict("Audience.HasBooks", "Cannot delete or modify the audience because it is still associated with books.");
     }
 }
