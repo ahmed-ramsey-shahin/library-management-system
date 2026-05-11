@@ -4,85 +4,90 @@ namespace Lms.Application.Common.Errors
 {
     public static class ApplicationErrors
     {
-        public static Error BookNotFound => Error.NotFound("ApplicationErrors.Book.BookNotFound", "The required book was not found.");
-        public static Error BookCopyNotFound => Error.NotFound("ApplicationErrors.BookCopy.BookCopyNotFound", "The required book copy was not found.");
+        // --- Books ---
+        public static Error BookNotFound => Error.NotFound("Book.NotFound", "The requested book was not found.");
+        public static Error BookIsbnInvalid => Error.Validation("Book.InvalidIsbn", "The provided ISBN format is invalid.");
+        public static Error BookIssnInvalid => Error.Validation("Book.InvalidIssn", "The provided ISSN format is invalid.");
+        public static Error BookTitleLength => Error.Validation("Book.TitleTooLong", "The book title cannot exceed 255 characters.");
+        public static Error BookDescriptionLength => Error.Validation("Book.DescriptionTooLong", "The book description cannot exceed 1024 characters.");
+        public static Error IsbnAlreadyExists => Error.Conflict("Book.IsbnConflict", "A book with this ISBN already exists in the catalog.");
+        public static Error IssnAlreadyExists => Error.Conflict("Book.IssnConflict", "A book with this ISSN already exists in the catalog.");
 
-        public static Error GenreNameLength => Error.Validation("ApplicationErrors.Genre.GenreNameLength", "Genre name length cannot exceed 50 characters.");
-        public static Error GenreAlreadyExists => Error.Conflict("ApplicationErrors.Genre.GenreAlreadyExists", "This genre already exists.");
-        public static Error GenreNotFound => Error.NotFound("ApplicationErrors.Genre.GenreNotFound", "The required genre was not found.");
+        // --- Book Copies ---
+        public static Error BookCopyNotFound => Error.NotFound("BookCopy.NotFound", "The requested book copy was not found.");
+        public static Error BarcodeInvalid => Error.Validation("BookCopy.InvalidBarcode", "The barcode must start with 'CPY-' followed by exactly 8 numeric digits.");
+        public static Error LocationLength => Error.Validation("BookCopy.LocationTooLong", "The location string cannot exceed 100 characters.");
+        public static Error BarcodeAlreadyExists => Error.Conflict("BookCopy.BarcodeConflict", "A book copy with this barcode already exists.");
 
-        public static Error KeywordNameLength => Error.Validation("ApplicationErrors.Keyword.KeywordNameLength", "Keyword name length cannot exceed 50 characters.");
-        public static Error KeywordAlreadyExists => Error.Conflict("ApplicationErrors.Keyword.KeywordAlreadyExists", "This keyword already exists.");
-        public static Error KeywordNotFound => Error.NotFound("ApplicationErrors.Keyword.KeywordNotFound", "The required keyword was not found.");
+        // --- Metadata (Genres, Keywords, Audiences, Authors, Categories, Publishers, Themes) ---
+        public static Error GenreNameLength => Error.Validation("Genre.NameTooLong", "The genre name cannot exceed 50 characters.");
+        public static Error GenreAlreadyExists => Error.Conflict("Genre.NameConflict", "A genre with this name already exists.");
+        public static Error GenreNotFound => Error.NotFound("Genre.NotFound", "The requested genre was not found.");
 
-        public static Error AudienceNameLength => Error.Validation("ApplicationErrors.Audience.AudienceNameLength", "Audience name length cannot exceed 50 characters.");
-        public static Error AudienceAlreadyExists => Error.Conflict("ApplicationErrors.Audience.AudienceAlreadyExists", "This audience already exists.");
-        public static Error AudienceNotFound => Error.NotFound("ApplicationErrors.Audience.AudienceNotFound", "The required audience was not found.");
+        public static Error KeywordNameLength => Error.Validation("Keyword.NameTooLong", "The keyword name cannot exceed 50 characters.");
+        public static Error KeywordAlreadyExists => Error.Conflict("Keyword.NameConflict", "A keyword with this name already exists.");
+        public static Error KeywordNotFound => Error.NotFound("Keyword.NotFound", "The requested keyword was not found.");
 
-        public static Error AuthorNameLength => Error.Validation("ApplicationErrors.Author.AuthorNameLength", "Author name length cannot exceed 50 characters.");
-        public static Error AuthorAlreadyExists => Error.Conflict("ApplicationErrors.Author.AuthorAlreadyExists", "This author already exists.");
-        public static Error AuthorNotFound => Error.NotFound("ApplicationErrors.Author.AuthorNotFound", "The required author was not found.");
+        public static Error AudienceNameLength => Error.Validation("Audience.NameTooLong", "The audience name cannot exceed 50 characters.");
+        public static Error AudienceAlreadyExists => Error.Conflict("Audience.NameConflict", "An audience with this name already exists.");
+        public static Error AudienceNotFound => Error.NotFound("Audience.NotFound", "The requested audience was not found.");
 
-        public static Error CategoryNameLength => Error.Validation("ApplicationErrors.Category.CategoryNameLength", "Category name length cannot exceed 50 characters.");
-        public static Error CategoryAlreadyExists => Error.Conflict("ApplicationErrors.Category.CategoryAlreadyExists", "This category already exists.");
-        public static Error CategoryNotFound => Error.NotFound("ApplicationErrors.Category.CategoryNotFound", "The required category was not found.");
+        public static Error AuthorNameLength => Error.Validation("Author.NameTooLong", "The author name cannot exceed 50 characters.");
+        public static Error AuthorAlreadyExists => Error.Conflict("Author.NameConflict", "An author with this name already exists.");
+        public static Error AuthorNotFound => Error.NotFound("Author.NotFound", "The requested author was not found.");
 
-        public static Error PublisherNameLength => Error.Validation("ApplicationErrors.Publisher.PublisherNameLength", "Publisher name length cannot exceed 50 characters.");
-        public static Error PublisherAlreadyExists => Error.Conflict("ApplicationErrors.Publisher.PublisherAlreadyExists", "This publisher already exists.");
-        public static Error PublisherNotFound => Error.NotFound("ApplicationErrors.Publisher.PublisherNotFound", "The required publisher was not found.");
+        public static Error CategoryNameLength => Error.Validation("Category.NameTooLong", "The category name cannot exceed 50 characters.");
+        public static Error CategoryAlreadyExists => Error.Conflict("Category.NameConflict", "A category with this name already exists.");
+        public static Error CategoryNotFound => Error.NotFound("Category.NotFound", "The requested category was not found.");
 
-        public static Error ThemeNameLength => Error.Validation("ApplicationErrors.Theme.ThemeNameLength", "Theme name length cannot exceed 50 characters.");
-        public static Error ThemeAlreadyExists => Error.Conflict("ApplicationErrors.Theme.ThemeAlreadyExists", "This theme already exists.");
-        public static Error ThemeNotFound => Error.NotFound("ApplicationErrors.Theme.ThemeNotFound", "The required theme was not found.");
+        public static Error PublisherNameLength => Error.Validation("Publisher.NameTooLong", "The publisher name cannot exceed 50 characters.");
+        public static Error PublisherAlreadyExists => Error.Conflict("Publisher.NameConflict", "A publisher with this name already exists.");
+        public static Error PublisherNotFound => Error.NotFound("Publisher.NotFound", "The requested publisher was not found.");
 
-        public static Error BookIsbnInvalid => Error.Validation("ApplicationErrors.Book.Isbn.Invalid", "The provided ISBN is invalid.");
-        public static Error BookIssnInvalid => Error.Validation("ApplicationErrors.Book.Issn.Invalid", "The provided ISSN is invalid.");
-        public static Error BookTitleLength => Error.Validation("ApplicationErrors.Book.Title.Length", "Book title length cannot exceed 255 characters.");
-        public static Error BookDescriptionLength => Error.Validation("ApplicationErrors.Book.Description.Length", "Book description length cannot exceed 1024 characters.");
-        public static Error IsbnAlreadyExists => Error.Conflict("ApplicationErrors.Book.Isbn.AlreadyExists", "A book with this ISBN already exists.");
-        public static Error IssnAlreadyExists => Error.Conflict("ApplicationErrors.Book.Issn.AlreadyExists", "A book with this ISSN already exists.");
+        public static Error ThemeNameLength => Error.Validation("Theme.NameTooLong", "The theme name cannot exceed 50 characters.");
+        public static Error ThemeAlreadyExists => Error.Conflict("Theme.NameConflict", "A theme with this name already exists.");
+        public static Error ThemeNotFound => Error.NotFound("Theme.NotFound", "The requested theme was not found.");
 
-        public static Error BarcodeInvalid => Error.Validation("ApplicationErrors.BookCopy.Barcode.Invalid", "The barcode value must start with 'CPY-' followed by exactly 8 numeric digits.");
-        public static Error LocationLength => Error.Validation("ApplicationErrors.BookCopy.Location.Length", "Theme location length cannot exceed 100 characters.");
-        public static Error BarcodeAlreadyExists => Error.Conflict("ApplicationErrors.BookCopy.BarcodeAlreadyExists", "A book copy with this barcode already exists.");
+        // --- Concurrency ---
+        public static Error ConcurrencyConflict => Error.Conflict("System.ConcurrencyConflict", "The requested resource was modified by another process. Please try again.");
 
-        public static Error ConcurrencyConflict => Error.Conflict("ApplicationErrors.ConcurrencyConflict", "Could not perform the required operation because of a concurrency conflict.");
+        // --- Users & Roles ---
+        public static Error UserNotFound => Error.NotFound("User.NotFound", "The requested user was not found.");
+        public static Error UserNotMember => Error.Forbidden("User.RequiresMemberRole", "This operation requires member privileges.");
+        public static Error NotLibrarian => Error.Forbidden("User.RequiresLibrarianRole", "This operation requires librarian privileges.");
 
-        public static Error UserNotFound => Error.NotFound("ApplicationErrors.User.UserNotFound", "The required user was not found.");
-        public static Error UserNotMember => Error.Unauthorized("ApplicationErrors.User.NotMember", "This operation is only allowed for members.");
-        public static Error ActiveBorrowsLimitReached => Error.Validation("ApplicationErrors.BorrowRecord.ActiveBorrowsLimitReached", "The user has reached the borrowing limit. Please return at least one book before borrowing another.");
-        public static Error LateBorrowsLimitReached => Error.Validation("ApplicationErrors.BorrowRecord.LateBorrowsLimitReached", "The user has reached the maximum number of late borrows. Please return overdue books before borrowing another.");
-        public static Error UnpaidFinesLimitReached => Error.Validation("ApplicationErrors.BorrowRecord.UnpaidFinesLimitReached", "The user has unpaid fines. Please pay all fines before borrowing.");
-        public static Error AnotherCopyAlreadyBorrowed => Error.Forbidden("ApplicationErrors.BorrowRecord.AnotherCopyAlreadyBorrowed", "The user has already borrowed another copy of this book.");
+        public static Error EmailInvalid => Error.Validation("User.InvalidEmail", "The provided email address is invalid.");
+        public static Error PhoneNumberInvalid => Error.Validation("User.InvalidPhoneNumber", "The provided phone number is invalid.");
+        public static Error NameLength => Error.Validation("User.NameTooLong", "First and last names cannot exceed 50 characters.");
+        public static Error AddressLength => Error.Validation("User.AddressTooLong", "The address cannot exceed 512 characters.");
 
-        public static Error BorrowRecordNotFound => Error.NotFound("ApplicationErrors.BorrowRecord.BorrowRecordNotFound", "The required borrow record was not found.");
+        public static Error EmailIsUsed => Error.Conflict("User.EmailConflict", "This email address is already registered to another user.");
+        public static Error PhoneNumberIsUsed => Error.Conflict("User.PhoneNumberConflict", "This phone number is already registered to another user.");
+        public static Error UserHasUnpaidFines => Error.Failure("User.HasUnpaidFines", "This operation cannot proceed because the user has unpaid fines.");
 
-        public static Error BorrowRecordStatusInvalid => Error.Validation("ApplicationErrors.BorrowRecord.BorrowRecordStatusInvalid", "The status of this record is no suitable for this operation.");
-        public static Error NewDueDateInvalid => Error.Validation("ApplicationErrors.BorrowRecord.NewDueDateInvlid", "The new due date must be after the old due date.");
+        public static Error PasswordInvalid => Error.Validation("User.InvalidPasswordFormat", "The password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.");
+        public static Error PasswordsDontMatch => Error.Validation("User.PasswordMismatch", "The provided current password does not match the actual password.");
 
-        public static Error NotLate => Error.Validation("ApplicationErrors.BorrowRecord.NotLate", "The specified borrow record is not late. Can not mark it as late.");
+        // --- Borrow Records & Circulation ---
+        public static Error BorrowRecordNotFound => Error.NotFound("BorrowRecord.NotFound", "The requested borrow record was not found.");
+        public static Error BorrowRecordStatusInvalid => Error.Conflict("BorrowRecord.InvalidStatusTransition", "The current status of this record does not allow the requested operation.");
+        public static Error NewDueDateInvalid => Error.Validation("BorrowRecord.InvalidDueDate", "The new due date must be later than the current due date.");
+        public static Error NotLate => Error.Conflict("BorrowRecord.NotOverdue", "This borrow record is not currently overdue.");
 
-        public static Error FineDescriptionLength => Error.Validation("ApplicationErrors.Fines.FineDescriptionLength", "Fine description length cannot exceed 500 characters.");
+        public static Error ActiveBorrowsLimitReached => Error.Failure("BorrowRecord.ActiveBorrowsLimitReached", "The user has reached their active borrowing limit. Please return at least one book before borrowing another.");
+        public static Error LateBorrowsLimitReached => Error.Failure("BorrowRecord.LateBorrowsLimitReached", "The user has reached the maximum allowed number of overdue borrows. Overdue books must be returned first.");
+        public static Error UnpaidFinesLimitReached => Error.Failure("BorrowRecord.UnpaidFinesLimitReached", "Borrowing privileges are suspended due to unpaid fines.");
+        public static Error AnotherCopyAlreadyBorrowed => Error.Conflict("BorrowRecord.DuplicateCopyBorrowed", "The user is already borrowing a copy of this book.");
 
-        public static Error FineNotFound => Error.NotFound("ApplicationErrors.Fine.FineNotFound", "The required fine was not found.");
+        // --- Fines ---
+        public static Error FineNotFound => Error.NotFound("Fine.NotFound", "The requested fine was not found.");
+        public static Error FineDescriptionLength => Error.Validation("Fine.DescriptionTooLong", "The fine description cannot exceed 500 characters.");
 
-        public static Error EmailInvalid => Error.Validation("ApplicationErrors.User.EmailInvalid", "Invalid email.");
-        public static Error PhoneNumberInvalid => Error.Validation("ApplicationErrors.User.PhoneNumberInvalid", "Invalid phone number.");
-        public static Error NameLength => Error.Validation("ApplicationErrors.User.NameLength", "The first or last name must be less than 50 caharacters.");
-        public static Error AddressLength => Error.Validation("ApplicationErrors.User.AddressLength", "The address must be less than 512 caharacters.");
-        public static Error EmailIsUsed => Error.Conflict("ApplicationErrors.User.EmailIsUsed", "This email is used by another user.");
-        public static Error PhoneNumberIsUsed => Error.Conflict("ApplicationErrors.User.PhoneNumberIsUsed", "This phone number is used by another user.");
-
-        public static Error UserHasUnpaidFines => Error.Failure("ApplicationErrors.User.UserHasUnpaidFines", "This user still has unpaid fines.");
-        public static Error NotLibrarian => Error.Unauthorized("ApplicationErrors.User.NotLibrarian", "This operation is only allowed for librarians.");
-
-        public static Error PasswordInvalid => Error.Validation("ApplicationErrors.User.PasswordInvalid", "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).");
-        public static Error PasswordsDontMatch => Error.Validation("ApplicationErrors.User.PasswordsDontMatch", "The old password and the real password does not match.");
-
-        public static Error ExpiredAccessTokenInvalid => Error.Conflict("ApplicationErrors.ExpiredAccessTokenInvalid", "Expired access token is not valid.");
-        public static Error UserIdClaimInvalid => Error.Conflict("ApplicationErrors.UserIdClaimInvalid", "Invalid user id claim.");
-        public static Error UserIdInvalid => Error.Validation("ApplicationErrors.UserIdInvalid", "Invalid user id.");
-        public static Error RefreshTokenExpired => Error.Validation("ApplicationErrors.RefreshTokenExpired", "Refresh token has expired.");
-        public static Error CredentialsInvalid => Error.Validation("ApplicationErrors.CredentialsInvalid", "User credentials invalid.");
+        // --- Authentication & Tokens ---
+        public static Error CredentialsInvalid => Error.Unauthorized("Auth.InvalidCredentials", "The provided email or password is incorrect.");
+        public static Error ExpiredAccessTokenInvalid => Error.Unauthorized("Auth.InvalidExpiredToken", "The provided expired access token is invalid or malformed.");
+        public static Error UserIdClaimInvalid => Error.Unauthorized("Auth.InvalidUserIdClaim", "The user identifier claim in the token is invalid or missing.");
+        public static Error UserIdInvalid => Error.Validation("Auth.InvalidUserId", "The provided user identifier is invalid.");
+        public static Error RefreshTokenExpired => Error.Unauthorized("Auth.RefreshTokenExpired", "The refresh token has expired. Please log in again.");
     }
 }
