@@ -67,7 +67,7 @@ namespace Lms.Domain.Circulation
 
             if (bookCopyId == Guid.Empty)
             {
-                errors.Add(BorrowRecordErrors.BookCopyId);
+                errors.Add(BorrowRecordErrors.BookCopyIdRequired);
             }
 
             if (dueDate <= DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)))
