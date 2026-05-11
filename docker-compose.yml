@@ -7,9 +7,16 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__SqlServer=Server=sqlserver;Database=library_management_system;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
       - ConnectionStrings__Redis=redis:6379,abortConnect=false
+      - ASPNETCORE_URLS=http://+:8080
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://seq:5341/ingest/otlp/v1/traces 
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - JwtSettings__Secret=${JwtSettings__Secret}
+      - Security__PasswordPepper=${Security__PasswordPepper}
+      - Email__ApiKey=${Email__ApiKey}
     depends_on:
       - sqlserver
       - redis
+      - seq
     ports:
       - "8080:8080"
     networks:
@@ -38,10 +45,51 @@ services:
       - redis_data:/data
     networks:
       - lms-network
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    volumes:
+      - ./containers/seq:/data
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_NOAUTHENTICATION=true
+    networks:
+      - lms-network
+    ports:
+      - "5341:5341"
+      - "8081:80"
+    restart: unless-stopped
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./containers/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    networks:
+      - lms-network
+    depends_on:
+      - lms-api
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=YourStrongPwd
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - lms-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
 
 volumes:
   sqlserver_data: {}
   redis_data: {}
+  grafana-data: {}
 
 networks:
   lms-network:
