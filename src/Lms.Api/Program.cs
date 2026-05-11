@@ -2,7 +2,6 @@ using Lms.Api;
 using Lms.Application;
 using Lms.Application.Common.Configurations;
 using Lms.Infrastructure;
-using Scalar.AspNetCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,24 +14,13 @@ builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configu
 
 var app = builder.Build();
 
+app.UseCoreMiddlewars(builder.Configuration);
+
 if (app.Environment.IsDevelopment())
-{
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/openapi/v1.json", "Library Management System API V1");
-        options.EnableDeepLinking();
-        options.DisplayRequestDuration();
-        options.EnableFilter();
-    });
-    app.MapScalarApiReference();
-}
-else
 {
     app.UseHsts();
 }
 
-app.UseCoreMiddlewars(builder.Configuration);
 app.MapControllers();
-app.UseAntiforgery();
 
 app.Run();

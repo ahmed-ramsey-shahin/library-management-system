@@ -77,7 +77,7 @@ namespace Lms.Api
                 options.AssumeDefaultVersionWhenUnspecified = true;
                 options.ReportApiVersions = true;
                 options.ApiVersionReader = new UrlSegmentApiVersionReader();
-            }).AddMvc()
+            })
             .AddApiExplorer(options =>
             {
                 options.GroupNameFormat = "'v'VVV";
