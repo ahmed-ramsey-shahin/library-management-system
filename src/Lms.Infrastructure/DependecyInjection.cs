@@ -46,6 +46,7 @@ namespace Lms.Infrastructure
             services.AddTransient<IPasswordHasher, PasswordHasher>();
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<ITokenProvider, TokenProvider>();
+            services.AddTransient<IPasswordGenerator, PasswordGenerator>();
             // authnetication configuration
             services.AddAuthentication(options =>
             {
