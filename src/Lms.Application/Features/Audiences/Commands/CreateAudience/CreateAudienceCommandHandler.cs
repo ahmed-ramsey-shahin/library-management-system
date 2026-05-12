@@ -19,7 +19,7 @@ namespace Lms.Application.Features.Audiences.Commands.CreateAudience
     {
         public async Task<Result<AudienceDto>> Handle(CreateAudienceCommand request, CancellationToken cancellationToken)
         {
-            var exists = await db.Audiences.AnyAsync(keyword => string.Equals(keyword.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            var exists = await db.Audiences.AnyAsync(keyword => request.Name.ToLower() == keyword.Name.ToLower(), cancellationToken);
 
             if (exists)
             {

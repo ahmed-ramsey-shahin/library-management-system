@@ -19,7 +19,7 @@ namespace Lms.Application.Features.Genres.Commands.CreateGenre
     {
         public async Task<Result<GenreDto>> Handle(CreateGenreCommand request, CancellationToken cancellationToken)
         {
-            var exists = await db.Genres.AnyAsync(genre => string.Equals(genre.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            var exists = await db.Genres.AnyAsync(genre => genre.Name.ToLower() == request.Name.ToLower(), cancellationToken);
 
             if (exists)
             {

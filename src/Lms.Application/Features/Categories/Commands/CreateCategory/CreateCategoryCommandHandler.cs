@@ -19,7 +19,7 @@ namespace Lms.Application.Features.Categories.Commands.CreateCategory
     {
         public async Task<Result<CategoryDto>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var exists = await db.Categories.AnyAsync(category => string.Equals(category.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            var exists = await db.Categories.AnyAsync(category => category.Name.ToLower() == request.Name.ToLower(), cancellationToken);
 
             if (exists)
             {

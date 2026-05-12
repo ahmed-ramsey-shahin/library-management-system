@@ -19,7 +19,7 @@ namespace Lms.Application.Features.Publishers.Commands.CreatePublisher
     {
         public async Task<Result<PublisherDto>> Handle(CreatePublisherCommand request, CancellationToken cancellationToken)
         {
-            var exists = await db.Publishers.AnyAsync(publisher => string.Equals(publisher.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            var exists = await db.Publishers.AnyAsync(publisher => publisher.Name.ToLower() == request.Name.ToLower(), cancellationToken);
 
             if (exists)
             {

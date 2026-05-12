@@ -19,7 +19,7 @@ namespace Lms.Application.Features.Keywords.Commands.CreateKeyword
     {
         public async Task<Result<KeywordDto>> Handle(CreateKeywordCommand request, CancellationToken cancellationToken)
         {
-            var exists = await db.Keywords.AnyAsync(keyword => string.Equals(keyword.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            var exists = await db.Keywords.AnyAsync(keyword => request.Name.ToLower() == keyword.Name.ToLower(), cancellationToken);
 
             if (exists)
             {

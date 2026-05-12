@@ -19,7 +19,7 @@ namespace Lms.Application.Features.Themes.Commands.CreateTheme
     {
         public async Task<Result<ThemeDto>> Handle(CreateThemeCommand request, CancellationToken cancellationToken)
         {
-            var exists = await db.Themes.AnyAsync(theme => string.Equals(theme.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            var exists = await db.Themes.AnyAsync(theme => request.Name.ToLower() == theme.Name.ToLower(), cancellationToken);
 
             if (exists)
             {
