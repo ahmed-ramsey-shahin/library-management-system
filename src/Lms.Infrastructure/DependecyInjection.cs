@@ -86,7 +86,7 @@ namespace Lms.Infrastructure
             });
             services.AddDistributedSqlServerCache(options =>
             {
-                options.ConnectionString = redisConnectionString;
+                options.ConnectionString = sqlServerConnectionString;
                 options.SchemaName = "dbo";
                 options.TableName = "LmsCache";
             });
