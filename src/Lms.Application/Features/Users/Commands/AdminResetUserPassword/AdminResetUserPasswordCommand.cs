@@ -4,7 +4,6 @@ using MediatR;
 namespace Lms.Application.Features.Users.Commands.AdminResetUserPassword
 {
     public sealed record AdminResetUserPasswordCommand(
-        Guid UserId,
-        string Password
+        Guid UserId
     ) : IRequest<Result<Updated>>;
 }

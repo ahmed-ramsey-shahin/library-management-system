@@ -10,7 +10,9 @@ namespace Lms.Application.Features.Users.Commands.AdminResetUserPassword
     public sealed class AdminResetUserPasswordCommandHandler(
         IAppDbContext db,
         ILogger<AdminResetUserPasswordCommandHandler> logger,
-        IPasswordHasher hasher
+        IPasswordHasher hasher,
+        IPasswordGenerator passwordGenerator,
+        IEmailService emailService
     ) : IRequestHandler<AdminResetUserPasswordCommand, Result<Updated>>
     {
         public async Task<Result<Updated>> Handle(AdminResetUserPasswordCommand request, CancellationToken cancellationToken)
@@ -28,7 +30,8 @@ namespace Lms.Application.Features.Users.Commands.AdminResetUserPassword
                 return ApplicationErrors.UserNotFound;
             }
 
-            var passwordHash = hasher.Hash(request.Password);
+            var password = passwordGenerator.Generate();
+            var passwordHash = hasher.Hash(password);
             var updateResult = user.ChangePassword(passwordHash);
 
             if (updateResult.IsError)
@@ -39,6 +42,7 @@ namespace Lms.Application.Features.Users.Commands.AdminResetUserPassword
             await db.SaveChangesAsync(cancellationToken);
             await db.RefreshTokens.Where(token => token.UserId == request.UserId)
                 .ExecuteDeleteAsync(cancellationToken);
+            _ = emailService.SendEmailAsync(user.Email, user.FirstName, "Your password has been reseted by an admin.", $"Your new password is {password}. Please change it ASAP.", default);
 
             if (logger.IsEnabled(LogLevel.Information))
             {
