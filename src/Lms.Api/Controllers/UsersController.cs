@@ -139,7 +139,7 @@ namespace Lms.Api.Controllers
         }
 
         [HttpPost("members")]
-        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Member)}")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
@@ -172,7 +172,7 @@ namespace Lms.Api.Controllers
         }
 
         [HttpGet("members/{id:guid}")]
-        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Member)}")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(typeof(MemberDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
