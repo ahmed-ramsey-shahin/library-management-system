@@ -61,7 +61,7 @@ namespace Lms.Domain.Common.Results
         private Result(List<Error> errors)
         {
             ArgumentNullException.ThrowIfNull(errors);
-            if (errors.Count > 0)
+            if (errors.Count == 0)
             {
                 throw new ArgumentException("Provide at least one error.", nameof(errors));
             }
