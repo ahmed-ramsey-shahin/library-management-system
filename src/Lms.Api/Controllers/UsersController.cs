@@ -24,7 +24,7 @@ namespace Lms.Api.Controllers
         [EndpointName("CreateAdmin")]
         [MapToApiVersion("1.0")]
         [Authorize(Roles = nameof(Role.Admin))]
-        public async Task<IActionResult> CreateAdmin([FromBody] CreateAdminRequest request, [FromHeader(Name = "X-Idempotency-Key")] string idepmpotencyKey,CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateAdmin([FromBody] CreateAdminRequest request, [FromHeader(Name = "X-Idempotency-Key")] string idempotencyKey,CancellationToken cancellationToken)
         {
             var result = await sender.Send(new CreateAdminCommand(
                 request.Email,
@@ -33,14 +33,15 @@ namespace Lms.Api.Controllers
                 request.PhoneNumber,
                 request.Address,
                 request.Password,
-                idepmpotencyKey
+                idempotencyKey
             ), cancellationToken);
             return result.Match(
-                result => CreatedAtAction(
+                id => CreatedAtAction(
                     nameof(GetAdminById),
                     new {
-                        id = result,
-                    }
+                        id,
+                    },
+                    id
                 ),
                 Problem
             );
