@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
 using Lms.Application.Common.Interfaces;
 using Lms.Application.Features.Users.Commands.ActivateUser;
+using Lms.Application.Features.Users.Commands.AdminResetUserPassword;
 using Lms.Application.Features.Users.Commands.CreateAdmin;
 using Lms.Application.Features.Users.Commands.CreateLibrarian;
 using Lms.Application.Features.Users.Commands.CreateMember;
@@ -196,6 +197,18 @@ namespace Lms.Api.Controllers
         public async Task<IActionResult> ActivateUser(Guid id, CancellationToken cancellationToken)
         {
             var result = await sender.Send(new ActivateUserCommand(id), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPut("{id:guid}/password-resets")]
+        [Authorize(Roles = nameof(Role.Admin))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [EndpointName("AdminResetUserPassword")]
+        public async Task<IActionResult> AdminResetUserPassword(Guid id, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new AdminResetUserPasswordCommand(id), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
