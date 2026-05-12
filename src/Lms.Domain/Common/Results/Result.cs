@@ -55,7 +55,7 @@ namespace Lms.Domain.Common.Results
         private Result(Error error)
         {
             _errors = [error];
-            IsSuccess = true;
+            IsSuccess = false;
         }
 
         private Result(List<Error> errors)
@@ -65,6 +65,7 @@ namespace Lms.Domain.Common.Results
             {
                 throw new ArgumentException("Provide at least one error.", nameof(errors));
             }
+
             IsSuccess = false;
             _errors = errors;
         }
