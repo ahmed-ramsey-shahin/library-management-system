@@ -30,9 +30,11 @@ namespace Lms.Infrastructure.Data.Configurations
             builder.Property(entity => entity.LibraryCardNumber)
                 .HasColumnName("library_card_number");
             builder.Property(entity => entity.Role)
-                .HasColumnName("role");
+                .HasColumnName("role")
+                .HasConversion<string>();
             builder.Property(entity => entity.Status)
-                .HasColumnName("status");
+                .HasColumnName("status")
+                .HasConversion<string>();
             builder.Property(entity => entity.Password)
                 .HasColumnName("password");
             builder.HasMany(entity => entity.LibrarianCategories)

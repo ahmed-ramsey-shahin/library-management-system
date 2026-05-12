@@ -22,9 +22,11 @@ namespace Lms.Infrastructure.Data.Configurations
             builder.Property(entity => entity.Barcode)
                 .HasColumnName("barcode");
             builder.Property(entity => entity.Status)
-                .HasColumnName("status");
+                .HasColumnName("status")
+                .HasConversion<string>();
             builder.Property(entity => entity.State)
-                .HasColumnName("state");
+                .HasColumnName("state")
+                .HasConversion<string>();
             builder.Property(entity => entity.Location)
                 .HasColumnName("location");
             builder.Property(entity => entity.Version)

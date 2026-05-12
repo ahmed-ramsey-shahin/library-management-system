@@ -32,7 +32,8 @@ namespace Lms.Infrastructure.Data.Configurations
             builder.Property(entity => entity.PickedUp)
                 .HasColumnName("pickedup");
             builder.Property(entity => entity.Status)
-                .HasColumnName("status");
+                .HasColumnName("status")
+                .HasConversion<string>();
 
             builder.HasOne(entity => entity.Member)
                 .WithMany(member => member.BorrowRecords)

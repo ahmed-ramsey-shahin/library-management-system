@@ -22,7 +22,8 @@ namespace Lms.Infrastructure.Data.Configurations
             builder.Property(entity => entity.BorrowRecordId)
                 .HasColumnName("borrow_record_id");
             builder.Property(entity => entity.Status)
-                .HasColumnName("status");
+                .HasColumnName("status")
+                .HasConversion<string>();
             builder.Property(entity => entity.Amount)
                 .HasColumnName("amount");
             builder.Property(entity => entity.Description)
