@@ -28,7 +28,7 @@ namespace Lms.Application.Features.Publishers.Commands.UpdatePublisher
                 return ApplicationErrors.PublisherNotFound;
             }
 
-            var exists = await db.Publishers.AnyAsync(publisher => string.Equals(publisher.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            var exists = await db.Publishers.AnyAsync(publisher => publisher.Name.ToLower() == request.Name.ToLower(), cancellationToken);
 
             if (exists)
             {

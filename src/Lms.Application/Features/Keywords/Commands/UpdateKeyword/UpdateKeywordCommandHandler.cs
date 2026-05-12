@@ -28,7 +28,7 @@ namespace Lms.Application.Features.Keywords.Commands.UpdateKeyword
                 return ApplicationErrors.KeywordNotFound;
             }
 
-            var exists = await db.Keywords.AnyAsync(keyword => string.Equals(keyword.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            var exists = await db.Keywords.AnyAsync(keyword => keyword.Name.ToLower() == request.Name.ToLower(), cancellationToken);
 
             if (exists)
             {

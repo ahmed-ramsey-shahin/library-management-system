@@ -28,7 +28,7 @@ namespace Lms.Application.Features.Audiences.Commands.UpdateAudience
                 return ApplicationErrors.AudienceNotFound;
             }
 
-            var exists = await db.Audiences.AnyAsync(keyword => string.Equals(keyword.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            var exists = await db.Audiences.AnyAsync(keyword => keyword.Name.ToLower() == request.Name.ToLower(), cancellationToken);
 
             if (exists)
             {

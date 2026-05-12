@@ -28,7 +28,7 @@ namespace Lms.Application.Features.Categories.Commands.UpdateCategory
                 return ApplicationErrors.CategoryNotFound;
             }
 
-            var exists = await db.Categories.AnyAsync(category => string.Equals(category.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            var exists = await db.Categories.AnyAsync(category => category.Name.ToLower() == request.Name.ToLower(), cancellationToken);
 
             if (exists)
             {

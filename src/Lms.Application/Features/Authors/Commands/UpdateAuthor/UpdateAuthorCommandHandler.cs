@@ -28,7 +28,7 @@ namespace Lms.Application.Features.Authors.Commands.UpdateAuthor
                 return ApplicationErrors.AuthorNotFound;
             }
 
-            var exists = await db.Authors.AnyAsync(author => string.Equals(author.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            var exists = await db.Authors.AnyAsync(author => request.Name.ToLower() == author.Name.ToLower(), cancellationToken);
 
             if (exists)
             {

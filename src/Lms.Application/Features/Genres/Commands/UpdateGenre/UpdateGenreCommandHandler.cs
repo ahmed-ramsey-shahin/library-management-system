@@ -28,7 +28,7 @@ namespace Lms.Application.Features.Genres.Commands.UpdateGenre
                 return ApplicationErrors.GenreNotFound;
             }
 
-            var exists = await db.Genres.AnyAsync(genre => string.Equals(genre.Name, request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            var exists = await db.Genres.AnyAsync(genre => request.Name.ToLower() == genre.Name.ToLower(), cancellationToken);
 
             if (exists)
             {
