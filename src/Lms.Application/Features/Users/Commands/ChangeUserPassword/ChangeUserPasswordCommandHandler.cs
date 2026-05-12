@@ -47,6 +47,8 @@ namespace Lms.Application.Features.Users.Commands.ChangeUserPassword
             }
 
             await db.SaveChangesAsync(cancellationToken);
+            await db.RefreshTokens.Where(token => token.UserId == request.UserId)
+                .ExecuteDeleteAsync(cancellationToken);
 
             if (logger.IsEnabled(LogLevel.Information))
             {
