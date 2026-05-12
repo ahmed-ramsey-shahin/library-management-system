@@ -3,6 +3,7 @@ using Lms.Api.Dtos.Requests;
 using Lms.Application.Common.Interfaces;
 using Lms.Application.Features.Users.Commands.CreateAdmin;
 using Lms.Application.Features.Users.Commands.CreateLibrarian;
+using Lms.Application.Features.Users.Commands.CreateMember;
 using Lms.Application.Features.Users.Dtos;
 using Lms.Application.Features.Users.Queries.GetAdminById;
 using Lms.Application.Features.Users.Queries.GetLibrarianById;
@@ -135,6 +136,52 @@ namespace Lms.Api.Controllers
                 Role.Member => (await sender.Send(new GetMemberByIdQuery(userId))).Match(Ok, Problem),
                 _ => Unauthorized()
             };
+        }
+
+        [HttpPost("members")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Member)}")]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+        [EndpointName("CreateMember")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> CreateMember([FromHeader(Name = "X-Idempotency-Key")] string idempotencyKey, [FromBody] CreateMemberRequest request, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new CreateMemberCommand(
+                request.Email,
+                request.FirstName,
+                request.LastName,
+                request.PhoneNumber,
+                request.Address,
+                request.Password,
+                idempotencyKey
+            ), cancellationToken);
+            return result.Match(
+                id => CreatedAtAction(
+                    nameof(GetMemberById),
+                    new {
+                        id,
+                    },
+                    id
+                ),
+                Problem
+            );
+        }
+
+        [HttpGet("members/{id:guid}")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Member)}")]
+        [ProducesResponseType(typeof(MemberDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointName("GetMemberById")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> GetMemberById(Guid id, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetMemberByIdQuery(id), cancellationToken);
+            return result.Match(Ok, Problem);
         }
     }
 }
