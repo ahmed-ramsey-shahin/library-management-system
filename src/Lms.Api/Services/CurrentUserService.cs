@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Lms.Application.Common.Interfaces;
+using Lms.Domain.Identity;
 
 namespace Lms.Api.Services
 {
@@ -18,6 +19,19 @@ namespace Lms.Api.Services
                 {
                     return Guid.Empty;
                 }
+            }
+        }
+
+        public Role? UserRole
+        {
+            get
+            {
+                var userRole = httpContext.HttpContext?.User.FindFirstValue(ClaimTypes.Role);
+                if (Enum.TryParse(userRole, out Role role))
+                {
+                    return role;
+                }
+                return null;
             }
         }
     }

@@ -1,10 +1,12 @@
 using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
+using Lms.Application.Common.Interfaces;
 using Lms.Application.Features.Users.Commands.CreateAdmin;
 using Lms.Application.Features.Users.Commands.CreateLibrarian;
 using Lms.Application.Features.Users.Dtos;
 using Lms.Application.Features.Users.Queries.GetAdminById;
 using Lms.Application.Features.Users.Queries.GetLibrarianById;
+using Lms.Application.Features.Users.Queries.GetMemberById;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -107,6 +109,32 @@ namespace Lms.Api.Controllers
                 ),
                 Problem
             );
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        [ProducesResponseType(typeof(AdminDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LibrarianDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MemberDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointName("GetCurrentUser")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> GetCurrentUser([FromServices] IUser userService)
+        {
+            if (userService.Id is null)
+            {
+                return Unauthorized();
+            }
+
+            var userId = userService.Id.Value;
+            return userService.UserRole switch
+            {
+                Role.Admin => (await sender.Send(new GetAdminByIdQuery(userId))).Match(Ok, Problem),
+                Role.Librarian => (await sender.Send(new GetLibrarianByIdQuery(userId))).Match(Ok, Problem),
+                Role.Member => (await sender.Send(new GetMemberByIdQuery(userId))).Match(Ok, Problem),
+                _ => Unauthorized()
+            };
         }
     }
 }
