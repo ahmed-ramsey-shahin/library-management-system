@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Lms.Application.Features.Users.Dtos;
 using Lms.Application.Features.Users.Queries.GenerateTokens;
+using Lms.Application.Features.Users.Queries.RefreshToken;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,17 @@ namespace Lms.Api.Controllers
         [EndpointDescription("Authenticates a user using provided credentials and returns a JWT token pair.")]
         [EndpointName("GenerateToken")]
         public async Task<IActionResult> GenerateToken([FromBody] GenerateTokensQuery request, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(request, cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpPost("token/refresh")]
+        [ProducesResponseType(typeof(TokenDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointName("RefreshToken")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenQuery request, CancellationToken cancellationToken)
         {
             var result = await sender.Send(request, cancellationToken);
             return result.Match(Ok, Problem);
