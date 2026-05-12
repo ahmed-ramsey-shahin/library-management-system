@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Lms.Api.Dtos.Requests;
 using Lms.Application.Features.Keywords.Commands.CreateKeyword;
 using Lms.Application.Features.Keywords.Commands.DeleteKeyword;
 using Lms.Application.Features.Keywords.Commands.UpdateKeyword;
@@ -40,9 +41,9 @@ namespace Lms.Api.Controllers
         [EndpointDescription("This endpoint takes the name of an keyword, creates it, and returns its ID.")]
         [MapToApiVersion("1.0")]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Create([FromHeader(Name="X-Idempotency-Key")] string idempotencyKey, [FromBody] string name, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromHeader(Name="X-Idempotency-Key")] string idempotencyKey, [FromBody] CreateKeywordRequest request, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new CreateKeywordCommand(name, idempotencyKey), cancellationToken);
+            var result = await sender.Send(new CreateKeywordCommand(request.Name, idempotencyKey), cancellationToken);
             return result.Match(result => StatusCode(StatusCodes.Status201Created, result), Problem);
         }
 
@@ -70,9 +71,9 @@ namespace Lms.Api.Controllers
         [EndpointSummary("Update an keyword.")]
         [MapToApiVersion("1.0")]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Update(Guid keywordId, [FromBody] string name, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(Guid keywordId, [FromBody] CreateKeywordRequest request, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new UpdateKeywordCommand(keywordId, name), cancellationToken);
+            var result = await sender.Send(new UpdateKeywordCommand(keywordId, request.Name), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }

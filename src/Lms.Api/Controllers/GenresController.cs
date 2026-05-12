@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Lms.Api.Dtos.Requests;
 using Lms.Application.Features.Genres.Commands.CreateGenre;
 using Lms.Application.Features.Genres.Commands.DeleteGenre;
 using Lms.Application.Features.Genres.Commands.UpdateGenre;
@@ -40,9 +41,9 @@ namespace Lms.Api.Controllers
         [EndpointDescription("This endpoint takes the name of an genre, creates it, and returns its ID.")]
         [MapToApiVersion("1.0")]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Create([FromHeader(Name="X-Idempotency-Key")] string idempotencyKey, [FromBody] string name, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromHeader(Name="X-Idempotency-Key")] string idempotencyKey, [FromBody] CreateGenreRequest request, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new CreateGenreCommand(name, idempotencyKey), cancellationToken);
+            var result = await sender.Send(new CreateGenreCommand(request.Name, idempotencyKey), cancellationToken);
             return result.Match(result => StatusCode(StatusCodes.Status201Created, result), Problem);
         }
 
@@ -70,9 +71,9 @@ namespace Lms.Api.Controllers
         [EndpointSummary("Update an genre.")]
         [MapToApiVersion("1.0")]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Update(Guid genreId, [FromBody] string name, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(Guid genreId, [FromBody] CreateGenreRequest request, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new UpdateGenreCommand(genreId, name), cancellationToken);
+            var result = await sender.Send(new UpdateGenreCommand(genreId, request.Name), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }

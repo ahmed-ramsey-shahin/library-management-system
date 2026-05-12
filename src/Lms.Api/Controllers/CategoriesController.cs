@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Lms.Api.Dtos.Requests;
 using Lms.Application.Features.Categories.Commands.CreateCategory;
 using Lms.Application.Features.Categories.Commands.DeleteCategory;
 using Lms.Application.Features.Categories.Commands.UpdateCategory;
@@ -40,9 +41,9 @@ namespace Lms.Api.Controllers
         [EndpointDescription("This endpoint takes the name of an category, creates it, and returns its ID.")]
         [MapToApiVersion("1.0")]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Create([FromHeader(Name="X-Idempotency-Key")] string idempotencyKey, [FromBody] string name, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromHeader(Name="X-Idempotency-Key")] string idempotencyKey, [FromBody] CreateCategoryRequest request, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new CreateCategoryCommand(name, idempotencyKey), cancellationToken);
+            var result = await sender.Send(new CreateCategoryCommand(request.Name, idempotencyKey), cancellationToken);
             return result.Match(result => StatusCode(StatusCodes.Status201Created, result), Problem);
         }
 
@@ -70,9 +71,9 @@ namespace Lms.Api.Controllers
         [EndpointSummary("Update an category.")]
         [MapToApiVersion("1.0")]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Update(Guid categoryId, [FromBody] string name, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(Guid categoryId, [FromBody] CreateCategoryRequest request, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new UpdateCategoryCommand(categoryId, name), cancellationToken);
+            var result = await sender.Send(new UpdateCategoryCommand(categoryId, request.Name), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }

@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Lms.Api.Dtos.Requests;
 using Lms.Application.Features.Themes.Commands.CreateTheme;
 using Lms.Application.Features.Themes.Commands.DeleteTheme;
 using Lms.Application.Features.Themes.Commands.UpdateTheme;
@@ -40,9 +41,9 @@ namespace Lms.Api.Controllers
         [EndpointDescription("This endpoint takes the name of an theme, creates it, and returns its ID.")]
         [MapToApiVersion("1.0")]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Create([FromHeader(Name="X-Idempotency-Key")] string idempotencyKey, [FromBody] string name, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromHeader(Name="X-Idempotency-Key")] string idempotencyKey, [FromBody] CreateThemeRequest request, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new CreateThemeCommand(name, idempotencyKey), cancellationToken);
+            var result = await sender.Send(new CreateThemeCommand(request.Name, idempotencyKey), cancellationToken);
             return result.Match(result => StatusCode(StatusCodes.Status201Created, result), Problem);
         }
 
@@ -70,9 +71,9 @@ namespace Lms.Api.Controllers
         [EndpointSummary("Update an theme.")]
         [MapToApiVersion("1.0")]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Update(Guid themeId, [FromBody] string name, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(Guid themeId, [FromBody] CreateThemeRequest request, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new UpdateThemeCommand(themeId, name), cancellationToken);
+            var result = await sender.Send(new UpdateThemeCommand(themeId, request.Name), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }

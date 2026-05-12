@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Lms.Api.Dtos.Requests;
 using Lms.Application.Features.Authors.Commands.CreateAuthor;
 using Lms.Application.Features.Authors.Commands.DeleteAuthor;
 using Lms.Application.Features.Authors.Commands.UpdateAuthor;
@@ -40,9 +41,9 @@ namespace Lms.Api.Controllers
         [EndpointDescription("This endpoint takes the name of an author, creates it, and returns its ID.")]
         [MapToApiVersion("1.0")]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Create([FromHeader(Name="X-Idempotency-Key")] string idempotencyKey, [FromBody] string name, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromHeader(Name="X-Idempotency-Key")] string idempotencyKey, [FromBody] CreateAuthorRequest request, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new CreateAuthorCommand(name, idempotencyKey), cancellationToken);
+            var result = await sender.Send(new CreateAuthorCommand(request.Name, idempotencyKey), cancellationToken);
             return result.Match(result => StatusCode(StatusCodes.Status201Created, result), Problem);
         }
 
@@ -70,9 +71,9 @@ namespace Lms.Api.Controllers
         [EndpointSummary("Update an author.")]
         [MapToApiVersion("1.0")]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Update(Guid authorId, [FromBody] string name, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(Guid authorId, [FromBody] CreateAuthorRequest request, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new UpdateAuthorCommand(authorId, name), cancellationToken);
+            var result = await sender.Send(new UpdateAuthorCommand(authorId, request.Name), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
