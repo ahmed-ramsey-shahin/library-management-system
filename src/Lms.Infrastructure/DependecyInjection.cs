@@ -73,22 +73,16 @@ namespace Lms.Infrastructure
             // Caching configuration
             services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = configuration.GetConnectionString("Redis");
+                options.Configuration = redisConnectionString;
                 options.InstanceName = "Lms_";
             });
             services.AddHybridCache(options =>
             {
                 options.DefaultEntryOptions = new HybridCacheEntryOptions
                 {
-                    Expiration = TimeSpan.FromMinutes(5),
-                    LocalCacheExpiration = TimeSpan.FromMinutes(5)
+                    Expiration = TimeSpan.FromMinutes(10),
+                    LocalCacheExpiration = TimeSpan.FromMinutes(2)
                 };
-            });
-            services.AddDistributedSqlServerCache(options =>
-            {
-                options.ConnectionString = sqlServerConnectionString;
-                options.SchemaName = "dbo";
-                options.TableName = "LmsCache";
             });
             return services;
         }
