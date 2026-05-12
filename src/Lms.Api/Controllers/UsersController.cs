@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
 using Lms.Application.Common.Interfaces;
+using Lms.Application.Features.Users.Commands.ActivateUser;
 using Lms.Application.Features.Users.Commands.CreateAdmin;
 using Lms.Application.Features.Users.Commands.CreateLibrarian;
 using Lms.Application.Features.Users.Commands.CreateMember;
@@ -182,6 +183,20 @@ namespace Lms.Api.Controllers
         {
             var result = await sender.Send(new GetMemberByIdQuery(id), cancellationToken);
             return result.Match(Ok, Problem);
+        }
+
+        [HttpPost("{id:guid}/activation")]
+        [Authorize(Roles = nameof(Role.Admin))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [EndpointName("ActivateUser")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> ActivateUser(Guid id, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new ActivateUserCommand(id), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
         }
     }
 }

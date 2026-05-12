@@ -62,7 +62,7 @@ namespace Lms.Application.Common.Errors
 
         public static Error EmailIsUsed => Error.Conflict("User.EmailConflict", "This email address is already registered to another user.");
         public static Error PhoneNumberIsUsed => Error.Conflict("User.PhoneNumberConflict", "This phone number is already registered to another user.");
-        public static Error UserHasUnpaidFines => Error.Failure("User.HasUnpaidFines", "This operation cannot proceed because the user has unpaid fines.");
+        public static Error UserHasUnpaidFines => Error.Validation("User.HasUnpaidFines", "This operation cannot proceed because the user has unpaid fines.");
 
         public static Error PasswordInvalid => Error.Validation("User.InvalidPasswordFormat", "The password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.");
         public static Error PasswordsDontMatch => Error.Validation("User.PasswordMismatch", "The provided current password does not match the actual password.");
