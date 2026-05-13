@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
 using Lms.Application.Features.Books.Commands.CreateBook;
+using Lms.Application.Features.Books.Commands.DeleteBook;
 using Lms.Application.Features.Books.Dtos;
 using Lms.Application.Features.Books.Queries.GetBookById;
 using Lms.Domain.Identity;
@@ -73,6 +74,22 @@ namespace Lms.Api.Controllers
         {
             var result = await sender.Send(new GetBookByIdQuery(id), cancellationToken);
             return result.Match(Ok, Problem);
+        }
+
+        [HttpDelete("{id:guid}")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("DeleteBook")]
+        public async Task<IActionResult> DeleteBook(Guid id, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new DeleteBookCommand(id), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
         }
     }
 }
