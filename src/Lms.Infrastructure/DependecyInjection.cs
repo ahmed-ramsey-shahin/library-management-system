@@ -5,6 +5,7 @@ using Lms.Domain.Identity;
 using Lms.Infrastructure.Data;
 using Lms.Infrastructure.Data.Interceptors;
 using Lms.Infrastructure.Identity;
+using Lms.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -45,6 +46,7 @@ namespace Lms.Infrastructure
                 client.DefaultRequestHeaders.Add("api-key", emailApiKey);
                 client.DefaultRequestHeaders.Add("accept", "application/json");
             });
+            services.AddScoped<IEmailService, EmailService>();
             // hangfire service configuration
             services.AddHangfire(config => config.UseSqlServerStorage(sqlServerConnectionString));
             services.AddHangfireServer();
