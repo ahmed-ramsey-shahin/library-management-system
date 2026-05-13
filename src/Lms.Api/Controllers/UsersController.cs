@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
 using Lms.Application.Common.Interfaces;
@@ -40,7 +41,11 @@ namespace Lms.Api.Controllers
         [EndpointName("CreateAdmin")]
         [MapToApiVersion("1.0")]
         [Authorize(Roles = nameof(Role.Admin))]
-        public async Task<IActionResult> CreateAdmin([FromBody] CreateAdminRequest request, [FromHeader(Name = "X-Idempotency-Key")] string idempotencyKey,CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateAdmin(
+            [FromBody] CreateAdminRequest request,
+            [FromHeader(Name = "X-Idempotency-Key")] [Required] string idempotencyKey,
+            CancellationToken cancellationToken
+        )
         {
             var result = await sender.Send(new CreateAdminCommand(
                 request.Email,
@@ -99,7 +104,11 @@ namespace Lms.Api.Controllers
         [EndpointName("CreateLibrarian")]
         [MapToApiVersion("1.0")]
         [Authorize(Roles = nameof(Role.Admin))]
-        public async Task<IActionResult> CreateLibrarian([FromBody] CreateLibrarianRequest request, [FromHeader(Name = "X-Idempotency-Key")] string idempotencyKey,CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateLibrarian(
+            [FromBody] CreateLibrarianRequest request,
+            [FromHeader(Name = "X-Idempotency-Key")] [Required] string idempotencyKey,
+            CancellationToken cancellationToken
+            )
         {
             var result = await sender.Send(new CreateLibrarianCommand(
                 request.Email,
@@ -159,7 +168,11 @@ namespace Lms.Api.Controllers
         [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
         [EndpointName("CreateMember")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> CreateMember([FromHeader(Name = "X-Idempotency-Key")] string idempotencyKey, [FromBody] CreateMemberRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateMember(
+            [FromHeader(Name = "X-Idempotency-Key")] [Required] string idempotencyKey,
+            [FromBody] CreateMemberRequest request,
+            CancellationToken cancellationToken
+        )
         {
             var result = await sender.Send(new CreateMemberCommand(
                 request.Email,
