@@ -10,6 +10,7 @@ using Lms.Application.Features.Users.Commands.CreateLibrarian;
 using Lms.Application.Features.Users.Commands.CreateMember;
 using Lms.Application.Features.Users.Commands.DeleteUser;
 using Lms.Application.Features.Users.Commands.SuspendUser;
+using Lms.Application.Features.Users.Commands.UpdateLibrarianCategories;
 using Lms.Application.Features.Users.Dtos;
 using Lms.Application.Features.Users.Queries.GetAdminById;
 using Lms.Application.Features.Users.Queries.GetLibrarianById;
@@ -295,6 +296,21 @@ namespace Lms.Api.Controllers
         public async Task<IActionResult> SuspendUser(Guid id, CancellationToken cancellationToken)
         {
             var result = await sender.Send(new SuspendUserCommand(id), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPut("librarians/{id:guid}/categories")]
+        [Authorize(Roles = nameof(Role.Admin))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("UpdateLibrarianCategories")]
+        public async Task<IActionResult> UpdateLibrarianCategories(Guid id, [FromBody] UpdateLibrarianCategoriesRequest request, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new UpdateLibrarianCategoriesCommand(id, request.CategoryIds), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
