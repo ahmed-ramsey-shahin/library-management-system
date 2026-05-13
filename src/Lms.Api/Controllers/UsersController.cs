@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
 using Lms.Application.Common.Interfaces;
+using Lms.Application.Common.Models;
 using Lms.Application.Features.Users.Commands.ActivateUser;
 using Lms.Application.Features.Users.Commands.AdminResetUserPassword;
 using Lms.Application.Features.Users.Commands.ChangeUserDetails;
@@ -13,8 +14,11 @@ using Lms.Application.Features.Users.Commands.SuspendUser;
 using Lms.Application.Features.Users.Commands.UpdateLibrarianCategories;
 using Lms.Application.Features.Users.Dtos;
 using Lms.Application.Features.Users.Queries.GetAdminById;
+using Lms.Application.Features.Users.Queries.GetAdmins;
 using Lms.Application.Features.Users.Queries.GetLibrarianById;
+using Lms.Application.Features.Users.Queries.GetLibrariansByCategory;
 using Lms.Application.Features.Users.Queries.GetMemberById;
+using Lms.Application.Features.Users.Queries.GetMembers;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -312,6 +316,51 @@ namespace Lms.Api.Controllers
         {
             var result = await sender.Send(new UpdateLibrarianCategoriesCommand(id, request.CategoryIds), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpGet("admins")]
+        [Authorize(Roles = nameof(Role.Admin))]
+        [ProducesResponseType(typeof(PaginatedList<AdminDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetAdmins")]
+        public async Task<IActionResult> GetAdmins([FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetAdminsQuery(pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("librarians")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(typeof(PaginatedList<LibrarianDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetLibrarians")]
+        public async Task<IActionResult> GetLibrarians([FromQuery] Guid categoryId, [FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetLibrariansByCategoryQuery(categoryId, pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("members")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(typeof(PaginatedList<MemberDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetMembers")]
+        public async Task<IActionResult> GetMembers([FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetMembersQuery(pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
         }
     }
 }
