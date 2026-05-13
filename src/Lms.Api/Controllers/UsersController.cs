@@ -8,6 +8,8 @@ using Lms.Application.Features.Users.Commands.ChangeUserPassword;
 using Lms.Application.Features.Users.Commands.CreateAdmin;
 using Lms.Application.Features.Users.Commands.CreateLibrarian;
 using Lms.Application.Features.Users.Commands.CreateMember;
+using Lms.Application.Features.Users.Commands.DeleteUser;
+using Lms.Application.Features.Users.Commands.SuspendUser;
 using Lms.Application.Features.Users.Dtos;
 using Lms.Application.Features.Users.Queries.GetAdminById;
 using Lms.Application.Features.Users.Queries.GetLibrarianById;
@@ -261,6 +263,38 @@ namespace Lms.Api.Controllers
                 ),
                 cancellationToken
             );
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [Authorize(Roles = nameof(Role.Admin))]
+        [HttpDelete("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("DeleteUser")]
+        public async Task<IActionResult> DeleteUser(Guid id, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new DeleteUserCommand(id), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPost("{id:guid}/suspensions")]
+        [Authorize(Roles = nameof(Role.Admin))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("SuspendUser")]
+        public async Task<IActionResult> SuspendUser(Guid id, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new SuspendUserCommand(id), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
