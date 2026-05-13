@@ -8,7 +8,7 @@ namespace Lms.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Keyword> builder)
         {
-            builder.ToTable("keywoprds");
+            builder.ToTable("keywords");
             builder.HasKey(entity => entity.Id);
             builder.HasQueryFilter(entity => !entity.IsDeleted);
             builder.Property(entity => entity.Id).HasColumnName("id");

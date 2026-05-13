@@ -19,7 +19,6 @@ using Lms.Application.Features.Users.Queries.GetLibrarianById;
 using Lms.Application.Features.Users.Queries.GetLibrariansByCategory;
 using Lms.Application.Features.Users.Queries.GetMemberById;
 using Lms.Application.Features.Users.Queries.GetMembers;
-using Lms.Application.Features.Users.Queries.GetUserByEmail;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
