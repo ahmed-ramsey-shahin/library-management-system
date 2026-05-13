@@ -25,15 +25,7 @@ namespace Lms.Application.Common.Behaviors
 
             return await cache.GetOrCreateAsync(
                 key: cachedQuery.CacheKey,
-                factory: async cancellationToken =>
-                {
-                    var result = await next(cancellationToken);
-                    if (result is IResult r && r.IsSuccess)
-                    {
-                        return result;
-                    }
-                    return default!;
-                },
+                factory: async cancellationToken => await next(cancellationToken),
                 options: new HybridCacheEntryOptions
                 {
                     Expiration = cachedQuery.Expiration,

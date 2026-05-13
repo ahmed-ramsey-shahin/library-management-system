@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Lms.Domain.Common.Results
 {
     public readonly record struct Error
@@ -6,6 +8,7 @@ namespace Lms.Domain.Common.Results
         public string Description { get; }
         public ErrorKind Type { get; }
 
+        [JsonConstructor]
         private Error(string code, string description, ErrorKind type)
         {
             Code = code;
