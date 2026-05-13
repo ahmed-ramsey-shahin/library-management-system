@@ -363,20 +363,5 @@ namespace Lms.Api.Controllers
             var result = await sender.Send(new GetMembersQuery(pageSize, pageNumber), cancellationToken);
             return result.Match(Ok, Problem);
         }
-
-        [HttpGet("{email:string}")]
-        [Authorize(Roles = nameof(Role.Admin))]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [MapToApiVersion("1.0")]
-        [EndpointName("GetUserByEmail")]
-        public async Task<IActionResult> GetUserByEmail(string email, CancellationToken cancellationToken)
-        {
-            var result = await sender.Send(new GetUserByEmailQuery(email), cancellationToken);
-            return result.Match(Ok, Problem);
-        }
     }
 }
