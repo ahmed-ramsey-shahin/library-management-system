@@ -5,7 +5,6 @@ using Lms.Domain.Identity;
 using Lms.Infrastructure.Data;
 using Lms.Infrastructure.Data.Interceptors;
 using Lms.Infrastructure.Identity;
-using Lms.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -13,7 +12,6 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Resend;
 
 namespace Lms.Infrastructure
 {
