@@ -19,6 +19,7 @@ using Lms.Application.Features.Users.Queries.GetLibrarianById;
 using Lms.Application.Features.Users.Queries.GetLibrariansByCategory;
 using Lms.Application.Features.Users.Queries.GetMemberById;
 using Lms.Application.Features.Users.Queries.GetMembers;
+using Lms.Application.Features.Users.Queries.GetUserByEmail;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -360,6 +361,21 @@ namespace Lms.Api.Controllers
         public async Task<IActionResult> GetMembers([FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
         {
             var result = await sender.Send(new GetMembersQuery(pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("{email:string}")]
+        [Authorize(Roles = nameof(Role.Admin))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetUserByEmail")]
+        public async Task<IActionResult> GetUserByEmail(string email, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetUserByEmailQuery(email), cancellationToken);
             return result.Match(Ok, Problem);
         }
     }
