@@ -3,6 +3,7 @@ using Lms.Api.Dtos.Requests;
 using Lms.Application.Common.Interfaces;
 using Lms.Application.Features.Users.Commands.ActivateUser;
 using Lms.Application.Features.Users.Commands.AdminResetUserPassword;
+using Lms.Application.Features.Users.Commands.ChangeUserPassword;
 using Lms.Application.Features.Users.Commands.CreateAdmin;
 using Lms.Application.Features.Users.Commands.CreateLibrarian;
 using Lms.Application.Features.Users.Commands.CreateMember;
@@ -206,9 +207,30 @@ namespace Lms.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [EndpointName("AdminResetUserPassword")]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> AdminResetUserPassword(Guid id, CancellationToken cancellationToken)
         {
             var result = await sender.Send(new AdminResetUserPasswordCommand(id), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPut("me/password")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [EndpointName("ChangePassword")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> ChangePassword([FromServices] IUser userService, [FromBody] ChangePasswordRequest request, CancellationToken cancellationToken)
+        {
+            if (userService.Id is null)
+            {
+                return Unauthorized();
+            }
+
+            var result = await sender.Send(new ChangeUserPasswordCommand(userService.Id.Value, request.OldPassword, request.NewPassword), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
