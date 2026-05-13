@@ -3,6 +3,7 @@ using Lms.Api.Dtos.Requests;
 using Lms.Application.Common.Interfaces;
 using Lms.Application.Features.Users.Commands.ActivateUser;
 using Lms.Application.Features.Users.Commands.AdminResetUserPassword;
+using Lms.Application.Features.Users.Commands.ChangeUserDetails;
 using Lms.Application.Features.Users.Commands.ChangeUserPassword;
 using Lms.Application.Features.Users.Commands.CreateAdmin;
 using Lms.Application.Features.Users.Commands.CreateLibrarian;
@@ -221,9 +222,9 @@ namespace Lms.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [EndpointName("ChangePassword")]
+        [EndpointName("ChangeUserPassword")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> ChangePassword([FromServices] IUser userService, [FromBody] ChangePasswordRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> ChangeUserPassword([FromServices] IUser userService, [FromBody] ChangeUserPasswordRequest request, CancellationToken cancellationToken)
         {
             if (userService.Id is null)
             {
@@ -231,6 +232,35 @@ namespace Lms.Api.Controllers
             }
 
             var result = await sender.Send(new ChangeUserPasswordCommand(userService.Id.Value, request.OldPassword, request.NewPassword), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPut("me")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("ChangeUserDetails")]
+        public async Task<IActionResult> ChangeUserDetails([FromServices] IUser userService, [FromBody] ChangeUserDetailsRequest request, CancellationToken cancellationToken)
+        {
+            if (userService.Id is null)
+            {
+                return Unauthorized();
+            }
+
+            var result = await sender.Send(
+                new ChangeUserDetailsCommand(
+                    userService.Id.Value,
+                    request.FirstName,
+                    request.LastName,
+                    request.PhoneNumber,
+                    request.Address
+                ),
+                cancellationToken
+            );
             return result.Match(_ => NoContent(), Problem);
         }
     }

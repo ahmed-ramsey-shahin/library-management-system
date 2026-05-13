@@ -1,6 +1,6 @@
 namespace Lms.Api.Dtos.Requests
 {
-    public record ChangePasswordRequest
+    public record ChangeUserPasswordRequest
     (
         string OldPassword,
         string NewPassword
