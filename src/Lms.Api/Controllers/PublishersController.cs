@@ -4,6 +4,7 @@ using Lms.Application.Features.Publishers.Commands.CreatePublisher;
 using Lms.Application.Features.Publishers.Commands.DeletePublisher;
 using Lms.Application.Features.Publishers.Commands.UpdatePublisher;
 using Lms.Application.Features.Publishers.Dtos;
+using Lms.Application.Features.Publishers.Queries.GetPublisherByBookId;
 using Lms.Application.Features.Publishers.Queries.GetPublishers;
 using Lms.Domain.Identity;
 using MediatR;
@@ -75,6 +76,19 @@ namespace Lms.Api.Controllers
         {
             var result = await sender.Send(new UpdatePublisherCommand(publisherId, request.Name), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/books/{bookId:guid}/publishers")]
+        [ProducesResponseType(typeof(List<PublisherDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetPublishersByBook")]
+        public async Task<IActionResult> GetPublishersByBook(Guid bookId, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetPublisherByBookIdQuery(bookId), cancellationToken);
+            return result.Match(Ok, Problem);
         }
     }
 }
