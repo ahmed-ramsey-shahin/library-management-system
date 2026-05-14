@@ -5,6 +5,7 @@ using Lms.Application.Features.Categories.Commands.DeleteCategory;
 using Lms.Application.Features.Categories.Commands.UpdateCategory;
 using Lms.Application.Features.Categories.Dtos;
 using Lms.Application.Features.Categories.Queries.GetCategories;
+using Lms.Application.Features.Categories.Queries.GetCategoriesByBookId;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

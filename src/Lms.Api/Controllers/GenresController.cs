@@ -5,6 +5,7 @@ using Lms.Application.Features.Genres.Commands.DeleteGenre;
 using Lms.Application.Features.Genres.Commands.UpdateGenre;
 using Lms.Application.Features.Genres.Dtos;
 using Lms.Application.Features.Genres.Queries.GetGenres;
+using Lms.Application.Features.Genres.Queries.GetGenresByBookId;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -75,6 +76,19 @@ namespace Lms.Api.Controllers
         {
             var result = await sender.Send(new UpdateGenreCommand(genreId, request.Name), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/books/{bookId:guid}/genres")]
+        [ProducesResponseType(typeof(List<GenreDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetGenresByBook")]
+        public async Task<IActionResult> GetGenresByBook(Guid bookId, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetGenresByBookIdQuery(bookId), cancellationToken);
+            return result.Match(Ok, Problem);
         }
     }
 }
