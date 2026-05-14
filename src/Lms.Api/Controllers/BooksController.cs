@@ -20,6 +20,7 @@ using Lms.Application.Features.Books.Queries.GetBooksByCategory;
 using Lms.Application.Features.Books.Queries.GetBooksByGenre;
 using Lms.Application.Features.Books.Queries.GetBooksByKeyword;
 using Lms.Application.Features.Books.Queries.GetBooksByTheme;
+using Lms.Application.Features.Books.Queries.GetBooksByTitle;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -234,6 +235,18 @@ namespace Lms.Api.Controllers
                 request.DamageFee
             ), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpGet("{title}")]
+        [ProducesResponseType(typeof(PaginatedList<BookDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetBooksByTitle")]
+        public async Task<IActionResult> GetBooksByTitle(string title, [FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetBooksByTitleQuery(title, pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
         }
 
         [HttpGet("/api/v{version:apiVersion}/audiences/{audienceId:guid}/books")]
