@@ -5,6 +5,7 @@ using Lms.Application.Features.Authors.Commands.DeleteAuthor;
 using Lms.Application.Features.Authors.Commands.UpdateAuthor;
 using Lms.Application.Features.Authors.Dtos;
 using Lms.Application.Features.Authors.Queries.GetAuthors;
+using Lms.Application.Features.Authors.Queries.GetAuthorsByBookId;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -75,6 +76,19 @@ namespace Lms.Api.Controllers
         {
             var result = await sender.Send(new UpdateAuthorCommand(authorId, request.Name), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/books/{bookId:guid}/authors")]
+        [ProducesResponseType(typeof(List<AuthorDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetAuthorsByBook")]
+        public async Task<IActionResult> GetAuthorsByBook(Guid bookId, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetAuthorsByBookIdQuery(bookId), cancellationToken);
+            return result.Match(Ok, Problem);
         }
     }
 }
