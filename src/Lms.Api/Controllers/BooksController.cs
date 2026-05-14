@@ -17,6 +17,7 @@ using Lms.Application.Features.Books.Queries.GetBookById;
 using Lms.Application.Features.Books.Queries.GetBooksByAudience;
 using Lms.Application.Features.Books.Queries.GetBooksByCategory;
 using Lms.Application.Features.Books.Queries.GetBooksByKeyword;
+using Lms.Application.Features.Books.Queries.GetBooksByTheme;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -269,6 +270,19 @@ namespace Lms.Api.Controllers
         public async Task<IActionResult> GetBooksByKeyword(Guid keywordId, [FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
         {
             var result = await sender.Send(new GetBooksByKeywordQuery(keywordId, pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/themes/{themeId:guid}/books")]
+        [ProducesResponseType(typeof(PaginatedList<BookDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetBooksByTheme")]
+        public async Task<IActionResult> GetBooksByTheme(Guid themeId, [FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetBooksByThemeQuery(themeId, pageSize, pageNumber), cancellationToken);
             return result.Match(Ok, Problem);
         }
     }
