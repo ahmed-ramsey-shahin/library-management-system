@@ -5,6 +5,7 @@ using Lms.Application.Features.Books.Commands.CreateBook;
 using Lms.Application.Features.Books.Commands.DeleteBook;
 using Lms.Application.Features.Books.Commands.UpdateBookAudiences;
 using Lms.Application.Features.Books.Commands.UpdateBookCategories;
+using Lms.Application.Features.Books.Commands.UpdateBookDetails;
 using Lms.Application.Features.Books.Dtos;
 using Lms.Application.Features.Books.Queries.GetBookById;
 using Lms.Domain.Identity;
@@ -119,6 +120,31 @@ namespace Lms.Api.Controllers
         public async Task<IActionResult> UpdateBookCategories(Guid id, [FromBody] UpdateBookCategoriesRequest request, CancellationToken cancellationToken)
         {
             var result = await sender.Send(new UpdateBookCategoriesCommand(id, request.CategoryIds), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPut("{id:guid}/details")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [EndpointName("UpdateBookDetails")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> UpdateBookDetails(Guid id, [FromBody] UpdateBookDetailsRequest request, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new UpdateBookDetailsCommand(
+                id,
+                request.Isbn,
+                request.Issn,
+                request.Title,
+                request.Description,
+                request.PageCount,
+                request.PublisherId,
+                request.PublishingDate,
+                request.Edition,
+                request.Language
+            ), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
