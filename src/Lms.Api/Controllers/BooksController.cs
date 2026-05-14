@@ -15,6 +15,7 @@ using Lms.Application.Features.Books.Commands.UpdateBookThemes;
 using Lms.Application.Features.Books.Dtos;
 using Lms.Application.Features.Books.Queries.GetBookById;
 using Lms.Application.Features.Books.Queries.GetBooksByAudience;
+using Lms.Application.Features.Books.Queries.GetBooksByAuthor;
 using Lms.Application.Features.Books.Queries.GetBooksByCategory;
 using Lms.Application.Features.Books.Queries.GetBooksByGenre;
 using Lms.Application.Features.Books.Queries.GetBooksByKeyword;
@@ -297,6 +298,19 @@ namespace Lms.Api.Controllers
         public async Task<IActionResult> GetBooksByGenre(Guid genreId, [FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
         {
             var result = await sender.Send(new GetBooksByGenreQuery(genreId, pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/authors/{authorId:guid}/books")]
+        [ProducesResponseType(typeof(PaginatedList<BookDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetBooksByAuthor")]
+        public async Task<IActionResult> GetBooksByAuthor(Guid authorId, [FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetBooksByAuthorQuery(authorId, pageSize, pageNumber), cancellationToken);
             return result.Match(Ok, Problem);
         }
     }
