@@ -4,6 +4,7 @@ using Lms.Api.Dtos.Requests;
 using Lms.Application.Features.Books.Commands.CreateBook;
 using Lms.Application.Features.Books.Commands.DeleteBook;
 using Lms.Application.Features.Books.Commands.UpdateBookAudiences;
+using Lms.Application.Features.Books.Commands.UpdateBookAuthors;
 using Lms.Application.Features.Books.Commands.UpdateBookCategories;
 using Lms.Application.Features.Books.Commands.UpdateBookDetails;
 using Lms.Application.Features.Books.Dtos;
@@ -95,7 +96,7 @@ namespace Lms.Api.Controllers
             return result.Match(_ => NoContent(), Problem);
         }
 
-        [HttpPut("{id:guid}/adiences")]
+        [HttpPut("{id:guid}/audiences")]
         [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -109,7 +110,7 @@ namespace Lms.Api.Controllers
             return result.Match(_ => NoContent(), Problem);
         }
 
-        [HttpPut("{id:guid}/adiences")]
+        [HttpPut("{id:guid}/categories")]
         [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -145,6 +146,20 @@ namespace Lms.Api.Controllers
                 request.Edition,
                 request.Language
             ), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPut("{id:guid}/authors")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [EndpointName("UpdateBookAuthors")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> UpdateBookAuthors(Guid id, [FromBody] UpdateBookAuthorsRequest request, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new UpdateBookAuthorsCommand(id, request.AuthorIds), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
