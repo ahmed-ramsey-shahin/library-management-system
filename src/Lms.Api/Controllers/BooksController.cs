@@ -21,6 +21,7 @@ using Lms.Application.Features.Books.Queries.GetBooksByGenre;
 using Lms.Application.Features.Books.Queries.GetBooksByKeyword;
 using Lms.Application.Features.Books.Queries.GetBooksByTheme;
 using Lms.Application.Features.Books.Queries.GetBooksByTitle;
+using Lms.Application.Features.Books.Queries.GetLatestBooks;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -246,6 +247,18 @@ namespace Lms.Api.Controllers
         public async Task<IActionResult> GetBooksByTitle([FromQuery] string title, [FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
         {
             var result = await sender.Send(new GetBooksByTitleQuery(title, pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("latest")]
+        [ProducesResponseType(typeof(PaginatedList<BookDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetLatestBooks")]
+        public async Task<IActionResult> GetLatestBooks([FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetLatestBooksQuery(pageSize, pageNumber), cancellationToken);
             return result.Match(Ok, Problem);
         }
 
