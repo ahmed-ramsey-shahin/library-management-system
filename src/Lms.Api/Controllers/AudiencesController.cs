@@ -5,6 +5,7 @@ using Lms.Application.Features.Audiences.Commands.DeleteAudience;
 using Lms.Application.Features.Audiences.Commands.UpdateAudience;
 using Lms.Application.Features.Audiences.Dtos;
 using Lms.Application.Features.Audiences.Queries.GetAudiences;
+using Lms.Application.Features.Audiences.Queries.GetAudiencesByBookId;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -75,6 +76,19 @@ namespace Lms.Api.Controllers
         {
             var result = await sender.Send(new UpdateAudienceCommand(audienceId, request.Name), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/books/{bookId:guid}/audiences")]
+        [ProducesResponseType(typeof(List<AudienceDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetAudiencesByBook")]
+        public async Task<IActionResult> GetAudiencesByBook(Guid bookId, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetAudiencesByBookIdQuery(bookId), cancellationToken);
+            return result.Match(Ok, Problem);
         }
     }
 }
