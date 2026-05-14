@@ -7,6 +7,7 @@ using Lms.Application.Features.Books.Commands.UpdateBookAudiences;
 using Lms.Application.Features.Books.Commands.UpdateBookAuthors;
 using Lms.Application.Features.Books.Commands.UpdateBookCategories;
 using Lms.Application.Features.Books.Commands.UpdateBookDetails;
+using Lms.Application.Features.Books.Commands.UpdateBookFinancials;
 using Lms.Application.Features.Books.Commands.UpdateBookGenres;
 using Lms.Application.Features.Books.Commands.UpdateBookKeywords;
 using Lms.Application.Features.Books.Commands.UpdateBookThemes;
@@ -205,6 +206,26 @@ namespace Lms.Api.Controllers
         public async Task<IActionResult> UpdateBookThemes(Guid id, [FromBody] UpdateBookThemesRequest request, CancellationToken cancellationToken)
         {
             var result = await sender.Send(new UpdateBookThemesCommand(id, request.ThemeIds), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPut("{id:guid}/financials")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [EndpointName("UpdateBookFinancials")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> UpdateBookFinancials(Guid id, [FromBody] UpdateBookFinancialsRequest request, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new UpdateBookFinancialsCommand(
+                id,
+                request.BorrowPricePerDay,
+                request.FinePerDay,
+                request.LostFee,
+                request.DamageFee
+            ), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
