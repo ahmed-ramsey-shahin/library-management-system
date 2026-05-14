@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
+using Lms.Application.Common.Models;
 using Lms.Application.Features.Books.Commands.CreateBook;
 using Lms.Application.Features.Books.Commands.DeleteBook;
 using Lms.Application.Features.Books.Commands.UpdateBookAudiences;
@@ -13,6 +14,7 @@ using Lms.Application.Features.Books.Commands.UpdateBookKeywords;
 using Lms.Application.Features.Books.Commands.UpdateBookThemes;
 using Lms.Application.Features.Books.Dtos;
 using Lms.Application.Features.Books.Queries.GetBookById;
+using Lms.Application.Features.Books.Queries.GetBooksByAudience;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -227,6 +229,19 @@ namespace Lms.Api.Controllers
                 request.DamageFee
             ), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/audiences/{audienceId:guid}/books")]
+        [ProducesResponseType(typeof(PaginatedList<BookDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetBooksByAudience")]
+        public async Task<IActionResult> GetBooksByAudience(Guid audienceId, [FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetBooksByAudienceQuery(audienceId, pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
         }
     }
 }
