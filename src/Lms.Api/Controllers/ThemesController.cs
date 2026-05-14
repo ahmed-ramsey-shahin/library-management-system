@@ -5,6 +5,7 @@ using Lms.Application.Features.Themes.Commands.DeleteTheme;
 using Lms.Application.Features.Themes.Commands.UpdateTheme;
 using Lms.Application.Features.Themes.Dtos;
 using Lms.Application.Features.Themes.Queries.GetThemes;
+using Lms.Application.Features.Themes.Queries.GetThemesByBookId;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -75,6 +76,19 @@ namespace Lms.Api.Controllers
         {
             var result = await sender.Send(new UpdateThemeCommand(themeId, request.Name), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/books/{bookId:guid}/themes")]
+        [ProducesResponseType(typeof(List<ThemeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetThemesByBook")]
+        public async Task<IActionResult> GetThemesByBook(Guid bookId, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetThemesByBookIdQuery(bookId), cancellationToken);
+            return result.Match(Ok, Problem);
         }
     }
 }
