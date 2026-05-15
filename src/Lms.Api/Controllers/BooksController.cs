@@ -40,6 +40,7 @@ namespace Lms.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [EndpointName("CreateBook")]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> CreateBook(
