@@ -26,13 +26,14 @@ namespace Lms.Application.Features.Books.Queries.GetBookCopyById
                     Location = copy.Location,
                     State = copy.State,
                     AcquisitionDate = copy.AcquisitionDate,
+                    Version = copy.Version,
                     Book = new BookSummaryDto
                     {
                         Edition = copy.Book.Edition,
                         Isbn = copy.Book.Isbn,
                         Title = copy.Book.Title,
                         AvailableCopies = db.BookCopies.Count(c => c.BookId == copy.BookId && c.State == BookCopyState.Available),
-                        BookId = copy.BookId
+                        BookId = copy.BookId,
                     }
                 }).FirstOrDefaultAsync(cancellationToken);
 

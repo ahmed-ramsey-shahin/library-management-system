@@ -10,6 +10,6 @@ namespace Lms.Application.Features.Books.Dtos
         public BookCopyStatus Status { get; init; }
         public string Location { get; init; } = null!;
         public DateOnly AcquisitionDate { get; init; }
-
+        public byte[] Version { get; init; } = null!;
     }
 }
