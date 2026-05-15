@@ -36,7 +36,8 @@ namespace Lms.Application.Features.BorrowRecords.EventHandlers
             await sender.Send(new UpdateBookCopyStatusCommand(
                 BookId: borrowRecord.BookCopy.BookId,
                 CopyId: borrowRecord.BookCopyId,
-                Status: BookCopyStatus.Lost
+                Status: BookCopyStatus.Lost,
+                Version: borrowRecord.BookCopy.Version
             ), cancellationToken);
             await sender.Send(new IssueFineCommand(
                 BorrowRecordId: notification.BorrowRecordId,
