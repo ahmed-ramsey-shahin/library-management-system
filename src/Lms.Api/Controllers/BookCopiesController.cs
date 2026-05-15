@@ -8,7 +8,9 @@ using Lms.Application.Features.Books.Commands.MarkBookCopyAsMaintenance;
 using Lms.Application.Features.Books.Commands.UpdateBookCopyLocation;
 using Lms.Application.Features.Books.Commands.UpdateBookCopyStatus;
 using Lms.Application.Features.Books.Dtos;
+using Lms.Application.Features.Books.Queries.GetBookCopies;
 using Lms.Application.Features.Books.Queries.GetBookCopyById;
+using Lms.Domain.Catalog;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -185,6 +187,19 @@ namespace Lms.Api.Controllers
         {
             var result = await sender.Send(new MarkBookCopyAsMaintenanceCommand(bookId, copyId, request.Version), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(List<BookCopySummaryDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetBookCopies")]
+        public async Task<IActionResult> GetBookCopies(Guid bookId, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new GetBookCopiesQuery(bookId), cancellationToken);
+            return result.Match(Ok, Problem);
         }
     }
 }
