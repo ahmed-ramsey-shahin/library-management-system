@@ -31,7 +31,7 @@ namespace Lms.Application.Features.Books.Queries.GetBookCopyById
                         Edition = copy.Book.Edition,
                         Isbn = copy.Book.Isbn,
                         Title = copy.Book.Title,
-                        AvailableCopies = copy.Book.BookCopies.Count(copy => copy.State == BookCopyState.Available),
+                        AvailableCopies = db.BookCopies.Count(c => c.BookId == copy.BookId && c.State == BookCopyState.Available),
                         BookId = copy.BookId
                     }
                 }).FirstOrDefaultAsync(cancellationToken);
