@@ -45,7 +45,7 @@ namespace Lms.Application.Features.Books.Queries.GetBookById
                     FinePerDay = book.FinePerDay,
                     LostFee = book.LostFee,
                     DamageFee = book.DamageFee,
-                    AvailableCopies = book.BookCopies.Count(copy => copy.State == BookCopyState.Available),
+                    AvailableCopies = book.BookCopies.Count(copy => copy.State == BookCopyState.Available && copy.Status != BookCopyStatus.Lost),
                     Categories = book.BookCategories.Select(bookCategory => new CategoryDto{ CategoryId=bookCategory.CategoryId, Name=bookCategory.Category.Name }).ToList(),
                     Keywords = book.BookKeywords.Select(bookKeyword => new KeywordDto{ KeywordId=bookKeyword.KeywordId, Name=bookKeyword.Keyword.Name }).ToList(),
                     Themes = book.BookThemes.Select(bookTheme => new ThemeDto{ ThemeId=bookTheme.ThemeId, Name=bookTheme.Theme.Name }).ToList(),
