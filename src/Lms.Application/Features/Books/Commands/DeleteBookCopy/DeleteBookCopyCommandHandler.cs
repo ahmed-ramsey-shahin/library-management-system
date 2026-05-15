@@ -37,7 +37,23 @@ namespace Lms.Application.Features.Books.Commands.DeleteBookCopy
                 return removalResult.Errors!;
             }
 
-            await db.SaveChangesAsync(cancellationToken);
+            var bookCopy = book.BookCopies.FirstOrDefault(copy => copy.Id == request.CopyId);
+            db.SetOriginalVersion(bookCopy!, request.Version);
+
+            try
+            {
+                await db.SaveChangesAsync(cancellationToken);
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                if (logger.IsEnabled(LogLevel.Error))
+                {
+                    logger.LogError("Book copy update aborted because of a concurrency conflict.");
+                }
+
+                return ApplicationErrors.ConcurrencyConflict;
+            }
+
             await cache.RemoveByTagAsync("book-copy", cancellationToken);
 
             if (logger.IsEnabled(LogLevel.Information))
