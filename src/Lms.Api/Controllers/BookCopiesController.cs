@@ -3,6 +3,7 @@ using Lms.Api.Dtos.Requests;
 using Lms.Application.Features.Books.Commands.CreateBookCopy;
 using Lms.Application.Features.Books.Commands.DeleteBookCopy;
 using Lms.Application.Features.Books.Commands.UpdateBookCopyLocation;
+using Lms.Application.Features.Books.Commands.UpdateBookCopyStatus;
 using Lms.Application.Features.Books.Dtos;
 using Lms.Application.Features.Books.Queries.GetBookCopyById;
 using Lms.Domain.Identity;
@@ -104,6 +105,25 @@ namespace Lms.Api.Controllers
         )
         {
             var result = await sender.Send(new UpdateBookCopyLocationCommand(bookId, copyId, request.Location, request.Version), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPut("{copyId:guid}/status")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("ChangeBookCopyStatus")]
+        public async Task<IActionResult> ChangeBookCopyStatus(
+            Guid bookId,
+            Guid copyId,
+            [FromBody] ChangeBookCopyStatusRequest request,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new UpdateBookCopyStatusCommand(bookId, copyId, request.Status, request.Version), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
