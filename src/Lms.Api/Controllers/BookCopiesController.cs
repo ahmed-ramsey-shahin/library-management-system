@@ -2,6 +2,9 @@ using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
 using Lms.Application.Features.Books.Commands.CreateBookCopy;
 using Lms.Application.Features.Books.Commands.DeleteBookCopy;
+using Lms.Application.Features.Books.Commands.MarkBookCopyAsAvailable;
+using Lms.Application.Features.Books.Commands.MarkBookCopyAsBorrowed;
+using Lms.Application.Features.Books.Commands.MarkBookCopyAsMaintenance;
 using Lms.Application.Features.Books.Commands.UpdateBookCopyLocation;
 using Lms.Application.Features.Books.Commands.UpdateBookCopyStatus;
 using Lms.Application.Features.Books.Dtos;
@@ -124,6 +127,63 @@ namespace Lms.Api.Controllers
         )
         {
             var result = await sender.Send(new UpdateBookCopyStatusCommand(bookId, copyId, request.Status, request.Version), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPost("{copyId:guid}/availability")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("MarkBookCopyAsAvailable")]
+        public async Task<IActionResult> MarkBookCopyAsAvailable(
+            Guid bookId,
+            Guid copyId,
+            [FromBody] MarkBookCopyAsAvailableRequest request,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new MarkBookCopyAsAvailableCommand(bookId, copyId, request.Version), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPost("{copyId:guid}/borrowings")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("MarkBookCopyAsBorrowed")]
+        public async Task<IActionResult> MarkBookCopyAsBorrowed(
+            Guid bookId,
+            Guid copyId,
+            [FromBody] MarkBookCopyAsBorrowedRequest request,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new MarkBookCopyAsBorrowedCommand(bookId, copyId, request.Version), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPost("{copyId:guid}/maintenance")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("MarkBookCopyAsMaintenance")]
+        public async Task<IActionResult> MarkBookCopyAsMaintenance(
+            Guid bookId,
+            Guid copyId,
+            [FromBody] MarkBookCopyAsMaintenanceRequest request,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new MarkBookCopyAsMaintenanceCommand(bookId, copyId, request.Version), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
