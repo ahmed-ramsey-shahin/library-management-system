@@ -14,6 +14,7 @@ namespace Lms.Application.Common.Errors
         public static Error IssnAlreadyExists => Error.Conflict("Book.IssnConflict", "A book with this ISSN already exists in the catalog.");
 
         // --- Book Copies ---
+        public static Error BookCopyNotFound => Error.NotFound("BookCopy.NotFound", "The requested book copy was not found.");
         public static Error BarcodeInvalid => Error.Validation("BookCopy.InvalidBarcode", "The barcode must start with 'CPY-' followed by exactly 8 numeric digits.");
         public static Error LocationLength => Error.Validation("BookCopy.LocationTooLong", "The location string cannot exceed 100 characters.");
         public static Error BarcodeAlreadyExists => Error.Conflict("BookCopy.BarcodeConflict", "A book copy with this barcode already exists.");
