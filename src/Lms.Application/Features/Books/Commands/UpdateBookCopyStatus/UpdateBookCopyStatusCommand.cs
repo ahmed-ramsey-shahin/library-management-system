@@ -7,6 +7,7 @@ namespace Lms.Application.Features.Books.Commands.UpdateBookCopyStatus
     public sealed record UpdateBookCopyStatusCommand (
         Guid BookId,
         Guid CopyId,
-        BookCopyStatus Status
+        BookCopyStatus Status,
+        byte[] Version
     ) : IRequest<Result<Updated>>;
 }
