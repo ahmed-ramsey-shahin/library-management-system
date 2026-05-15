@@ -58,6 +58,8 @@ namespace Lms.Application.Features.Books.Commands.CreateBookCopy
                 return copyCreationResult.Errors!;
             }
 
+            db.BookCopies.Add(copyCreationResult.Value);
+
             await db.SaveChangesAsync(cancellationToken);
             await cache.RemoveByTagAsync(["book-copy", "book"], cancellationToken);
 

@@ -1,6 +1,7 @@
 using Lms.Application.Common.Errors;
 using Lms.Application.Common.Interfaces;
 using Lms.Application.Features.Books.Dtos;
+using Lms.Domain.Catalog;
 using Lms.Domain.Common.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,7 @@ namespace Lms.Application.Features.Books.Queries.GetBookCopyById
                         Edition = copy.Book.Edition,
                         Isbn = copy.Book.Isbn,
                         Title = copy.Book.Title,
-                        AvailableCopies = copy.Book.AvailableCopies,
+                        AvailableCopies = copy.Book.BookCopies.Count(copy => copy.State == BookCopyState.Available),
                         BookId = copy.BookId
                     }
                 }).FirstOrDefaultAsync(cancellationToken);
