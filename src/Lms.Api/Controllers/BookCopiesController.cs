@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
 using Lms.Application.Features.Books.Commands.CreateBookCopy;
 using Lms.Application.Features.Books.Commands.DeleteBookCopy;
+using Lms.Application.Features.Books.Commands.UpdateBookCopyLocation;
 using Lms.Application.Features.Books.Dtos;
 using Lms.Application.Features.Books.Queries.GetBookCopyById;
 using Lms.Domain.Identity;
@@ -12,10 +13,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Lms.Api.Controllers
 {
     [ApiController]
-    [Route("/api/v{version:apiVersion}/book-copies")]
+    [Route("/api/v{version:apiVersion}/books/{bookId:guid}/copies")]
     public class BookCopiesController(ISender sender) : ApiController
     {
-        [HttpPost("/api/v{version:apiVersion}/books/{bookId:guid}/copies")]
+        [HttpPost]
         [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -54,7 +55,7 @@ namespace Lms.Api.Controllers
             );
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("/api/v{version:apiVersion}/book-copies/{id:guid}")]
         [ProducesResponseType(typeof(BookCopyDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -67,7 +68,7 @@ namespace Lms.Api.Controllers
             return result.Match(Ok, Problem);
         }
 
-        [HttpDelete("/api/v{version:apiVersion}/books/{bookId:guid}/copies/{copyId:guid}")]
+        [HttpDelete("{copyId:guid}")]
         [Authorize(Roles = nameof(Role.Admin))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -76,9 +77,14 @@ namespace Lms.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [MapToApiVersion("1.0")]
         [EndpointName("DeleteBookCopy")]
-        public async Task<IActionResult> DeleteBookCopy(Guid bookId, Guid copyId, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteBookCopy(
+            Guid bookId,
+            Guid copyId,
+            [FromBody] DeleteBookCopyRequest request,
+            CancellationToken cancellationToken
+        )
         {
-            var result = await sender.Send(new DeleteBookCopyCommand(bookId, copyId), cancellationToken);
+            var result = await sender.Send(new DeleteBookCopyCommand(bookId, copyId, request.Version), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
