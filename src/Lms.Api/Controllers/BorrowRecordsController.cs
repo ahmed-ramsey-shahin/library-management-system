@@ -8,6 +8,7 @@ using Lms.Application.Features.BorrowRecords.Commands.MarkRecordAsLate;
 using Lms.Application.Features.BorrowRecords.Commands.OverrideDueDate;
 using Lms.Application.Features.BorrowRecords.Commands.RejectBorrowRecord;
 using Lms.Application.Features.BorrowRecords.Commands.RenewBook;
+using Lms.Application.Features.BorrowRecords.Commands.ReturnBook;
 using Lms.Application.Features.BorrowRecords.Dto;
 using Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById;
 using Lms.Application.Features.BorrowRecords.Queries.GetMemberActiveBorrowings;
@@ -360,6 +361,25 @@ namespace Lms.Api.Controllers
         )
         {
             var result = await sender.Send(new RenewBookCommand(id, request.DueDate, idempotencyKey), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPost("{id:guid}/returns")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("ReturnBook")]
+        public async Task<IActionResult> ReturnBook(
+            Guid id,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new ReturnBookCommand(id), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
