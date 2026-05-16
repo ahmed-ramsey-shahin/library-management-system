@@ -89,8 +89,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
 
             var bookAlreadyBorrowed = member.BorrowRecords.Any(
                 borrowRecord => borrowRecord.BookCopy.Book.Isbn == book.Isbn &&
-                borrowRecord.Status != BorrowRecordStatus.Rejected &&
-                borrowRecord.Status != BorrowRecordStatus.Returned
+                borrowRecord.Status is BorrowRecordStatus.Late or BorrowRecordStatus.Accepted or BorrowRecordStatus.Waiting
             );
 
             if (bookAlreadyBorrowed)
