@@ -514,7 +514,7 @@ namespace Lms.Domain.Catalog
 
         public Result<BookCopy> AllocateAvailableCopy()
         {
-            var copy = _bookCopies.FirstOrDefault(c => c.State == BookCopyState.Available);
+            var copy = _bookCopies.FirstOrDefault(c => c.State == BookCopyState.Available && c.Status == BookCopyStatus.Good);
 
             if (copy is null)
             {
