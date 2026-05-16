@@ -11,6 +11,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.CancelBorrowRecord
     public sealed class CancelBorrowRecordCommandHandler(
         IAppDbContext db,
         HybridCache cache,
+        IUser currentUser,
         ILogger<CancelBorrowRecordCommandHandler> logger
     ) : IRequestHandler<CancelBorrowRecordCommand, Result<Updated>>
     {
@@ -28,6 +29,16 @@ namespace Lms.Application.Features.BorrowRecords.Commands.CancelBorrowRecord
                 }
 
                 return ApplicationErrors.BorrowRecordNotFound;
+            }
+
+            if (currentUser.Id != borrowRecord.MemberId)
+            {
+                if (logger.IsEnabled(LogLevel.Warning))
+                {
+                    logger.LogWarning("Could not cancel borrow record {BorrowRecordId} because member {MemberId} is not the owner of the borrow record.", request.BorrowRecordId, currentUser.Id!.Value);
+                }
+
+                return ApplicationErrors.BorrowRecordNotOwned;
             }
 
             var cancellationResult = borrowRecord.Cancel();
