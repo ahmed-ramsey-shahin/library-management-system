@@ -15,7 +15,8 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
         IAppDbContext db,
         ILogger<BorrowBookCommandHandler> logger,
         HybridCache cache,
-        IEnumerable<IBorrowPolicy> borrowPolicies
+        IEnumerable<IBorrowPolicy> borrowPolicies,
+        IUser currentUser
     ) : IRequestHandler<BorrowBookCommand, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(BorrowBookCommand request, CancellationToken cancellationToken)
@@ -28,13 +29,13 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
                 .ThenInclude(copy => copy.Book)
                 .Include(user => user.Fines.Where(fine => fine.Status == FineStatus.Unpaid))
                 .AsSplitQuery()
-                .FirstOrDefaultAsync(user => user.Id == request.UserId, cancellationToken);
+                .FirstOrDefaultAsync(user => user.Id == currentUser.Id, cancellationToken);
 
             if (member is null)
             {
                 if (logger.IsEnabled(LogLevel.Warning))
                 {
-                    logger.LogWarning("Operation aborted. No user was found with ID {UserId}.", request.UserId);
+                    logger.LogWarning("Operation aborted. No user was found with ID {UserId}.", currentUser.Id);
                 }
 
                 return ApplicationErrors.UserNotFound;
@@ -44,7 +45,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
             {
                 if (logger.IsEnabled(LogLevel.Warning))
                 {
-                    logger.LogWarning("Operation aborted. The specified user ({UserId}) is not a member.", request.UserId);
+                    logger.LogWarning("Operation aborted. The specified user ({UserId}) is not a member.", currentUser.Id);
                 }
 
                 return ApplicationErrors.UserNotMember;
@@ -112,7 +113,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
             var copy = copyAllocationResult.Value;
             var borrowRecordCreationResult = BorrowRecord.Create(
                 Guid.NewGuid(),
-                request.UserId,
+                currentUser.Id!.Value,
                 copy.Id,
                 request.DueDate,
                 request.PickupDeadline,
