@@ -74,6 +74,7 @@ namespace Lms.Application.Common.Errors
         public static Error NewDueDateInvalid => Error.Validation("BorrowRecord.InvalidDueDate", "The new due date must be later than the current due date.");
         public static Error NotLate => Error.Conflict("BorrowRecord.NotOverdue", "This borrow record is not currently overdue.");
         public static Error AnotherCopyAlreadyBorrowed => Error.Conflict("BorrowRecord.DuplicateCopyBorrowed", "The user is already borrowing a copy of this book.");
+        public static Error BorrowRecordNotOwned => Error.Forbidden("BorrowRecord.NotOwned", "You do not have permission to access this borrow record.");
 
         // --- Fines ---
         public static Error FineNotFound => Error.NotFound("Fine.NotFound", "The requested fine was not found.");

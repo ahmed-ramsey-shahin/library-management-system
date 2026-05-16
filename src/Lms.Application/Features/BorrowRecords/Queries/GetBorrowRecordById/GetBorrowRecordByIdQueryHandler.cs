@@ -3,6 +3,7 @@ using Lms.Application.Common.Interfaces;
 using Lms.Application.Features.BorrowRecords.Dto;
 using Lms.Application.Features.Fines.Dtos;
 using Lms.Domain.Common.Results;
+using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById
 {
     public sealed class GetBorrowRecordByIdQueryHandler(
         IAppDbContext db,
+        IUser currentUser,
         ILogger<GetBorrowRecordByIdQueryHandler> logger
     ) : IRequestHandler<GetBorrowRecordByIdQuery, Result<BorrowRecordDto>>
     {
@@ -60,6 +62,16 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById
                 }
 
                 return ApplicationErrors.BorrowRecordNotFound;
+            }
+
+            if (currentUser.UserRole == Role.Member && borrowRecord.MemberId != currentUser.Id)
+            {
+                if (logger.IsEnabled(LogLevel.Error))
+                {
+                    logger.LogError("The current member can not access this borrow record. {BorrowRecordId} {MemberId}.", request.BorrowRecordId, currentUser.Id);
+                }
+
+                return ApplicationErrors.BorrowRecordNotOwned;
             }
 
             return borrowRecord;
