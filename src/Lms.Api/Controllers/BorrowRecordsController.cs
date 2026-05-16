@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
+using Lms.Application.Common.Interfaces;
 using Lms.Application.Common.Models;
 using Lms.Application.Features.BorrowRecords.Commands.BorrowBook;
 using Lms.Application.Features.BorrowRecords.Dto;
@@ -64,7 +65,7 @@ namespace Lms.Api.Controllers
             return result.Match(Ok, Problem);
         }
 
-        [HttpGet("/api/v{version:apiVersion}/members/{memberId:guid}/borrow-records/active")]
+        [HttpGet("/api/v{version:apiVersion}/users/members/{memberId:guid}/borrow-records/active")]
         [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(typeof(PaginatedList<BorrowRecordSummaryDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -82,6 +83,27 @@ namespace Lms.Api.Controllers
         )
         {
             var result = await sender.Send(new GetMemberActiveBorrowingsQuery(memberId, pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/users/members/me/borrow-records/active")]
+        [Authorize(Roles = nameof(Role.Member))]
+        [ProducesResponseType(typeof(PaginatedList<BorrowRecordSummaryDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetMyActiveBorrowings")]
+        public async Task<IActionResult> GetMyActiveBorrowings(
+            [FromQuery] int pageNumber,
+            [FromQuery] int pageSize,
+            [FromServices] IUser currnetUser,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new GetMemberActiveBorrowingsQuery(currnetUser.Id!.Value, pageSize, pageNumber), cancellationToken);
             return result.Match(Ok, Problem);
         }
     }
