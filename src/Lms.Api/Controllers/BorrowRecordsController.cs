@@ -5,6 +5,7 @@ using Lms.Application.Common.Models;
 using Lms.Application.Features.BorrowRecords.Commands.BorrowBook;
 using Lms.Application.Features.BorrowRecords.Commands.CancelBorrowRecord;
 using Lms.Application.Features.BorrowRecords.Commands.MarkRecordAsLate;
+using Lms.Application.Features.BorrowRecords.Commands.OverrideDueDate;
 using Lms.Application.Features.BorrowRecords.Dto;
 using Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById;
 using Lms.Application.Features.BorrowRecords.Queries.GetMemberActiveBorrowings;
@@ -297,6 +298,26 @@ namespace Lms.Api.Controllers
         )
         {
             var result = await sender.Send(new MarkRecordAsLateCommand(id), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPut("{id:guid}/due-date")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("OverrideDueDate")]
+        public async Task<IActionResult> OverrideDueDate(
+            Guid id,
+            [FromBody] OverrideDueDateRequest request,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new OverrideDueDateCommand(id, request.DueDate), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
