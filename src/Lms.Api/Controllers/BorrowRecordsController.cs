@@ -6,6 +6,7 @@ using Lms.Application.Features.BorrowRecords.Commands.BorrowBook;
 using Lms.Application.Features.BorrowRecords.Dto;
 using Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById;
 using Lms.Application.Features.BorrowRecords.Queries.GetMemberActiveBorrowings;
+using Lms.Application.Features.BorrowRecords.Queries.GetMemberBorrowHistory;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -104,6 +105,48 @@ namespace Lms.Api.Controllers
         )
         {
             var result = await sender.Send(new GetMemberActiveBorrowingsQuery(currnetUser.Id!.Value, pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/users/members/{memberId:guid}/borrow-records/history")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(typeof(PaginatedList<BorrowRecordSummaryDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetMemberBorrowHistory")]
+        public async Task<IActionResult> GetMemberBorrowHistory(
+            Guid memberId,
+            [FromQuery] int pageNumber,
+            [FromQuery] int pageSize,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new GetMemberBorrowHistoryQuery(memberId, pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/users/members/me/borrow-records/history")]
+        [Authorize(Roles = nameof(Role.Member))]
+        [ProducesResponseType(typeof(PaginatedList<BorrowRecordSummaryDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetMyBorrowHistory")]
+        public async Task<IActionResult> GetMyBorrowHistory(
+            [FromQuery] int pageNumber,
+            [FromQuery] int pageSize,
+            [FromServices] IUser currnetUser,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new GetMemberBorrowHistoryQuery(currnetUser.Id!.Value, pageSize, pageNumber), cancellationToken);
             return result.Match(Ok, Problem);
         }
     }
