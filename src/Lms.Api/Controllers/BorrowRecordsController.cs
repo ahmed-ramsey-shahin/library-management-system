@@ -7,6 +7,7 @@ using Lms.Application.Features.BorrowRecords.Dto;
 using Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById;
 using Lms.Application.Features.BorrowRecords.Queries.GetMemberActiveBorrowings;
 using Lms.Application.Features.BorrowRecords.Queries.GetMemberBorrowHistory;
+using Lms.Application.Features.BorrowRecords.Queries.GetMemberPendingRequests;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -147,6 +148,48 @@ namespace Lms.Api.Controllers
         )
         {
             var result = await sender.Send(new GetMemberBorrowHistoryQuery(currnetUser.Id!.Value, pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/users/members/{memberId:guid}/borrow-records/pending")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(typeof(PaginatedList<BorrowRecordSummaryDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetMemberPendingRequests")]
+        public async Task<IActionResult> GetMemberPendingRequests(
+            Guid memberId,
+            [FromQuery] int pageNumber,
+            [FromQuery] int pageSize,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new GetMemberPendingRequestsQuery(memberId, pageSize, pageNumber), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/users/members/me/borrow-records/pending")]
+        [Authorize(Roles = nameof(Role.Member))]
+        [ProducesResponseType(typeof(PaginatedList<BorrowRecordSummaryDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetMyPendingRequests")]
+        public async Task<IActionResult> GetMyPendingRequests(
+            [FromQuery] int pageNumber,
+            [FromQuery] int pageSize,
+            [FromServices] IUser currnetUser,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new GetMemberPendingRequestsQuery(currnetUser.Id!.Value, pageSize, pageNumber), cancellationToken);
             return result.Match(Ok, Problem);
         }
     }
