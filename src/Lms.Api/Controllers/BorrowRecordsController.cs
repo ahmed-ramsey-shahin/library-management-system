@@ -8,6 +8,7 @@ using Lms.Application.Features.BorrowRecords.Commands.MarkRecordAsLate;
 using Lms.Application.Features.BorrowRecords.Commands.OverrideDueDate;
 using Lms.Application.Features.BorrowRecords.Commands.RejectBorrowRecord;
 using Lms.Application.Features.BorrowRecords.Commands.RenewBook;
+using Lms.Application.Features.BorrowRecords.Commands.ReportLostBook;
 using Lms.Application.Features.BorrowRecords.Commands.ReturnBook;
 using Lms.Application.Features.BorrowRecords.Dto;
 using Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById;
@@ -17,6 +18,7 @@ using Lms.Application.Features.BorrowRecords.Queries.GetMemberPendingRequests;
 using Lms.Application.Features.BorrowRecords.Queries.GetOverdueBorrowings;
 using Lms.Application.Features.BorrowRecords.Queries.GetReadyForPickup;
 using Lms.Application.Features.BorrowRecords.Queries.GetWaitingsByCategory;
+using Lms.Domain.Common.Results;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -286,7 +288,7 @@ namespace Lms.Api.Controllers
         }
 
         [HttpPost("{id:guid}/overdue-states")]
-        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -297,10 +299,22 @@ namespace Lms.Api.Controllers
         [EndpointName("MarkRecordAsLate")]
         public async Task<IActionResult> MarkRecordAsLate(
             Guid id,
+            [FromServices] IUser currentUser,
+            [FromHeader(Name = "X-Idempotency-Key")] string idempotencyKey,
             CancellationToken cancellationToken
         )
         {
-            var result = await sender.Send(new MarkRecordAsLateCommand(id), cancellationToken);
+            Result<Updated> result;
+
+            if (currentUser.UserRole is Role.Admin or Role.Librarian)
+            {
+                result = await sender.Send(new MarkRecordAsLateCommand(id), cancellationToken);
+            }
+            else
+            {
+                result = await sender.Send(new ReportLostBookCommand(id, idempotencyKey), cancellationToken);
+            }
+
             return result.Match(_ => NoContent(), Problem);
         }
 
