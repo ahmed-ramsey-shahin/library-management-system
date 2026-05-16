@@ -4,6 +4,7 @@ using Lms.Application.Common.Interfaces;
 using Lms.Application.Common.Models;
 using Lms.Application.Features.BorrowRecords.Commands.BorrowBook;
 using Lms.Application.Features.BorrowRecords.Commands.CancelBorrowRecord;
+using Lms.Application.Features.BorrowRecords.Commands.MarkRecordAsLate;
 using Lms.Application.Features.BorrowRecords.Dto;
 using Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById;
 using Lms.Application.Features.BorrowRecords.Queries.GetMemberActiveBorrowings;
@@ -277,6 +278,25 @@ namespace Lms.Api.Controllers
         )
         {
             var result = await sender.Send(new CancelBorrowRecordCommand(id), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPost("{id:guid}/overdue-state")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("MarkRecordAsLate")]
+        public async Task<IActionResult> MarkRecordAsLate(
+            Guid id,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new MarkRecordAsLateCommand(id), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
