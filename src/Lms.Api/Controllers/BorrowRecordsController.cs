@@ -341,5 +341,26 @@ namespace Lms.Api.Controllers
             var result = await sender.Send(new RejectBorrowRecordCommand(id), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
+
+        [HttpPost("{id:guid}/renewals")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("RenewBook")]
+        public async Task<IActionResult> RenewBook(
+            Guid id,
+            [FromBody] RenewBookRequest request,
+            [FromHeader(Name = "X-Idempotency-Key")] string idempotencyKey,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new RenewBookCommand(id, request.DueDate, idempotencyKey), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
     }
 }
