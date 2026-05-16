@@ -7,6 +7,7 @@ using Lms.Application.Features.BorrowRecords.Commands.CancelBorrowRecord;
 using Lms.Application.Features.BorrowRecords.Commands.MarkRecordAsLate;
 using Lms.Application.Features.BorrowRecords.Commands.OverrideDueDate;
 using Lms.Application.Features.BorrowRecords.Commands.RejectBorrowRecord;
+using Lms.Application.Features.BorrowRecords.Commands.RenewBook;
 using Lms.Application.Features.BorrowRecords.Dto;
 using Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById;
 using Lms.Application.Features.BorrowRecords.Queries.GetMemberActiveBorrowings;
@@ -158,7 +159,7 @@ namespace Lms.Api.Controllers
             return result.Match(Ok, Problem);
         }
 
-        [HttpGet("/api/v{version:apiVersion}/users/members/{memberId:guid}/borrow-records/pending")]
+        [HttpGet("/api/v{version:apiVersion}/users/members/{memberId:guid}/borrow-records/pendings")]
         [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(typeof(PaginatedList<BorrowRecordSummaryDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -201,7 +202,7 @@ namespace Lms.Api.Controllers
         }
 
 
-        [HttpGet("/api/v{version:apiVersion}/categories/{categoryId:guid}/borrow-records/overdue")]
+        [HttpGet("/api/v{version:apiVersion}/categories/{categoryId:guid}/borrow-records/overdues")]
         [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(typeof(PaginatedList<BorrowRecordSummaryDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -222,7 +223,7 @@ namespace Lms.Api.Controllers
             return result.Match(Ok, Problem);
         }
 
-        [HttpGet("/api/v{version:apiVersion}/categories/{categoryId:guid}/borrow-records/pending")]
+        [HttpGet("/api/v{version:apiVersion}/categories/{categoryId:guid}/borrow-records/pendings")]
         [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(typeof(PaginatedList<BorrowRecordSummaryDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -264,7 +265,7 @@ namespace Lms.Api.Controllers
             return result.Match(Ok, Problem);
         }
 
-        [HttpPost("{id:guid}/cancellation")]
+        [HttpPost("{id:guid}/cancellations")]
         [Authorize(Roles = nameof(Role.Member))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -283,7 +284,7 @@ namespace Lms.Api.Controllers
             return result.Match(_ => NoContent(), Problem);
         }
 
-        [HttpPost("{id:guid}/overdue-state")]
+        [HttpPost("{id:guid}/overdue-states")]
         [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -322,7 +323,7 @@ namespace Lms.Api.Controllers
             return result.Match(_ => NoContent(), Problem);
         }
 
-        [HttpPost("{id:guid}/rejection")]
+        [HttpPost("{id:guid}/rejections")]
         [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
