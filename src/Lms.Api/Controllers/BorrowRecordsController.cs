@@ -3,6 +3,7 @@ using Lms.Api.Dtos.Requests;
 using Lms.Application.Common.Interfaces;
 using Lms.Application.Common.Models;
 using Lms.Application.Features.BorrowRecords.Commands.BorrowBook;
+using Lms.Application.Features.BorrowRecords.Commands.CancelBorrowRecord;
 using Lms.Application.Features.BorrowRecords.Dto;
 using Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById;
 using Lms.Application.Features.BorrowRecords.Queries.GetMemberActiveBorrowings;
@@ -258,6 +259,25 @@ namespace Lms.Api.Controllers
         {
             var result = await sender.Send(new GetReadyForPickupQuery(categoryId, pageSize, pageNumber), cancellationToken);
             return result.Match(Ok, Problem);
+        }
+
+        [HttpPost("{id:guid}/cancellation")]
+        [Authorize(Roles = nameof(Role.Member))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("CancelBorrowRecord")]
+        public async Task<IActionResult> CancelBorrowRecord(
+            Guid id,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new CancelBorrowRecordCommand(id), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
         }
     }
 }
