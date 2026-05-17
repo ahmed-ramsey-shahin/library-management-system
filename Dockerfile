@@ -15,7 +15,8 @@ RUN dotnet restore "src/Lms.Api/Lms.Api.csproj"
 COPY . .
 
 # Build and publish
-RUN dotnet publish "src/Lms.Api/Lms.Api.csproj" -c Release -o /app
+# TODO: Change Debug to Realease in production
+RUN dotnet publish "src/Lms.Api/Lms.Api.csproj" -c Debug -o /app
 
 # Final Stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
@@ -26,6 +27,8 @@ RUN apt-get update && apt-get install -y tzdata && \
     rm -rf /var/lib/apt/lists/*
 
 ENV TZ=America/Montreal
+# TODO: Remove this line in production
+ENV ASPNETCORE_ENVIRONMENT=development
 
 WORKDIR /app
 COPY --from=build /app .
