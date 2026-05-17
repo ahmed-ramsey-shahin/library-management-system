@@ -398,7 +398,7 @@ namespace Lms.Api.Controllers
             return result.Match(_ => NoContent(), Problem);
         }
 
-        [HttpPost("{id:guid}/acceptance")]
+        [HttpPost("{id:guid}/acceptances")]
         [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
