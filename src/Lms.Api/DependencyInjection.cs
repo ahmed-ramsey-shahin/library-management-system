@@ -170,64 +170,60 @@ namespace Lms.Api
             if (dbContext is DbContext efDbContext)
             {
                 await efDbContext.Database.EnsureCreatedAsync();
+                var seedGraph = DatabaseSeeder.GenerateAllMockData(passwordHasher);
+
+                if (!await dbContext.Publishers.AnyAsync())
+                {
+                    await efDbContext.AddRangeAsync(seedGraph.Publishers);
+                    await dbContext.SaveChangesAsync(default);
+                }
+
+                if (!await dbContext.Audiences.AnyAsync())
+                {
+                    await efDbContext.AddRangeAsync(seedGraph.Audiences);
+                    await dbContext.SaveChangesAsync(default);
+                }
+
+                if (!await dbContext.Authors.AnyAsync())
+                {
+                    await efDbContext.AddRangeAsync(seedGraph.Authors);
+                    await dbContext.SaveChangesAsync(default);
+                }
+
+                if (!await dbContext.Genres.AnyAsync())
+                {
+                    await efDbContext.AddRangeAsync(seedGraph.Genres);
+                    await dbContext.SaveChangesAsync(default);
+                }
+
+                if (!await dbContext.Categories.AnyAsync())
+                {
+                    await efDbContext.AddRangeAsync(seedGraph.Categories);
+                    await dbContext.SaveChangesAsync(default);
+                }
+
+                if (!await dbContext.Themes.AnyAsync())
+                {
+                    await efDbContext.AddRangeAsync(seedGraph.Themes);
+                    await dbContext.SaveChangesAsync(default);
+                }
+
+                if (!await dbContext.Keywords.AnyAsync())
+                {
+                    await efDbContext.AddRangeAsync(seedGraph.Keywords);
+                    await dbContext.SaveChangesAsync(default);
+                }
+
+                if (!await dbContext.Users.AnyAsync())
+                {
+                    await efDbContext.AddRangeAsync(seedGraph.Users);
+                    await dbContext.SaveChangesAsync(default);
+                }
 
                 if (!await dbContext.Books.AnyAsync())
                 {
-                    var seedGraph = DatabaseSeeder.GenerateAllMockData(passwordHasher);
-
-                    if (await dbContext.Publishers.AnyAsync())
-                    {
-                        await efDbContext.AddRangeAsync(seedGraph.Publishers);
-                        await dbContext.SaveChangesAsync(default);
-                    }
-
-                    if (await dbContext.Audiences.AnyAsync())
-                    {
-                        await efDbContext.AddRangeAsync(seedGraph.Audiences);
-                        await dbContext.SaveChangesAsync(default);
-                    }
-
-                    if (await dbContext.Authors.AnyAsync())
-                    {
-                        await efDbContext.AddRangeAsync(seedGraph.Authors);
-                        await dbContext.SaveChangesAsync(default);
-                    }
-
-                    if (await dbContext.Genres.AnyAsync())
-                    {
-                        await efDbContext.AddRangeAsync(seedGraph.Genres);
-                        await dbContext.SaveChangesAsync(default);
-                    }
-
-                    if (await dbContext.Categories.AnyAsync())
-                    {
-                        await efDbContext.AddRangeAsync(seedGraph.Categories);
-                        await dbContext.SaveChangesAsync(default);
-                    }
-
-                    if (await dbContext.Themes.AnyAsync())
-                    {
-                        await efDbContext.AddRangeAsync(seedGraph.Themes);
-                        await dbContext.SaveChangesAsync(default);
-                    }
-
-                    if (await dbContext.Keywords.AnyAsync())
-                    {
-                        await efDbContext.AddRangeAsync(seedGraph.Keywords);
-                        await dbContext.SaveChangesAsync(default);
-                    }
-
-                    if (await dbContext.Users.AnyAsync())
-                    {
-                        await efDbContext.AddRangeAsync(seedGraph.Users);
-                        await dbContext.SaveChangesAsync(default);
-                    }
-
-                    if (await dbContext.Books.AnyAsync())
-                    {
-                        await efDbContext.AddRangeAsync(seedGraph.Books);
-                        await dbContext.SaveChangesAsync(default);
-                    }
+                    await efDbContext.AddRangeAsync(seedGraph.Books);
+                    await dbContext.SaveChangesAsync(default);
                 }
             }
 
