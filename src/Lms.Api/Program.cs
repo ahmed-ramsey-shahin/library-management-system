@@ -19,6 +19,7 @@ app.UseCoreMiddlewars(builder.Configuration);
 if (app.Environment.IsDevelopment())
 {
     app.UseHsts();
+    _ = app.SeedDatabase();
 }
 
 app.MapControllers();

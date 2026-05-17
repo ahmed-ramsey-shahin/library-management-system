@@ -4,8 +4,10 @@ using Asp.Versioning;
 using Lms.Api.Infrastructure;
 using Lms.Api.Services;
 using Lms.Application.Common.Interfaces;
+using Lms.Infrastructure.Data;
 using Lms.Infrastructure.Settings;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -157,6 +159,79 @@ namespace Lms.Api
                 .AddIdentityInfrastructure()
                 .AddConfiguredCors(configuration);
             return services;
+        }
+
+        public static async Task<IApplicationBuilder> SeedDatabase(this IApplicationBuilder app)
+        {
+            using var scope = app.ApplicationServices.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
+            var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+
+            if (dbContext is DbContext efDbContext)
+            {
+                await efDbContext.Database.EnsureCreatedAsync();
+
+                if (!await dbContext.Books.AnyAsync())
+                {
+                    var seedGraph = DatabaseSeeder.GenerateAllMockData(passwordHasher);
+
+                    if (await dbContext.Publishers.AnyAsync())
+                    {
+                        await efDbContext.AddRangeAsync(seedGraph.Publishers);
+                        await dbContext.SaveChangesAsync(default);
+                    }
+
+                    if (await dbContext.Audiences.AnyAsync())
+                    {
+                        await efDbContext.AddRangeAsync(seedGraph.Audiences);
+                        await dbContext.SaveChangesAsync(default);
+                    }
+
+                    if (await dbContext.Authors.AnyAsync())
+                    {
+                        await efDbContext.AddRangeAsync(seedGraph.Authors);
+                        await dbContext.SaveChangesAsync(default);
+                    }
+
+                    if (await dbContext.Genres.AnyAsync())
+                    {
+                        await efDbContext.AddRangeAsync(seedGraph.Genres);
+                        await dbContext.SaveChangesAsync(default);
+                    }
+
+                    if (await dbContext.Categories.AnyAsync())
+                    {
+                        await efDbContext.AddRangeAsync(seedGraph.Categories);
+                        await dbContext.SaveChangesAsync(default);
+                    }
+
+                    if (await dbContext.Themes.AnyAsync())
+                    {
+                        await efDbContext.AddRangeAsync(seedGraph.Themes);
+                        await dbContext.SaveChangesAsync(default);
+                    }
+
+                    if (await dbContext.Keywords.AnyAsync())
+                    {
+                        await efDbContext.AddRangeAsync(seedGraph.Keywords);
+                        await dbContext.SaveChangesAsync(default);
+                    }
+
+                    if (await dbContext.Users.AnyAsync())
+                    {
+                        await efDbContext.AddRangeAsync(seedGraph.Users);
+                        await dbContext.SaveChangesAsync(default);
+                    }
+
+                    if (await dbContext.Books.AnyAsync())
+                    {
+                        await efDbContext.AddRangeAsync(seedGraph.Books);
+                        await dbContext.SaveChangesAsync(default);
+                    }
+                }
+            }
+
+            return app;
         }
     }
 }
