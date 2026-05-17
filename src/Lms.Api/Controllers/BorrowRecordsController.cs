@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
 using Lms.Application.Common.Interfaces;
 using Lms.Application.Common.Models;
+using Lms.Application.Features.BorrowRecords.Commands.AcceptBorrowRecord;
 using Lms.Application.Features.BorrowRecords.Commands.BorrowBook;
 using Lms.Application.Features.BorrowRecords.Commands.CancelBorrowRecord;
 using Lms.Application.Features.BorrowRecords.Commands.MarkRecordAsLate;
@@ -394,6 +395,23 @@ namespace Lms.Api.Controllers
         )
         {
             var result = await sender.Send(new ReturnBookCommand(id), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPost("{id:guid}/acceptance")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [EndpointName("AcceptBorrowRequest")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> AcceptBorrowRequest(Guid id, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new AcceptBorrowRecordCommand(id), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
