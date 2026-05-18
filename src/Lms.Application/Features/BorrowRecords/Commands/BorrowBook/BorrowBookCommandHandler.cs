@@ -140,7 +140,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.BorrowBook
                 return ApplicationErrors.ConcurrencyConflict;
             }
 
-            await cache.RemoveByTagAsync(["book-copy"], cancellationToken);
+            await cache.RemoveByTagAsync(["book-copy", "borrow-record"], cancellationToken);
 
             if (logger.IsEnabled(LogLevel.Information))
             {
