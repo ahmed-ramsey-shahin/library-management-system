@@ -1,5 +1,4 @@
 using Lms.Application.Common.Interfaces;
-using Lms.Domain.Common.Results.Abstractions;
 using MediatR;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
@@ -23,9 +22,15 @@ namespace Lms.Application.Common.Behaviors
                 logger.LogInformation("Checking cache for {RequestName}", typeof(TRequest).Name);
             }
 
-            return await cache.GetOrCreateAsync(
+            var cacheHit = true;
+            var result = await cache.GetOrCreateAsync(
                 key: cachedQuery.CacheKey,
-                factory: async cancellationToken => await next(cancellationToken),
+                factory: async cancellationToken =>
+                {
+                    cacheHit = false;
+                    logger.LogInformation("Cache miss");
+                    return await next(cancellationToken);
+                },
                 options: new HybridCacheEntryOptions
                 {
                     Expiration = cachedQuery.Expiration,
@@ -33,6 +38,13 @@ namespace Lms.Application.Common.Behaviors
                 tags: cachedQuery.Tags,
                 cancellationToken: cancellationToken
             );
+
+            if (cacheHit)
+            {
+                logger.LogInformation("Cache hit.");
+            }
+
+            return result;
         }
     }
 }
