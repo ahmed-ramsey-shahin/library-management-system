@@ -1,4 +1,5 @@
 using Lms.Application.Common.Interfaces;
+using Lms.Domain.Common.Results.Abstractions;
 using MediatR;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
@@ -23,28 +24,42 @@ namespace Lms.Application.Common.Behaviors
             }
 
             var cacheHit = true;
-            var result = await cache.GetOrCreateAsync(
-                key: cachedQuery.CacheKey,
-                factory: async cancellationToken =>
-                {
-                    cacheHit = false;
-                    logger.LogInformation("Cache miss");
-                    return await next(cancellationToken);
-                },
-                options: new HybridCacheEntryOptions
-                {
-                    Expiration = cachedQuery.Expiration,
-                },
-                tags: cachedQuery.Tags,
-                cancellationToken: cancellationToken
-            );
 
-            if (cacheHit)
+            try
             {
-                logger.LogInformation("Cache hit.");
-            }
+                var result = await cache.GetOrCreateAsync(
+                    key: cachedQuery.CacheKey,
+                    factory: async cancellationToken =>
+                    {
+                        cacheHit = false;
+                        logger.LogInformation("Cache miss");
+                        var response = await next(cancellationToken);
 
-            return result;
+                        if (response is IResult result && result.IsSuccess)
+                        {
+                            return response;
+                        }
+
+                        throw new BypassCacheException(response!);
+                    },
+                    options: new HybridCacheEntryOptions
+                    {
+                        Expiration = cachedQuery.Expiration,
+                    },
+                    tags: cachedQuery.Tags,
+                    cancellationToken: cancellationToken
+                );
+
+                if (cacheHit)
+                {
+                    logger.LogInformation("Cache hit.");
+                }
+
+                return result;
+            } catch (BypassCacheException ex)
+            {
+                return (TResponse) ex.ErrorResponse;
+            }
         }
     }
 }
