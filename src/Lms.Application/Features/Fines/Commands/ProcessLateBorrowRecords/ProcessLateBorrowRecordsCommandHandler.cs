@@ -16,6 +16,7 @@ namespace Lms.Application.Features.Fines.Commands.ProcessLateBorrowRecords
     {
         public async Task Handle(ProcessLateBorrowRecordsCommand request, CancellationToken cancellationToken)
         {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
             List<Error> errors = [];
             var lateBorrowRecords = await db.BorrowRecords
                 .Where(record => record.Status == BorrowRecordStatus.Late)
@@ -25,17 +26,20 @@ namespace Lms.Application.Features.Fines.Commands.ProcessLateBorrowRecords
                 .AsSplitQuery()
                 .ToListAsync(cancellationToken);
             var finesAdded = 0;
+            var numberOfErrors = 0;
 
             foreach (var borrowRecord in lateBorrowRecords)
             {
+                var amount = borrowRecord.BookCopy.Book.FinePerDay * (today.DayNumber - borrowRecord.DueDate.DayNumber);
                 var fineAdditionResult = borrowRecord.AddFine(
                     id: Guid.NewGuid(),
-                    amount: borrowRecord.BookCopy.Book.FinePerDay,
+                    amount: amount,
                     description: $"Daily late return penalty for '{borrowRecord.BookCopy.Book.Title}' at {borrowRecord.BookCopy.Book.FinePerDay:C}/day."
                 );
 
                 if (fineAdditionResult.IsError)
                 {
+                    numberOfErrors++;
                     continue;
                 }
 
@@ -63,9 +67,16 @@ namespace Lms.Application.Features.Fines.Commands.ProcessLateBorrowRecords
                 await cache.RemoveByTagAsync(["borrow-record", "fine"],cancellationToken);
             }
 
-            if (errors.Count > 0 && logger.IsEnabled(LogLevel.Warning))
+            if (errors.Count > 0)
             {
-                logger.LogWarning("Some late borrow records could not be processed. {@Errors}.", errors);
+                if (logger.IsEnabled(LogLevel.Warning))
+                {
+                    logger.LogWarning("Some late borrow records could not be processed. {@Errors}.", errors);
+                }
+            }
+            else if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation(typeof(ProcessLateBorrowRecordsCommand).Name + " finished with {NumberOfErrors} errors.", numberOfErrors);
             }
         }
     }
