@@ -20,7 +20,7 @@ app.UseCoreMiddlewars(builder.Configuration);
 if (app.Environment.IsDevelopment())
 {
     app.UseHsts();
-    _ = app.SeedDatabase();
+    await app.SeedDatabase();
     app.UseHangfireDashboard("/hangfire", new DashboardOptions
     {
         Authorization = [],
