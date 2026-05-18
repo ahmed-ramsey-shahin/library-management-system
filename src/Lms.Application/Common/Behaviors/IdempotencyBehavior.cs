@@ -1,33 +1,33 @@
 using Lms.Application.Common.Interfaces;
 using MediatR;
-using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace Lms.Application.Common.Behaviors
 {
     public class IdempotencyBehavior<TRequest, TResponse>(
-        HybridCache cache,
+        IMemoryCache cache,
+        IUser CurrentUser,
         ILogger<IdempotencyBehavior<TRequest, TResponse>> logger
     ) : IPipelineBehavior<TRequest, TResponse> where TRequest : IIdempotentCommand
     {
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
-            return await cache.GetOrCreateAsync(
-                $"idem:{typeof(TRequest).Name}:{request.IdempotencyKey}",
-                async cancellationToken =>
-                {
-                    if (logger.IsEnabled(LogLevel.Information))
-                    {
-                        logger.LogInformation("Executing unique command for key {Key}.", request.IdempotencyKey);
-                    }
+            var cacheKey = $"idem:{CurrentUser.Id}:{typeof(TRequest).Name}:{request.IdempotencyKey}";
 
-                    return await next(cancellationToken);
-                },
-                options: new HybridCacheEntryOptions{
-                    Expiration = TimeSpan.FromMinutes(10),
-                },
-                cancellationToken: cancellationToken
-            );
+            if (cache.TryGetValue(cacheKey, out TResponse? cachedResponse))
+            {
+                if (logger.IsEnabled(LogLevel.Information))
+                {
+                    logger.LogInformation("Returning cached idempotent result for key {Key}.", request.IdempotencyKey);
+                }
+
+                return cachedResponse!;
+            }
+
+            var response = await next(cancellationToken);
+            cache.Set(cacheKey, response, TimeSpan.FromMinutes(2));
+            return response;
         }
     }
 }
