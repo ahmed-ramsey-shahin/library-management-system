@@ -16,6 +16,7 @@ namespace Lms.Application
             services.AddMediatR(configuration =>
             {
                 configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                configuration.AddOpenBehavior(typeof(IdempotencyBehavior<,>));
                 configuration.AddOpenBehavior(typeof(UnhandledExceptionBehavior<,>));
                 configuration.AddOpenBehavior(typeof(LoggingBehavior<,>));
                 configuration.AddOpenBehavior(typeof(PerformanceBehavior<,>));
