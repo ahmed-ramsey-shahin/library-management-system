@@ -36,17 +36,30 @@ namespace Lms.Application.Features.Fines.Commands.ProcessLateBorrowRecords
 
                 if (fineAdditionResult.IsError)
                 {
-                    errors.AddRange(fineAdditionResult.Errors!);
+                    continue;
                 }
-                else
+
+                db.Fines.Add(fineAdditionResult.Value);
+
+                try
                 {
-                    finesAdded++;
+                    await db.SaveChangesAsync(cancellationToken);
                 }
+                catch(Exception ex)
+                {
+                    logger.LogWarning("Exception on BorrowRecord {@Exception}. Skipping.", ex);
+                    if (db is DbContext efContext)
+                    {
+                        efContext.Entry(borrowRecord).State = EntityState.Unchanged;
+                        efContext.Entry(fineAdditionResult.Value).State = EntityState.Detached;
+                    }
+                }
+
+                finesAdded++;
             }
 
             if (finesAdded > 0)
             {
-                await db.SaveChangesAsync(cancellationToken);
                 await cache.RemoveByTagAsync(["borrow-record", "fine"],cancellationToken);
             }
 
