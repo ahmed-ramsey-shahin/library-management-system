@@ -44,7 +44,7 @@ namespace Lms.Application.Features.Fines.Queries.GetFineById
                 return ApplicationErrors.FineNotFound;
             }
 
-            if (currentUser.UserRole == Role.Member && fine.MemberId == currentUser.Id)
+            if (currentUser.UserRole == Role.Member && fine.MemberId != currentUser.Id)
             {
                 return ApplicationErrors.FineNotOwned;
             }
