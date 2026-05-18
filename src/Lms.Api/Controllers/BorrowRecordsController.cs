@@ -416,7 +416,7 @@ namespace Lms.Api.Controllers
             return result.Match(_ => NoContent(), Problem);
         }
 
-        [HttpGet("{id:guid}/pickups")]
+        [HttpPost("{id:guid}/pickups")]
         [Authorize(Roles = $"{nameof(Role.Librarian)},{nameof(Role.Admin)}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
