@@ -4,6 +4,7 @@ using Asp.Versioning;
 using Lms.Api.Infrastructure;
 using Lms.Api.Services;
 using Lms.Application.Common.Interfaces;
+using Lms.Infrastructure;
 using Lms.Infrastructure.Data;
 using Lms.Infrastructure.Settings;
 using Microsoft.AspNetCore.RateLimiting;
@@ -142,6 +143,7 @@ namespace Lms.Api
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseOutputCache();
+            app.UseBackgroundJobs();
             return app;
         }
 
