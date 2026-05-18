@@ -37,30 +37,18 @@ namespace Lms.Infrastructure.Data.Configurations
                 .HasConversion<string>();
             builder.Property(entity => entity.Password)
                 .HasColumnName("password");
-
             builder.HasMany(entity => entity.LibrarianCategories)
                 .WithOne(librarianCategory => librarianCategory.Librarian)
                 .HasForeignKey(librarianCategory => librarianCategory.UserId);
-            builder.Navigation(entity => entity.LibrarianCategories)
-                .UsePropertyAccessMode(PropertyAccessMode.Field);
-
             builder.HasMany(entity => entity.RefreshTokens)
                 .WithOne()
                 .HasForeignKey(refreshToken => refreshToken.UserId);
-            builder.Navigation(entity => entity.RefreshTokens)
-                .UsePropertyAccessMode(PropertyAccessMode.Field);
-
             builder.HasMany(entity => entity.BorrowRecords)
                 .WithOne(borrowRecord => borrowRecord.Member)
                 .HasForeignKey(borrowRecord => borrowRecord.MemberId);
-            builder.Navigation(entity => entity.BorrowRecords)
-                .UsePropertyAccessMode(PropertyAccessMode.Field);
-
             builder.HasMany(entity => entity.Fines)
                 .WithOne(fine => fine.Member)
                 .HasForeignKey(fine => fine.MemberId);
-            builder.Navigation(entity => entity.Fines)
-                .UsePropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }
