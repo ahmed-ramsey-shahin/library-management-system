@@ -2,6 +2,7 @@ using Lms.Application.Common.Errors;
 using Lms.Application.Common.Interfaces;
 using Lms.Application.Features.Fines.Dtos;
 using Lms.Domain.Common.Results;
+using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,8 @@ namespace Lms.Application.Features.Fines.Queries.GetFineById
 {
     public sealed class GetFineByIdQueryHandler(
         IAppDbContext db,
-        ILogger<GetFineByIdQueryHandler> logger
+        ILogger<GetFineByIdQueryHandler> logger,
+        IUser currentUser
     ) : IRequestHandler<GetFineByIdQuery, Result<FineDto>>
     {
         public async Task<Result<FineDto>> Handle(GetFineByIdQuery request, CancellationToken cancellationToken)
@@ -40,6 +42,11 @@ namespace Lms.Application.Features.Fines.Queries.GetFineById
                 }
 
                 return ApplicationErrors.FineNotFound;
+            }
+
+            if (currentUser.UserRole == Role.Member && fine.MemberId == currentUser.Id)
+            {
+                return ApplicationErrors.FineNotOwned;
             }
 
             return fine;

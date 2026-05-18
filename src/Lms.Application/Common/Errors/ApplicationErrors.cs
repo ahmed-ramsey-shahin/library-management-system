@@ -79,6 +79,7 @@ namespace Lms.Application.Common.Errors
         // --- Fines ---
         public static Error FineNotFound => Error.NotFound("Fine.NotFound", "The requested fine was not found.");
         public static Error FineDescriptionLength => Error.Validation("Fine.DescriptionTooLong", "The fine description cannot exceed 500 characters.");
+        public static Error FineNotOwned => Error.Forbidden("Fine.NotOwned", "You do not have permission to access this fine.");
 
         // --- Authentication & Tokens ---
         public static Error CredentialsInvalid => Error.Unauthorized("Auth.InvalidCredentials", "The provided email or password is incorrect.");
