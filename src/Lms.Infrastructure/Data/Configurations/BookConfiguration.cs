@@ -47,30 +47,44 @@ namespace Lms.Infrastructure.Data.Configurations
             builder.HasMany(entity => entity.BookCopies)
                 .WithOne(copy => copy.Book)
                 .HasForeignKey(copy => copy.BookId);
+            builder.Navigation(entity => entity.BookCopies)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             builder.HasMany(entity => entity.BookCategories)
                 .WithOne(bookCategory => bookCategory.Book)
                 .HasForeignKey(bookCategory => bookCategory.BookId);
+            builder.Navigation(entity => entity.BookCategories)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             builder.HasMany(entity => entity.BookKeywords)
                 .WithOne(bookKeyword => bookKeyword.Book)
                 .HasForeignKey(bookKeyword => bookKeyword.BookId);
+            builder.Navigation(entity => entity.BookKeywords)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             builder.HasMany(entity => entity.BookThemes)
                 .WithOne(bookTheme => bookTheme.Book)
                 .HasForeignKey(bookTheme => bookTheme.BookId);
+            builder.Navigation(entity => entity.BookThemes)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             builder.HasMany(entity => entity.BookGenres)
                 .WithOne(bookGenre => bookGenre.Book)
                 .HasForeignKey(bookGenre => bookGenre.BookId);
+            builder.Navigation(entity => entity.BookGenres)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             builder.HasMany(entity => entity.BookAudiences)
                 .WithOne(bookAudience => bookAudience.Book)
                 .HasForeignKey(bookAudience => bookAudience.BookId);
+            builder.Navigation(entity => entity.BookAudiences)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             builder.HasMany(entity => entity.BookAuthors)
                 .WithOne(bookAuthor => bookAuthor.Book)
                 .HasForeignKey(bookAuthor => bookAuthor.BookId);
+            builder.Navigation(entity => entity.BookAuthors)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             builder.HasOne(entity => entity.Publisher)
                 .WithMany()

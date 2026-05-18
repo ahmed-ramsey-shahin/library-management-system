@@ -46,6 +46,8 @@ namespace Lms.Infrastructure.Data.Configurations
             builder.HasMany(entity => entity.Fines)
                 .WithOne(fine => fine.BorrowRecord)
                 .HasForeignKey(fine => fine.BorrowRecordId);
+            builder.Navigation(entity => entity.Fines)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }
