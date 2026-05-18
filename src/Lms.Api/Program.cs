@@ -1,3 +1,4 @@
+using Hangfire;
 using Lms.Api;
 using Lms.Application;
 using Lms.Application.Common.Configurations;
@@ -20,6 +21,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseHsts();
     _ = app.SeedDatabase();
+    app.UseHangfireDashboard("/hangfire", new DashboardOptions
+    {
+        Authorization = [],
+    });
 }
 
 app.MapControllers();
