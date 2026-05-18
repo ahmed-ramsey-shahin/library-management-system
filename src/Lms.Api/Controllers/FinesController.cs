@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
+using Lms.Application.Common.Interfaces;
 using Lms.Application.Features.Fines.Commands.IssueFine;
 using Lms.Application.Features.Fines.Dtos;
 using Lms.Application.Features.Fines.Queries.GetFineById;
@@ -51,9 +52,13 @@ namespace Lms.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [MapToApiVersion("1.0")]
         [EndpointName("GetFineById")]
-        public async Task<IActionResult> GetFineById(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetFineById(
+            [FromServices] IUser user,
+            Guid id,
+            CancellationToken cancellationToken
+        )
         {
-            var result = await sender.Send(new GetFineByIdQuery(id), cancellationToken);
+            var result = await sender.Send(new GetFineByIdQuery(id, user.Id!.Value, user.UserRole!.Value), cancellationToken);
             return result.Match(Ok, Problem);
         }
     }
