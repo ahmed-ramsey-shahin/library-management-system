@@ -7,6 +7,7 @@ using Lms.Application.Features.Fines.Dtos;
 using Lms.Application.Features.Fines.Queries.GetFineById;
 using Lms.Application.Features.Fines.Queries.GetFinesByBorrowRecordId;
 using Lms.Application.Features.Fines.Queries.GetMemberFines;
+using Lms.Application.Features.Fines.Queries.GetUnpaidFinesByCategory;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -137,6 +138,31 @@ namespace Lms.Api.Controllers
         {
             var result = await sender.Send(new GetMemberFinesQuery(
                 user.Id!.Value,
+                pageNumber,
+                pageSize
+            ), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/categories/{categoryId:guid}/fines/unpaid")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(typeof(PaginatedList<FineDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetUnpaidFinesByCategory")]
+        public async Task<IActionResult> GetUnpaidFinesByCategory(
+            [FromQuery] int pageSize,
+            [FromQuery] int pageNumber,
+            Guid categoryId,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new GetUnpaidFinesByCategoryQuery(
+                categoryId,
                 pageNumber,
                 pageSize
             ), cancellationToken);
