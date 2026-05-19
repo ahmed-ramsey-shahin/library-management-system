@@ -3,6 +3,7 @@ using Lms.Api.Dtos.Requests;
 using Lms.Application.Common.Interfaces;
 using Lms.Application.Common.Models;
 using Lms.Application.Features.Fines.Commands.ChangeFineAmount;
+using Lms.Application.Features.Fines.Commands.DeleteFine;
 using Lms.Application.Features.Fines.Commands.IssueFine;
 using Lms.Application.Features.Fines.Dtos;
 using Lms.Application.Features.Fines.Queries.GetFineById;
@@ -188,6 +189,26 @@ namespace Lms.Api.Controllers
         )
         {
             var result = await sender.Send(new ChangeFineAmountCommand(borrowRecordId, fineId, request.NewAmount), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpDelete("/api/v{version:apiVersion}/borrow-records/{borrowRecordId:guid}/fines/{fineId:guid}")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("DeleteFine")]
+        public async Task<IActionResult> DeleteFine(
+            Guid borrowRecordId,
+            Guid fineId,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new DeleteFineCommand(borrowRecordId, fineId), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
