@@ -163,8 +163,8 @@ namespace Lms.Api.Controllers
         {
             var result = await sender.Send(new GetUnpaidFinesByCategoryQuery(
                 categoryId,
-                pageNumber,
-                pageSize
+                pageSize,
+                pageNumber
             ), cancellationToken);
             return result.Match(Ok, Problem);
         }
