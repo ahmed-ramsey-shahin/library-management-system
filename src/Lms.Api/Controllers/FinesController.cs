@@ -1,9 +1,11 @@
 using Asp.Versioning;
 using Lms.Api.Dtos.Requests;
 using Lms.Application.Common.Interfaces;
+using Lms.Application.Common.Models;
 using Lms.Application.Features.Fines.Commands.IssueFine;
 using Lms.Application.Features.Fines.Dtos;
 using Lms.Application.Features.Fines.Queries.GetFineById;
+using Lms.Application.Features.Fines.Queries.GetFinesByBorrowRecordId;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -59,6 +61,34 @@ namespace Lms.Api.Controllers
         )
         {
             var result = await sender.Send(new GetFineByIdQuery(id, user.Id!.Value, user.UserRole!.Value), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/borrow-records/{borrowRecordId:guid}/fines")]
+        [Authorize]
+        [ProducesResponseType(typeof(PaginatedList<FineDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetFinesByBorrowRecord")]
+        public async Task<IActionResult> GetFinesByBorrowRecord(
+            [FromServices] IUser user,
+            [FromQuery] int pageSize,
+            [FromQuery] int pageNumber,
+            Guid borrowRecordId,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new GetFinesByBorrowRecordIdQuery(
+                borrowRecordId,
+                user.Id!.Value,
+                user.UserRole!.Value,
+                pageNumber,
+                pageSize
+            ), cancellationToken);
             return result.Match(Ok, Problem);
         }
     }
