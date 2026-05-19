@@ -11,6 +11,6 @@ namespace Lms.Application.Features.Fines.Queries.GetFineById
 
         public string[] Tags => ["fine"];
 
-        public TimeSpan Expiration => TimeSpan.FromHours(1);
+        public TimeSpan Expiration => TimeSpan.FromMinutes(10);
     }
 }

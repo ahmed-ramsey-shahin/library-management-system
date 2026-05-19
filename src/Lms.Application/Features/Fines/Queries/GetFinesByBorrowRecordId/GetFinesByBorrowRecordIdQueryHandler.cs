@@ -1,7 +1,9 @@
+using Lms.Application.Common.Errors;
 using Lms.Application.Common.Interfaces;
 using Lms.Application.Common.Models;
 using Lms.Application.Features.Fines.Dtos;
 using Lms.Domain.Common.Results;
+using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,6 +52,12 @@ namespace Lms.Application.Features.Fines.Queries.GetFinesByBorrowRecordId
                     FineDate = fine.FineDate,
                     PaidAt = fine.PaidAt
                 }).ToListAsync(cancellationToken);
+
+            if (request.CurrnetUserRole == Role.Member && fines[0].MemberId != request.CurrentUserId)
+            {
+                return ApplicationErrors.FineNotOwned;
+            }
+
             return new PaginatedList<FineDto>
             {
                 TotalCount = totalCount,
