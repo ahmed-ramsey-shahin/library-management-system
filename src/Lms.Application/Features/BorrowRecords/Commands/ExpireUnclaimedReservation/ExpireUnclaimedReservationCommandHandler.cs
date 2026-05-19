@@ -19,14 +19,18 @@ namespace Lms.Application.Features.BorrowRecords.Commands.ExpireUnclaimedReserva
             logger.LogInformation("Expiring uncliamed reservations ...");
             List<Error> errors = [];
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
-            var cutoffDate = today.AddDays(-3);
             var borrowRecords = await db.BorrowRecords
                 .Include(record => record.BookCopy)
-                .Where(record => record.Status == BorrowRecordStatus.Accepted && record.PickupDeadline <= cutoffDate && !record.PickedUp)
+                .Where(record => record.Status == BorrowRecordStatus.Accepted && record.PickupDeadline < today && !record.PickedUp)
                 .ToListAsync(cancellationToken);
 
             if (borrowRecords.Count == 0)
             {
+                if (logger.IsEnabled(LogLevel.Information))
+                {
+                    logger.LogInformation("No uncliamed borrow records found.");
+                }
+
                 return;
             }
 
@@ -38,7 +42,7 @@ namespace Lms.Application.Features.BorrowRecords.Commands.ExpireUnclaimedReserva
 
             foreach (var borrowRecord in borrowRecords)
             {
-                var updateResult = borrowRecord.RejectBorrowRequest();
+                var updateResult = borrowRecord.Cancel();
 
                 if (updateResult.IsError)
                 {

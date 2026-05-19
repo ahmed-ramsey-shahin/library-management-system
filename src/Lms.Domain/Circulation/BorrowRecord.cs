@@ -301,7 +301,7 @@ namespace Lms.Domain.Circulation
 
         public Result<Deleted> Cancel()
         {
-            if (Status != BorrowRecordStatus.Waiting)
+            if (Status != BorrowRecordStatus.Waiting && !(Status == BorrowRecordStatus.Accepted && !PickedUp))
             {
                 return BorrowRecordErrors.CancellationInvalid(Status);
             }
