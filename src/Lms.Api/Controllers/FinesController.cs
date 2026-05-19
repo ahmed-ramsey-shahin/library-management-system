@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Lms.Api.Controllers
 {
     [ApiController]
-    [Route("/api/v{version:apiVersion}/fines")]
+    [Route("/api/v{version:apiVersion}/borrow-records/{borrowRecordId:guid}/fines")]
     public class FinesController(ISender sender) : ApiController
     {
         [HttpPost]
@@ -35,11 +35,12 @@ namespace Lms.Api.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> IssueFine(
             [FromHeader(Name = "X-Idempotency-Key")] string idempotencyKey,
+            Guid borrowRecordId,
             IssueFineRequest request,
             CancellationToken cancellationToken
         )
         {
-            var result = await sender.Send(new IssueFineCommand(request.BorrowRecordId, request.Amount, request.Description, DateTimeOffset.UtcNow, idempotencyKey), cancellationToken);
+            var result = await sender.Send(new IssueFineCommand(borrowRecordId, request.Amount, request.Description, DateTimeOffset.UtcNow, idempotencyKey), cancellationToken);
             return result.Match(id => CreatedAtAction(
                 nameof(GetFineById),
                 new
@@ -50,7 +51,7 @@ namespace Lms.Api.Controllers
             ), Problem);
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("/api/v1/v{version:apiVersion}/fines/{id:guid}")]
         [Authorize]
         [ProducesResponseType(typeof(FineDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -70,7 +71,7 @@ namespace Lms.Api.Controllers
             return result.Match(Ok, Problem);
         }
 
-        [HttpGet("/api/v{version:apiVersion}/borrow-records/{borrowRecordId:guid}/fines")]
+        [HttpGet]
         [Authorize]
         [ProducesResponseType(typeof(PaginatedList<FineDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -173,7 +174,7 @@ namespace Lms.Api.Controllers
             return result.Match(Ok, Problem);
         }
 
-        [HttpPut("/api/v{version:apiVersion}/borrow-records/{borrowRecordId:guid}/fines/{fineId:guid}/amount")]
+        [HttpPut("{fineId:guid}/amount")]
         [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -194,7 +195,7 @@ namespace Lms.Api.Controllers
             return result.Match(_ => NoContent(), Problem);
         }
 
-        [HttpDelete("/api/v{version:apiVersion}/borrow-records/{borrowRecordId:guid}/fines/{fineId:guid}")]
+        [HttpDelete("{fineId:guid}")]
         [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -234,7 +235,7 @@ namespace Lms.Api.Controllers
             return result.Match(_ => NoContent(), Problem);
         }
 
-        [HttpPost("/api/v{version:apiVersion}/borrow-records/{borrowRecordId:guid}/fines/{fineId:guid}/waives")]
+        [HttpPost("{fineId:guid}/waives")]
         [Authorize(Roles = nameof(Role.Admin))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
