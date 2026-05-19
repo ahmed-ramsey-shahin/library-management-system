@@ -30,7 +30,12 @@ namespace Lms.Application.Features.Fines.Commands.ProcessLateBorrowRecords
 
             foreach (var borrowRecord in lateBorrowRecords)
             {
-                var amount = borrowRecord.BookCopy.Book.FinePerDay * (today.DayNumber - borrowRecord.DueDate.DayNumber);
+                var latestFineDate = borrowRecord.Fines
+                    .OrderByDescending(fine => fine.FineDate)
+                    .FirstOrDefault()?.FineDate.Date;
+                var baselineDayNumber = latestFineDate.HasValue ? DateOnly.FromDateTime(latestFineDate.Value.Date).DayNumber : borrowRecord.DueDate.DayNumber;
+                var daysToFine = today.DayNumber - baselineDayNumber;
+                var amount = borrowRecord.BookCopy.Book.FinePerDay * daysToFine;
                 var fineAdditionResult = borrowRecord.AddFine(
                     id: Guid.NewGuid(),
                     amount: amount,
@@ -40,6 +45,7 @@ namespace Lms.Application.Features.Fines.Commands.ProcessLateBorrowRecords
                 if (fineAdditionResult.IsError)
                 {
                     numberOfErrors++;
+                    logger.LogError("Error while processing: {@Errors}.", fineAdditionResult.Errors);
                     continue;
                 }
 
