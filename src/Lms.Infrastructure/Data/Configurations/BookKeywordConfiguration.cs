@@ -18,6 +18,7 @@ namespace Lms.Infrastructure.Data.Configurations
             builder.HasOne(entity => entity.Keyword)
                 .WithMany()
                 .HasForeignKey(entity => entity.KeywordId);
+            builder.HasQueryFilter(entity => !entity.Book.IsDeleted);
         }
     }
 }

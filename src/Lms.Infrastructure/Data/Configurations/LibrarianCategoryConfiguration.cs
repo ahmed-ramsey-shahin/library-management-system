@@ -20,6 +20,7 @@ namespace Lms.Infrastructure.Data.Configurations
             builder.HasOne(entity => entity.Category)
                 .WithMany()
                 .HasForeignKey(entity => entity.CategoryId);
+            builder.HasQueryFilter(entity => !entity.Librarian.IsDeleted);
         }
     }
 }
