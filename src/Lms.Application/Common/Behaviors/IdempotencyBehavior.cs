@@ -1,4 +1,5 @@
 using Lms.Application.Common.Interfaces;
+using Lms.Domain.Common.Results.Abstractions;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -26,7 +27,12 @@ namespace Lms.Application.Common.Behaviors
             }
 
             var response = await next(cancellationToken);
-            cache.Set(cacheKey, response, TimeSpan.FromMinutes(2));
+
+            if (response is IResult result && result.IsSuccess)
+            {
+                cache.Set(cacheKey, response, TimeSpan.FromMinutes(2));
+            }
+
             return response;
         }
     }
