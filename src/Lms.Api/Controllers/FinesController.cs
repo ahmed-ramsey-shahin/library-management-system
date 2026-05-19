@@ -6,6 +6,7 @@ using Lms.Application.Features.Fines.Commands.ChangeFineAmount;
 using Lms.Application.Features.Fines.Commands.DeleteFine;
 using Lms.Application.Features.Fines.Commands.IssueFine;
 using Lms.Application.Features.Fines.Commands.PayFine;
+using Lms.Application.Features.Fines.Commands.WaiveFine;
 using Lms.Application.Features.Fines.Dtos;
 using Lms.Application.Features.Fines.Queries.GetFineById;
 using Lms.Application.Features.Fines.Queries.GetFinesByBorrowRecordId;
@@ -230,6 +231,26 @@ namespace Lms.Api.Controllers
         )
         {
             var result = await sender.Send(new PayFineCommand(borrowRecordId, fineId), cancellationToken);
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpPost("/api/v{version:apiVersion}/borrow-records/{borrowRecordId:guid}/fines/{fineId:guid}/waives")]
+        [Authorize(Roles = nameof(Role.Admin))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("WaiveFine")]
+        public async Task<IActionResult> WaiveFine(
+            Guid borrowRecordId,
+            Guid fineId,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new WaiveFineCommand(borrowRecordId, fineId), cancellationToken);
             return result.Match(_ => NoContent(), Problem);
         }
     }
