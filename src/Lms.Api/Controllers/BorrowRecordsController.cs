@@ -74,9 +74,9 @@ namespace Lms.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [MapToApiVersion("1.0")]
         [EndpointName("GetBorrowRecord")]
-        public async Task<IActionResult> GetBorrowRecord(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetBorrowRecord(Guid id, [FromServices] IUser user, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new GetBorrowRecordByIdQuery(id), cancellationToken);
+            var result = await sender.Send(new GetBorrowRecordByIdQuery(id, user.Id!.Value, user.UserRole!.Value), cancellationToken);
             return result.Match(Ok, Problem);
         }
 

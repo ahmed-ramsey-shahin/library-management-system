@@ -12,7 +12,6 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById
 {
     public sealed class GetBorrowRecordByIdQueryHandler(
         IAppDbContext db,
-        IUser currentUser,
         ILogger<GetBorrowRecordByIdQueryHandler> logger
     ) : IRequestHandler<GetBorrowRecordByIdQuery, Result<BorrowRecordDto>>
     {
@@ -64,11 +63,11 @@ namespace Lms.Application.Features.BorrowRecords.Queries.GetBorrowRecordById
                 return ApplicationErrors.BorrowRecordNotFound;
             }
 
-            if (currentUser.UserRole == Role.Member && borrowRecord.MemberId != currentUser.Id)
+            if (request.CurrentUserRole == Role.Member && borrowRecord.MemberId != request.CurrentUserId)
             {
                 if (logger.IsEnabled(LogLevel.Error))
                 {
-                    logger.LogError("The current member can not access this borrow record. {BorrowRecordId} {MemberId}.", request.BorrowRecordId, currentUser.Id);
+                    logger.LogError("The current member can not access this borrow record. {BorrowRecordId} {MemberId}.", request.BorrowRecordId, request.CurrentUserId);
                 }
 
                 return ApplicationErrors.BorrowRecordNotOwned;
