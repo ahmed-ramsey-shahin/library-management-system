@@ -6,6 +6,7 @@ using Lms.Application.Features.Fines.Commands.IssueFine;
 using Lms.Application.Features.Fines.Dtos;
 using Lms.Application.Features.Fines.Queries.GetFineById;
 using Lms.Application.Features.Fines.Queries.GetFinesByBorrowRecordId;
+using Lms.Application.Features.Fines.Queries.GetMemberFines;
 using Lms.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -86,6 +87,56 @@ namespace Lms.Api.Controllers
                 borrowRecordId,
                 user.Id!.Value,
                 user.UserRole!.Value,
+                pageNumber,
+                pageSize
+            ), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/users/members/{memberId:guid}/fines")]
+        [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Librarian)}")]
+        [ProducesResponseType(typeof(PaginatedList<FineDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetMemberFines")]
+        public async Task<IActionResult> GetMemberFines(
+            [FromQuery] int pageSize,
+            [FromQuery] int pageNumber,
+            Guid memberId,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new GetMemberFinesQuery(
+                memberId,
+                pageNumber,
+                pageSize
+            ), cancellationToken);
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet("/api/v{version:apiVersion}/users/members/me/fines")]
+        [Authorize(Roles = nameof(Role.Member))]
+        [ProducesResponseType(typeof(PaginatedList<FineDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [MapToApiVersion("1.0")]
+        [EndpointName("GetMyFines")]
+        public async Task<IActionResult> GetMyFines(
+            [FromQuery] int pageSize,
+            [FromQuery] int pageNumber,
+            [FromServices] IUser user,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await sender.Send(new GetMemberFinesQuery(
+                user.Id!.Value,
                 pageNumber,
                 pageSize
             ), cancellationToken);
