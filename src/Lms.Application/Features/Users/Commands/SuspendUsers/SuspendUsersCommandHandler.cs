@@ -16,12 +16,23 @@ namespace Lms.Application.Features.Users.Commands.SuspendUsers
     {
         public async Task Handle(SuspendUsersCommand request, CancellationToken cancellationToken)
         {
+            var suspensionCutoffDate = DateTimeOffset.UtcNow.AddDays(-30);
             var usersToSuspend = await db.Users
                 .Where(user => user.Role == Role.Member && user.Status != UserStatus.Suspended && user.Fines.Any(
                     fine => fine.Status == FineStatus.Unpaid &&
-                            fine.FineDate < DateTimeOffset.UtcNow.AddDays(-30)
+                            fine.FineDate < suspensionCutoffDate
                 )).ToListAsync(cancellationToken);
             var suspendedUsers = 0;
+
+            if (usersToSuspend.Count == 0)
+            {
+                if (logger.IsEnabled(LogLevel.Information))
+                {
+                    logger.LogWarning("No users found to suspend.");
+                }
+
+                return;
+            }
 
             foreach (var user in usersToSuspend)
             {
